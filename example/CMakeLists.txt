@@ -1,0 +1,60 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(example VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#设置程序输出目录
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${COMPLETEUI_DIRECTORY}/bin)
+
+#Library type
+
+if (COMPLETEUI_BUILD_STATIC_LIB)
+    set(LIBRARY_TYPE_NAME CompleteUIplugin)
+else ()
+    set(LIBRARY_TYPE_NAME CompleteUI)
+endif ()
+
+
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
+
+
+set(PROJECT_SOURCES
+    main.cpp
+   # Administrative.h
+   # Administrative.cpp
+    resources.qrc
+    ico.rc
+)
+
+
+
+qt_add_executable(${PROJECT_NAME}
+    ${PROJECT_SOURCES}
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    WIN32_EXECUTABLE TRUE
+)
+
+
+target_link_libraries(${PROJECT_NAME}  PRIVATE
+    Qt6::Quick
+    Qt6::Sql
+    ${LIBRARY_TYPE_NAME}
+)
+#message("LIBRARY_TYPE_NAME:${LIBRARY_TYPE_NAME}")
+
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_QML_IMPORT_PATH="${COMPLETEUI_DIRECTORY}/bin/CompleteUI"
+)
+
+install(TARGETS ${PROJECT_NAME}
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
