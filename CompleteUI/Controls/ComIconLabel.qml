@@ -11,8 +11,6 @@ Item {
     property bool iconbold: false
     property font font:Qt.font({family:Theme.defaultFontFamily,pixelSize : 13, weight: Font.Normal})
     property color color:!enabled? Theme.DisabledTextColor: Theme.isDark ? "white" : "black"
-
-
     property color icocolor:control.color
     property real topPadding: 0
     property real leftPadding: 0
@@ -21,7 +19,6 @@ Item {
     property int spacing:4
     implicitWidth: loader.width
     implicitHeight: loader.height
-
     Component {
         id: comp_icon
         ComImage{

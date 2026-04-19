@@ -20,6 +20,7 @@ class Theme : public QObject
     Q_PROPERTY_AUTO(QColor, DividerColor)
     Q_PROPERTY_AUTO(QColor, DisabledColor)
     Q_PROPERTY_AUTO(QColor, DisabledTextColor)
+    Q_PROPERTY_AUTO(QColor, DisabledBorderColor)
     //按钮颜色配置
     Q_PROPERTY_AUTO(QColor, ButtonNormalColor)
     Q_PROPERTY_AUTO(QColor, ButtonHoverColor)

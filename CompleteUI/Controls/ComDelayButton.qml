@@ -9,6 +9,7 @@ T.DelayButton {
     property color progressbarcolor: Theme.setColorAlpha(Theme.PrimaryColor,150)
     property color primarycolor:Theme.PrimaryColor
     property color color:{
+         if(!enabled) return Theme.DisabledColor
         if (control.pressed){
             return Theme.ButtonPressColor
         }
@@ -18,7 +19,7 @@ T.DelayButton {
         return Theme.ButtonNormalColor
     }
     property color textcolor:{
-
+        if(!enabled) return Theme.DisabledTextColor
         if(control.progress===1.0)
         {
             return "#FFFFFF"
@@ -27,8 +28,8 @@ T.DelayButton {
     }
 
     property color bordercolor:{
+         if(!enabled) return Theme.DisabledBorderColor
         if(control.hovered || control.progress===1.0) return control.primarycolor
-
         return Theme.ButtonBorderNormalColor
     }
 
@@ -61,10 +62,9 @@ T.DelayButton {
             color: Theme.isDark ? Qt.darker(control.primarycolor, 0.9)
                                 : Qt.lighter(control.primarycolor, 1.1)
             cornerRadius: background.radius + glowRadius
-            opacity: (control.hovered && !control.pressed) ? 0.3 : 0
+            opacity: (enabled && control.hovered && !control.pressed) ? 0.3 : 0
             visible: opacity > 0
             z: -1
-
         }
         Rectangle {
             id: background
@@ -100,7 +100,6 @@ T.DelayButton {
             easing.type: Easing.Linear
         }
     }
-
     // 属性设置
     delay: 500
     focusPolicy: Qt.TabFocus

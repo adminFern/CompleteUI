@@ -21,46 +21,53 @@ Theme::Theme(QObject *parent)
     connect(this, &Theme::isDarkChanged, this, &Theme::refreshColors);
     connect(this, &Theme::PrimaryColorChanged, this, &Theme::refreshColors);
     connect(this, &Theme::SpecialEffectChanged, this, &Theme::refreshColors);
-  this->refreshColors();
+    this->refreshColors();
 
 }
 
 void Theme::refreshColors()
 {
-
-
     auto dark = isDark();
     PrimaryColor(dark ? _accentColor->dark() : _accentColor->lighter());
-
     switch (_SpecialEffect) {
-        case Theme::Effect::Mica:
-        case Theme::Effect::MicaAlt:
-           if(Dwm->isWindow11())  backgroundColor(Qt::transparent);
-           ButtonNormalColor(dark?QColor(50, 50, 50,200) : QColor(252, 252, 252,200));
-           ButtonHoverColor(dark?QColor(62, 62, 62) : QColor(255, 255, 255));
-           ButtonPressColor(dark?QColor(48, 48, 48,220) : QColor(255, 255, 255,220));
-           ButtonBorderNormalColor(dark ? QColor(100, 100, 100, 210) : QColor(225, 225, 225, 210));
-           Textcolor(dark ? Qt::white:Qt::black);
-             break;
-        case Theme::Effect::Acrylic:
-             if(Dwm->isWindow11())  backgroundColor(Qt::transparent);
-             ButtonNormalColor(dark?QColor(42, 42, 42) : QColor(252, 252, 252));
-             ButtonHoverColor(dark?QColor(48, 48, 48) : QColor(255, 255, 255));
-             ButtonPressColor(dark?QColor(48, 48, 48,220) : QColor(255, 255, 255,220));
-             ButtonBorderNormalColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
-             Textcolor(dark ? Qt::white:Qt::black);
-            break;
-        default:
-            backgroundColor(dark ? QColor(32, 32, 32, 255) : QColor(243, 243, 243, 255));
-            DividerColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
-            DisabledColor(dark ? QColor(42, 46, 55) : QColor(235, 235, 235));
-            DisabledTextColor(dark ? QColor(107, 114, 128) : QColor(171, 171, 171));
-            ButtonNormalColor(dark?QColor(42, 42, 42) : QColor(252, 252, 252));
-            ButtonHoverColor(dark?QColor(48, 48, 48) : QColor(255, 255, 255));
-            ButtonPressColor(dark?QColor(48, 48, 48,220) : QColor(255, 255, 255,220));
-            ButtonBorderNormalColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
-            Textcolor(dark ? Qt::white:Qt::black);
-            break;
+    case Theme::Effect::Mica:
+    case Theme::Effect::MicaAlt:
+        if(Dwm->isWindow11())  backgroundColor(Qt::transparent);
+        ButtonNormalColor(dark?QColor(50, 50, 50,200) : QColor(252, 252, 252,200));
+        ButtonHoverColor(dark?QColor(62, 62, 62) : QColor(255, 255, 255));
+        ButtonPressColor(dark?QColor(48, 48, 48,220) : QColor(255, 255, 255,220));
+        ButtonBorderNormalColor(dark ? QColor(100, 100, 100, 210) : QColor(225, 225, 225, 210));
+        Textcolor(dark ? Qt::white:Qt::black);
+        DividerColor(dark ? QColor(80, 80, 80, 180) : QColor(200, 200, 200, 180));
+        DisabledColor(dark ? QColor(46, 46, 46,100) : QColor(235, 235, 235,100));
+        DisabledTextColor(dark ? QColor(107, 114, 128) : QColor(171, 171, 171));
+        DisabledBorderColor(dark ? QColor(100, 100, 100,200) : QColor(200, 200, 200,200));
+        break;
+    case Theme::Effect::Acrylic:
+        if(Dwm->isWindow11())  backgroundColor(Qt::transparent);
+        ButtonNormalColor(dark?QColor(42, 42, 42,30) : QColor(252, 252, 252,120));
+        ButtonHoverColor(dark?QColor(48, 48, 48,170) : QColor(255, 255, 255,180));
+        ButtonPressColor(dark?QColor(48, 48, 48,200) : QColor(255, 255, 255,200));
+        ButtonBorderNormalColor(dark ? QColor(80, 80, 80, 100) : QColor(210, 210, 210, 230));
+        Textcolor(dark ? Qt::white:Qt::black);
+        DividerColor(dark ? QColor(80, 80, 80, 110) : QColor(210, 210, 210, 200));
+        DisabledColor(dark ? QColor(46, 46, 46,100) : QColor(235, 235, 235,100));
+        DisabledTextColor(dark ? QColor(107, 114, 128) : QColor(171, 171, 171));
+        DisabledBorderColor(dark ? QColor(100, 100, 100) : QColor(200, 200, 200));
+
+        break;
+    default:
+        backgroundColor(dark ? QColor(32, 32, 32, 255) : QColor(243, 243, 243, 255));
+        DividerColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
+        DisabledColor(dark ? QColor(46, 46, 46,180) : QColor(235, 235, 235,180));
+        DisabledTextColor(dark ? QColor(100, 100, 100) : QColor(190, 190, 190));
+        DisabledBorderColor(dark ? QColor(100, 100, 100) : QColor(200, 200, 200));
+        ButtonNormalColor(dark?QColor(42, 42, 42) : QColor(252, 252, 252));
+        ButtonHoverColor(dark?QColor(48, 48, 48) : QColor(255, 255, 255));
+        ButtonPressColor(dark?QColor(48, 48, 48,220) : QColor(255, 255, 255,220));
+        ButtonBorderNormalColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
+        Textcolor(dark ? Qt::white:Qt::black);
+        break;
     }
 }
 

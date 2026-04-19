@@ -7,7 +7,6 @@ import Qt5Compat.GraphicalEffects
 import CompleteUI
 
 T.Button {
-
   id: control
   display:DisplayType.TextOnly
   property bool handCursor: true
@@ -17,9 +16,10 @@ T.Button {
   property color normalcolor:Theme.ButtonNormalColor
   property color hovercolor:Theme.ButtonHoverColor
   property color pressedcolor:Theme.ButtonPressColor
-    property color primarycolor:Theme.PrimaryColor
+  property color primarycolor:Theme.PrimaryColor
   property color highlightedcolor: "hotpink"
   property color textcolor:{
+    if(!enabled) return Theme.DisabledTextColor
     if(control.highlighted ) return Theme.isDark? "black":"white"
     return Theme.Textcolor
   }
@@ -34,6 +34,7 @@ T.Button {
   leftPadding: 6
   rightPadding: 6
   property color bordercolor:{
+    if(!enabled) return Theme.DisabledBorderColor
     if(control.hovered) return Theme.PrimaryColor
     return Theme.ButtonBorderNormalColor
   }
@@ -68,7 +69,7 @@ T.Button {
       }
 
       cornerRadius: background.radius + glowRadius
-      opacity: (!control.flat && control.hovered && !control.pressed) ? 0.3 : 0
+      opacity: (enabled &&!control.flat && control.hovered && !control.pressed) ? 0.3 : 0
       visible: opacity > 0
       scale: 1.0
       z: -1
@@ -79,6 +80,7 @@ T.Button {
       anchors.fill: parent
       radius: control.radius
       color:{
+        if(!enabled) return Theme.DisabledColor
         if(control.highlighted){
           if(control.pressed) return Theme.isDark? Qt.darker(control.highlightedcolor,0.8)
                                                  :Qt.lighter(control.highlightedcolor,1.1)

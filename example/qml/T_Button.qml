@@ -2,166 +2,1015 @@
 import QtQuick.Controls
 import QtQuick.Layouts
 import CompleteUI
-Item{
-    id: scrollView
-    Column{
+
+Item {
+    id: root
+
+    ScrollView {
         anchors.fill: parent
-        spacing: 15
-
-    ComGroupBox{
-        width: parent.width-4
-        height: 85
-        anchors.margins:4
-        title: "按钮组件"
-        font: Qt.font({
-                          family: "微软雅黑",
-                          pixelSize: 18,
-                          weight: Font.Bold
-                      })
-
-        Item {
-            id:buttLayout
+        ColumnLayout{
             anchors.fill: parent
-            anchors.margins:10
+            anchors.margins: 20
+            spacing: 20
 
-            Row{
-                anchors.fill: parent
-                spacing: 15
-                ComButton{
-                    id:a
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "基础按钮"
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 100
+
+
+                ComGroupBox{
+                    anchors.fill: parent
+                    padding: 8
+                    title: "基础按钮"
+                    RowLayout{
+                        anchors.fill: parent
+                        spacing: 6
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                text: "基础按钮"
+                                height: 30
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                display: DisplayType.TextOnly
+
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("TextOnly模式")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                height: 30
+                                display: DisplayType.IconBesideText
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                iconsource: FluentIcon.ico_Connect
+                                text: "图标按钮"
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("IconBesideText模式")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                height: 30
+                                display: DisplayType.TextBesideIcon
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                iconsource: FluentIcon.ico_Connect
+                                text: "图标按钮"
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("TextBesideIcon模式")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                display: DisplayType.TextUnderIcon
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                iconsource: FluentIcon.ico_MapPin
+                                text: "图标按钮"
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("TextUnderIcon模式")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing:4
+                            ComButton {
+                                height: 30
+                                display: DisplayType.IconBesideText
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                iconsource: "📉"
+                                text: "Emoji图标按钮"
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("Emoji模式")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                height: 30
+                                display: DisplayType.TextBesideIcon
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                iconsource: "📉"
+                                text: "Emoji图标按钮"
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("Emoji模式")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing:4
+                            ComButton {
+                                height: 30
+                                highlighted: true
+                                display: DisplayType.TextOnly
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: "颜色按钮"
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("highlighted模式")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                height: 30
+                                width: 30
+                                //   highlighted: true
+                                display: DisplayType.IconOnly
+                                iconsource: "📉"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: "颜色按钮"
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("IconOnly模式")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                height: 30
+                                width: 30
+                                //   highlighted: true
+                                display: DisplayType.IconOnly
+                                iconsource: FluentIcon.ico_QuickNote
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: "颜色按钮"
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("IconOnly模式")
+                            }
+                        }
+                    }
+
                 }
-                ComButton{
-                    id:b
-                    text: "图标按钮"
-                    display: Button.IconOnly
-                    iconsource: FluentIcon.ico_Wifi
-                    anchors.verticalCenter: parent.verticalCenter
-                    //enabled: false
-                }
-                ComButton{
-                    id:c
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "图标按钮"
-                    display: Button.TextBesideIcon
-                    iconsource: FluentIcon.ico_MapPin
-                }
-                ComButton{
-                    id:d
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "Emoji图标按钮"
-                    display: Button.TextBesideIcon
-                    iconsource: "📉"
-                }
-                ComButton{
-                    id:e
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "图标按钮"
-                    display: Button.TextUnderIcon
-                    iconsource: FluentIcon.ico_VPN
-                }
-                ComButton{
-                    id:f
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "图标按钮"
-                    display: Button.TextUnderIcon
-                    iconsource: "🪁"
-                }
-                ComFlatButton{
-                    id:g
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "图标按钮"
-                }
-                ComFlatButton{
-                    id:h
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "图标按钮"
-                    display: Button.TextUnderIcon
-                    iconsource: "🪁"
-                }
-                ComFlatButton{
-                    id:i
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "图标按钮"
-                    display: Button.TextBesideIcon
-                    iconsource: "📊"
-                    normalcolor: "salmon"
-                }
-                ComSwitch{
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "禁用"
-                    onCheckedChanged: {
-                        a.enabled=!checked
-                        b.enabled=!checked
-                        c.enabled=!checked
-                        d.enabled=!checked
-                        e.enabled=!checked
-                        f.enabled=!checked
-                        g.enabled=!checked
-                        h.enabled=!checked
-                        i.enabled=!checked
+            }
+
+
+            /*ComGroupBox{
+                width: parent.width
+
+                title: "基础按钮"
+                padding: 8
+                Row{
+                    anchors.fill: parent
+                    spacing: 20
+
+                    Column{
+                        anchors.fill: parent
+                        spacing:8
+                        ComButton {
+                            anchors.left:parent.left
+                            anchors.top:parent.top
+                            id:defaultbut
+                            text: "默认按钮"
+                        }
+                        Text {
+                            id: name
+                            text: qsTr("text")
+                        }
+                    }
+
+
+                    // Item {
+
+                    //
+                    // }
+
+
+
+                    ComButton {
+                        text: "默认按钮"
                     }
                 }
+
+
+
+            }*/
+
+
+
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
-        }
-    }
 
-    ComGroupBox{
-        width: parent.width-4
-        height: 120
-        anchors.margins:4
-        title: "日期框组件"
-        font: Qt.font({
-                          family: "微软雅黑",
-                          pixelSize: 18,
-                          weight: Font.Bold
-                      })
 
-        Item {
-            id:dateLayout
-            anchors.fill: parent
-            anchors.margins:10
-
-            Row{
-                anchors.fill: parent
-                spacing: 15
-
-                ComDatePicker{
-                    id: datePicker1
-                    anchors.verticalCenter: parent.verticalCenter
-                    // selectedDate: new Date()
-                    // onDateSelected: function(date) {
-                    // }
-                }
-
-                // ComDatePicker{
-                //     id: datePicker2
-                //     anchors.verticalCenter: parent.verticalCenter
-                //     onDateSelected: function(date) {
-                //     }
-                // }
-
-                // ComDatePicker{
-                //     id: datePicker3
-                //     anchors.verticalCenter: parent.verticalCenter
-                //     selectedDate: new Date()
-                //     radius: 8
-                //     selectedColor: "#FF6B6B"
-                //     onDateSelected: function(date) {
-                //     }
-                // }
-
-                // ComSwitch{
-                //     anchors.verticalCenter: parent.verticalCenter
-                //     onCheckedChanged: {
-                //         datePicker1.enabled = !checked
-                //         datePicker2.enabled = !checked
-                //         datePicker3.enabled = !checked
-                //     }
-                // }
-            }
-        }
-    }
+        }//ColumnLayout
     }
 }
+
+/*  ScrollBar.vertical: ComScrollBar {
+         id: verticalScrollBar
+         anchors.top: parent.top
+         anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.rightMargin: 8
+         policy: ScrollBar.AsNeeded
+         minimumSize: 0.1
+         // anchors.rightMargin: 1
+    }
+
+    // ScrollBar.horizontal: ComScrollBar {
+    //     enabled: false
+    //     policy: ScrollBar.AlwaysOff
+    // }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 20
+        spacing: 20
+
+        Text {
+            text: "ComButton 组件示例"
+            font.pixelSize: 20
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        Text {
+            text: "基础用法"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ComButton {
+                text: "默认按钮"
+            }
+
+            ComButton {
+                text: "禁用按钮"
+                enabled: false
+            }
+
+            ComButton {
+                text: "带图标"
+                iconsource: FluentIcon.ico_Home
+            }
+        }
+
+        Text {
+            text: "显示模式 (display)"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "仅文本"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "TextOnly"
+                    display: DisplayType.TextOnly
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "仅图标"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    iconsource: FluentIcon.ico_Search
+                    display: DisplayType.IconOnly
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "图标在左"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "IconBesideText"
+                    iconsource: FluentIcon.ico_Bluetooth
+                    display: DisplayType.IconBesideText
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "图标在右"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "TextBesideIcon"
+                    iconsource: FluentIcon.ico_Connect
+                    display: DisplayType.TextBesideIcon
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "图标在上"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "TextUnderIcon"
+                    iconsource: FluentIcon.ico_VPN
+                    display: DisplayType.TextUnderIcon
+                }
+            }
+        }
+
+        Text {
+            text: "Emoji 图标按钮"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ComButton {
+                text: "微笑"
+                iconsource: "\u263A"
+                display: DisplayType.IconBesideText
+            }
+
+            ComButton {
+                text: "点赞"
+                iconsource: "\uD83D\uDC4D"
+                display: DisplayType.IconBesideText
+            }
+
+            ComButton {
+                text: "爱心"
+                iconsource: "\u2764"
+                display: DisplayType.IconBesideText
+            }
+
+            ComButton {
+                iconsource: "\uD83D\uDE04"
+                display: DisplayType.IconOnly
+            }
+
+            ComButton {
+                iconsource: "\uD83D\uDC4D"
+                display: DisplayType.IconOnly
+            }
+
+            ComButton {
+                iconsource: "\u2764"
+                display: DisplayType.IconOnly
+            }
+
+            ComButton {
+                text: "表情"
+                iconsource: FluentIcon.ico_Emoji
+                display: DisplayType.IconBesideText
+            }
+
+            ComButton {
+                text: "庆祝"
+                iconsource: FluentIcon.ico_EmojiTabCelebrationObjects
+                display: DisplayType.IconBesideText
+            }
+        }
+
+        Text {
+            text: "颜色自定义"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 30
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "默认颜色"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "默认"
+                    width: 100
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "自定义颜色"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "自定义"
+                    width: 100
+                    normalcolor: "#4CAF50"
+                    hovercolor: "#66BB6A"
+                    pressedcolor: "#388E3C"
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "主色高亮"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Primary"
+                    width: 100
+                    highlighted: true
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "粉红高亮"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Highlighted"
+                    width: 100
+                    highlighted: true
+                    highlightedcolor: "hotpink"
+                }
+            }
+        }
+
+        Text {
+            text: "圆角与边框"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ComButton {
+                text: "圆角 4"
+                radius: 4
+            }
+
+            ComButton {
+                text: "圆角 8"
+                radius: 8
+            }
+
+            ComButton {
+                text: "圆角 15"
+                radius: 15
+            }
+
+            ComButton {
+                text: "胶囊形"
+                radius: height / 2
+            }
+
+            ComButton {
+                text: "无边框"
+                radius: 8
+                bordercolor: "transparent"
+            }
+        }
+
+        Text {
+            text: "图标设置"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "图标大小 16"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Small"
+                    iconsource: FluentIcon.ico_Mail
+                    iconsize: 16
+                    display: DisplayType.IconBesideText
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "图标大小 24"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Medium"
+                    iconsource: FluentIcon.ico_Mail
+                    iconsize: 24
+                    display: DisplayType.IconBesideText
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "图标大小 32"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Large"
+                    iconsource: FluentIcon.ico_Mail
+                    iconsize: 32
+                    display: DisplayType.IconBesideText
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "图标颜色"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Colored"
+                    iconsource: FluentIcon.ico_Home
+                    display: DisplayType.IconBesideText
+                    textcolor: "#FF5722"
+                }
+            }
+        }
+
+        Text {
+            text: "光标与动画"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "手型光标"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Hand Cursor"
+                    handCursor: true
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "箭头光标"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Arrow Cursor"
+                    handCursor: false
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "禁用动画"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "No Animation"
+                    enableAnimation: false
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "自定义缩放因子"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComButton {
+                    text: "Scale 0.9"
+                    scaleAnimationFactor: 0.9
+                }
+            }
+        }
+
+        Text {
+            text: "字体设置"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ComButton {
+                text: "小字体"
+                font.pixelSize: 12
+            }
+
+            ComButton {
+                text: "中等字体"
+                font.pixelSize: 16
+            }
+
+            ComButton {
+                text: "大字体"
+                font.pixelSize: 20
+            }
+
+            ComButton {
+                text: "粗体"
+                font.weight: Font.Bold
+            }
+
+            ComButton {
+                text: "自定义颜色"
+                font.pixelSize: 16
+                textcolor: "#9C27B0"
+            }
+        }
+
+        Text {
+            text: "内边距与间距"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ComButton {
+                text: "紧凑"
+                topPadding: 2
+                bottomPadding: 2
+                leftPadding: 4
+                rightPadding: 4
+                spacing: 2
+            }
+
+            ComButton {
+                text: "默认"
+            }
+
+            ComButton {
+                text: "宽松"
+                topPadding: 12
+                bottomPadding: 12
+                leftPadding: 16
+                rightPadding: 16
+                spacing: 8
+            }
+
+            ComButton {
+                text: "Tall"
+                topPadding: 20
+                bottomPadding: 20
+            }
+        }
+
+        Text {
+            text: "按钮组与交互"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 10
+
+            RowLayout {
+                spacing: 10
+                ComButton {
+                    text: "按钮 A"
+                    highlighted: true
+                    onClicked: label.text = "点击了: 按钮 A"
+                }
+                ComButton {
+                    text: "按钮 B"
+                    onClicked: label.text = "点击了: 按钮 B"
+                }
+                ComButton {
+                    text: "按钮 C"
+                    onClicked: label.text = "点击了: 按钮 C"
+                }
+            }
+
+            Text {
+                id: label
+                text: "请点击上面的按钮"
+                color: Theme.Textcolor
+            }
+        }
+
+        Text {
+            text: "完整自定义示例"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ComButton {
+                text: "自定义样式"
+                iconsource: FluentIcon.ico_Search
+                display: DisplayType.IconBesideText
+                iconsize: 20
+                radius: 12
+                normalcolor: "#2196F3"
+                hovercolor: "#42A5F5"
+                pressedcolor: "#1976D2"
+                textcolor: "white"
+                highlighted: false
+                handCursor: true
+                enableAnimation: true
+                scaleAnimationFactor: 0.95
+                font.pixelSize: 14
+                topPadding: 10
+                bottomPadding: 10
+                leftPadding: 20
+                rightPadding: 20
+            }
+
+            ComButton {
+                text: "Success"
+                iconsource: FluentIcon.ico_Accept
+                display: DisplayType.IconBesideText
+                radius: 8
+                normalcolor: "#4CAF50"
+                hovercolor: "#66BB6A"
+                pressedcolor: "#388E3C"
+                textcolor: "white"
+            }
+
+            ComButton {
+                text: "Warning"
+                iconsource: FluentIcon.ico_Warning
+                display: DisplayType.IconBesideText
+                radius: 8
+                normalcolor: "#FF9800"
+                hovercolor: "#FFA726"
+                pressedcolor: "#F57C00"
+                textcolor: "white"
+            }
+
+            ComButton {
+                text: "Danger"
+                iconsource: FluentIcon.ico_Cancel
+                display: DisplayType.IconBesideText
+                radius: 8
+                normalcolor: "#F44336"
+                hovercolor: "#EF5350"
+                pressedcolor: "#E53935"
+                textcolor: "white"
+            }
+        }
+
+        Text {
+            text: "ComDelayButton 延时按钮"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        Text {
+            text: "按住按钮不放，进度条走完才能触发点击事件"
+            font.pixelSize: 12
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "默认 (500ms)"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComDelayButton {
+                    text: "默认"
+                    onClicked: delayLabel.text = "触发点击!"
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "快速 (200ms)"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComDelayButton {
+                    text: "快速"
+                    delay: 200
+                    onClicked: delayLabel.text = "快速触发!"
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "慢速 (1500ms)"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComDelayButton {
+                    text: "慢速"
+                    delay: 1500
+                    onClicked: delayLabel.text = "慢速触发!"
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "带图标"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComDelayButton {
+                    text: "保存"
+                    iconsource: FluentIcon.ico_Save
+                    display: DisplayType.IconBesideText
+                    onClicked: delayLabel.text = "保存成功!"
+                }
+            }
+
+            ColumnLayout {
+                spacing: 5
+                Text {
+                    text: "禁用"
+                    color: Theme.Textcolor
+                    font.pixelSize: 12
+                }
+                ComDelayButton {
+                    text: "禁用"
+                    enabled: false
+                }
+            }
+        }
+
+        Text {
+            id: delayLabel
+            text: "请点击上面的延时按钮"
+            color: Theme.Textcolor
+            font.pixelSize: 14
+        }
+
+        Text {
+            text: "颜色自定义"
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            ComDelayButton {
+                text: "绿色"
+                delay: 800
+                progressbarcolor: "#4CAF50"
+            }
+
+            ComDelayButton {
+                text: "红色"
+                delay: 800
+                progressbarcolor: "#F44336"
+            }
+
+            ComDelayButton {
+                text: "蓝色"
+                delay: 800
+                progressbarcolor: "#2196F3"
+            }
+
+            ComDelayButton {
+                text: "紫色"
+                delay: 800
+                progressbarcolor: "#9C27B0"
+            }
+        }
+
+        Item {
+            Layout.fillHeight: true
+            Layout.minimumHeight: 50
+        }
+    }
+}*/
