@@ -18,11 +18,48 @@ T.Button {
   property color pressedcolor:Theme.ButtonPressColor
   property color primarycolor:Theme.PrimaryColor
   property color highlightedcolor: "hotpink"
+
   property color textcolor:{
     if(!enabled) return Theme.DisabledTextColor
-    if(control.highlighted ) return Theme.isDark? "black":"white"
+    if(control.highlighted ) return "white"
     return Theme.Textcolor
   }
+  property color bordercolor:{
+    if(!enabled) return Theme.DisabledBorderColor
+    if(flat) return "transparent"
+    if(highlighted) return highlightedcolor
+    if(control.hovered) return Theme.PrimaryColor
+    return Theme.ButtonBorderNormalColor
+  }
+  QtObject{
+    id:d
+
+    property color color:{
+      if(!enabled) return Theme.DisabledColor
+      //颜色填充
+      if(highlighted){
+        if(flat){
+          if(control.pressed) return Theme.isDark? Qt.darker(control.highlightedcolor,0.8)
+                                                 :Qt.lighter(control.highlightedcolor,1.1)
+          if(control.hovered) return Theme.isDark? Qt.darker(control.highlightedcolor,0.9)
+                                                 :Qt.lighter(control.highlightedcolor,1.2)
+          return control.highlightedcolor
+        }else{
+          if(control.pressed) return Theme.isDark? Theme.setColorAlpha(Qt.darker(control.highlightedcolor,0.8),230)
+                                                 :Theme.setColorAlpha(Qt.lighter(control.highlightedcolor,1.1),230)
+          if(control.hovered) return Theme.isDark? Theme.setColorAlpha(Qt.darker(control.highlightedcolor,0.9),230)
+                                                 :Theme.setColorAlpha(Qt.lighter(control.highlightedcolor,1.2),230)
+
+          return Theme.setColorAlpha(control.highlightedcolor,230)
+        }
+      }
+      if(control.pressed) return control.pressedcolor
+      if(control.hovered) return control.hovercolor
+      return control.normalcolor
+    }
+  }
+
+
   property bool enableAnimation: true
   property real scaleAnimationFactor: 0.95
   highlighted: false
@@ -33,11 +70,7 @@ T.Button {
   bottomPadding: 6
   leftPadding: 6
   rightPadding: 6
-  property color bordercolor:{
-    if(!enabled) return Theme.DisabledBorderColor
-    if(control.hovered) return Theme.PrimaryColor
-    return Theme.ButtonBorderNormalColor
-  }
+
   // 动画部分
   contentItem:ComIconLabel {
     z:4
@@ -56,6 +89,8 @@ T.Button {
   background: Item{
     z:0
     anchors.fill: parent
+
+
     RectangularGlow {
       id: glow
       anchors.fill: background
@@ -74,11 +109,13 @@ T.Button {
       z: -1
       Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
     }
+
+
     Rectangle{
       id: background
       anchors.fill: parent
       radius: control.radius
-      color:{
+      color:d.color/*{
         if(!enabled) return Theme.DisabledColor
         if(control.highlighted){
           if(control.pressed) return Theme.isDark? Qt.darker(control.highlightedcolor,0.8)
@@ -90,8 +127,8 @@ T.Button {
         if(control.pressed) return control.pressedcolor
         if(control.hovered) return control.hovercolor
         return control.normalcolor
-      }
-      border.width: control.highlighted ? 0 : 1
+      }*/
+      border.width: control.flat ? 0 : 1
       border.color:control.bordercolor
       scale: 1.0
       Behavior on border.color { ColorAnimation { duration: 200 } }

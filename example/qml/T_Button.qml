@@ -1,4 +1,4 @@
-﻿import QtQuick
+import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import CompleteUI
@@ -140,13 +140,14 @@ Item {
                                 highlighted: true
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 display: DisplayType.TextOnly
-
+                                flat: true
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 color: Theme.isDark? "dimgray":"gray"
                                 font.pixelSize: 11
                                 text: qsTr("默认颜色按钮")
+
                             }
                         }
                         Column{
@@ -231,6 +232,111 @@ Item {
                                 font.pixelSize: 11
                                 text: qsTr("藏青颜色按钮")
                             }
+                        }
+                    }
+                }
+            }
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 220
+                ComGroupBox{
+                    anchors.fill: parent
+                    padding: 8
+                    title: "悬浮按钮"
+                    ColumnLayout{
+                        anchors.fill: parent
+                        spacing: 16
+                        RowLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 40
+                            Column{
+                                Layout.fillHeight: true
+                                spacing: 4
+                                ComFloatButton{
+                                    direction: ComFloatButton.Direction.Up
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    action1Icon: FluentIcon.ico_Edit
+                                    action2Icon: FluentIcon.ico_Delete
+                                    action3Icon: FluentIcon.ico_Share
+                                    onAction1Clicked: floatLabel.text = "点击了: 编辑"
+                                    onAction2Clicked: floatLabel.text = "点击了: 删除"
+                                    onAction3Clicked: floatLabel.text = "点击了: 分享"
+                                }
+                                Text{
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    color: Theme.isDark? "dimgray":"gray"
+                                    font.pixelSize: 11
+                                    text: qsTr("向上弹出")
+                                }
+                            }
+                            Column{
+                                Layout.fillHeight: true
+                                spacing: 4
+                                ComFloatButton{
+                                    direction: ComFloatButton.Direction.Down
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    action1Icon: FluentIcon.ico_Copy
+                                    action2Icon: FluentIcon.ico_Save
+                                    action3Icon: FluentIcon.ico_Print
+                                    onAction1Clicked: floatLabel.text = "点击了: 复制"
+                                    onAction2Clicked: floatLabel.text = "点击了: 保存"
+                                    onAction3Clicked: floatLabel.text = "点击了: 打印"
+                                }
+                                Text{
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    color: Theme.isDark? "dimgray":"gray"
+                                    font.pixelSize: 11
+                                    text: qsTr("向下弹出")
+                                }
+                            }
+                            Column{
+                                Layout.fillHeight: true
+                                spacing: 4
+                                ComFloatButton{
+                                    direction: ComFloatButton.Direction.Left
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    action1Icon: FluentIcon.ico_Search
+                                    action2Icon: FluentIcon.ico_Filter
+                                    action3Icon: FluentIcon.ico_Settings
+                                    onAction1Clicked: floatLabel.text = "点击了: 搜索"
+                                    onAction2Clicked: floatLabel.text = "点击了: 筛选"
+                                    onAction3Clicked: floatLabel.text = "点击了: 设置"
+                                }
+                                Text{
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    color: Theme.isDark? "dimgray":"gray"
+                                    font.pixelSize: 11
+                                    text: qsTr("向左弹出")
+                                }
+                            }
+                            Column{
+                                Layout.fillHeight: true
+                                spacing: 4
+                                ComFloatButton{
+                                    direction: ComFloatButton.Direction.Right
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    accentColor: "#E60013"
+                                    action1Icon: FluentIcon.ico_Mail
+                                    action2Icon: FluentIcon.ico_FavoriteStarFill
+                                    action3Icon: FluentIcon.ico_Send
+                                    onAction1Clicked: floatLabel.text = "点击了: 邮件"
+                                    onAction2Clicked: floatLabel.text = "点击了: 收藏"
+                                    onAction3Clicked: floatLabel.text = "点击了: 发送"
+                                }
+                                Text{
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    color: Theme.isDark? "dimgray":"gray"
+                                    font.pixelSize: 11
+                                    text: qsTr("向右弹出(红色)")
+                                }
+                            }
+                        }
+                        Text{
+                            id: floatLabel
+                            color: Theme.isDark? "dimgray":"gray"
+                            font.pixelSize: 12
+                            text: qsTr("点击子按钮查看效果")
                         }
                     }
                 }

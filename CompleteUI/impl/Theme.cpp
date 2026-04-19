@@ -28,6 +28,7 @@ Theme::Theme(QObject *parent)
 void Theme::refreshColors()
 {
     auto dark = isDark();
+
     PrimaryColor(dark ? _accentColor->dark() : _accentColor->lighter());
     switch (_SpecialEffect) {
     case Theme::Effect::Mica:
@@ -58,7 +59,7 @@ void Theme::refreshColors()
         FillBackgroundColor(dark ? QColor(80, 80, 80, 30) : QColor(255, 255, 255, 100));
         break;
     default:
-        backgroundColor(dark ? QColor(32, 32, 32, 255) : QColor(243, 243, 243, 255));
+        backgroundColor(dark ? QColor(32, 32, 32, 255) : QColor(240, 240, 240, 255));
         DividerColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
         DisabledColor(dark ? QColor(46, 46, 46,180) : QColor(235, 235, 235,180));
         DisabledTextColor(dark ? QColor(100, 100, 100) : QColor(190, 190, 190));
@@ -68,7 +69,7 @@ void Theme::refreshColors()
         ButtonPressColor(dark?QColor(48, 48, 48,220) : QColor(255, 255, 255,220));
         ButtonBorderNormalColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
         Textcolor(dark ? Qt::white:Qt::black);
-        FillBackgroundColor(dark ? QColor(40, 40, 40, 240) : QColor(255, 255, 255, 240));
+        FillBackgroundColor(dark ? QColor(40, 40, 40, 180) : QColor(255, 255, 255, 180));
         break;
     }
 }

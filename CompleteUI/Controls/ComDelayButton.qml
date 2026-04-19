@@ -8,6 +8,7 @@ T.DelayButton {
     id: control
     property color progressbarcolor: Theme.setColorAlpha(Theme.PrimaryColor,150)
     property color primarycolor:Theme.PrimaryColor
+    property bool flat:false
     property color color:{
          if(!enabled) return Theme.DisabledColor
         if (control.pressed){
@@ -62,7 +63,7 @@ T.DelayButton {
             color: Theme.isDark ? Qt.darker(control.primarycolor, 0.9)
                                 : Qt.lighter(control.primarycolor, 1.1)
             cornerRadius: background.radius + glowRadius
-            opacity: (enabled && control.hovered && !control.pressed) ? 0.3 : 0
+            opacity: (!flat && enabled && control.hovered && !control.pressed) ? 0.3 : 0
             visible: opacity > 0
             z: -1
         }
@@ -71,7 +72,7 @@ T.DelayButton {
             anchors.fill: parent
             radius: control.radius
             color: control.color
-            border.width: 1
+            border.width: control.flat?0:1
             border.color: control.bordercolor
 
             // 进度条填充
