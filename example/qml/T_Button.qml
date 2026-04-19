@@ -254,14 +254,19 @@ Item {
                                 Layout.fillHeight: true
                                 spacing: 4
                                 ComFloatButton{
+                                    id: floatBtn1
                                     direction: ComFloatButton.Direction.Up
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    action1Icon: FluentIcon.ico_Edit
-                                    action2Icon: FluentIcon.ico_Delete
-                                    action3Icon: FluentIcon.ico_Share
-                                    onAction1Clicked: floatLabel.text = "点击了: 编辑"
-                                    onAction2Clicked: floatLabel.text = "点击了: 删除"
-                                    onAction3Clicked: floatLabel.text = "点击了: 分享"
+                                    actions: [
+                                        { icon: FluentIcon.ico_Edit, enabled: true },
+                                        { icon: FluentIcon.ico_Delete, enabled: true },
+                                        { icon: FluentIcon.ico_Share, enabled: true }
+                                    ]
+                                    onSubClicked: (index)=> {
+                                        if(index === 0) floatLabel.text = "向上弹出 - 点击了: 编辑"
+                                        else if(index === 1) floatLabel.text = "向上弹出 - 点击了: 删除"
+                                        else floatLabel.text = "向上弹出 - 点击了: 分享"
+                                    }
                                 }
                                 Text{
                                     anchors.horizontalCenter: parent.horizontalCenter
@@ -274,14 +279,19 @@ Item {
                                 Layout.fillHeight: true
                                 spacing: 4
                                 ComFloatButton{
+                                    id: floatBtn2
                                     direction: ComFloatButton.Direction.Down
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    action1Icon: FluentIcon.ico_Copy
-                                    action2Icon: FluentIcon.ico_Save
-                                    action3Icon: FluentIcon.ico_Print
-                                    onAction1Clicked: floatLabel.text = "点击了: 复制"
-                                    onAction2Clicked: floatLabel.text = "点击了: 保存"
-                                    onAction3Clicked: floatLabel.text = "点击了: 打印"
+                                    actions: [
+                                        { icon: FluentIcon.ico_Copy, enabled: true },
+                                        { icon: FluentIcon.ico_Save, enabled: true },
+                                        { icon: FluentIcon.ico_Print, enabled: true }
+                                    ]
+                                    onSubClicked: (index)=> {
+                                        if(index === 0) floatLabel.text = "向下弹出 - 点击了: 复制"
+                                        else if(index === 1) floatLabel.text = "向下弹出 - 点击了: 保存"
+                                        else floatLabel.text = "向下弹出 - 点击了: 打印"
+                                    }
                                 }
                                 Text{
                                     anchors.horizontalCenter: parent.horizontalCenter
@@ -294,14 +304,19 @@ Item {
                                 Layout.fillHeight: true
                                 spacing: 4
                                 ComFloatButton{
+                                    id: floatBtn3
                                     direction: ComFloatButton.Direction.Left
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    action1Icon: FluentIcon.ico_Search
-                                    action2Icon: FluentIcon.ico_Filter
-                                    action3Icon: FluentIcon.ico_Settings
-                                    onAction1Clicked: floatLabel.text = "点击了: 搜索"
-                                    onAction2Clicked: floatLabel.text = "点击了: 筛选"
-                                    onAction3Clicked: floatLabel.text = "点击了: 设置"
+                                    actions: [
+                                        { icon: FluentIcon.ico_Search, enabled: true },
+                                        { icon: FluentIcon.ico_Filter, enabled: true },
+                                        { icon: FluentIcon.ico_Settings, enabled: true }
+                                    ]
+                                    onSubClicked: (index)=> {
+                                        if(index === 0) floatLabel.text = "向左弹出 - 点击了: 搜索"
+                                        else if(index === 1) floatLabel.text = "向左弹出 - 点击了: 筛选"
+                                        else floatLabel.text = "向左弹出 - 点击了: 设置"
+                                    }
                                 }
                                 Text{
                                     anchors.horizontalCenter: parent.horizontalCenter
@@ -314,15 +329,20 @@ Item {
                                 Layout.fillHeight: true
                                 spacing: 4
                                 ComFloatButton{
+                                    id: floatBtn4
                                     direction: ComFloatButton.Direction.Right
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     accentColor: "#E60013"
-                                    action1Icon: FluentIcon.ico_Mail
-                                    action2Icon: FluentIcon.ico_FavoriteStarFill
-                                    action3Icon: FluentIcon.ico_Send
-                                    onAction1Clicked: floatLabel.text = "点击了: 邮件"
-                                    onAction2Clicked: floatLabel.text = "点击了: 收藏"
-                                    onAction3Clicked: floatLabel.text = "点击了: 发送"
+                                    actions: [
+                                        { icon: FluentIcon.ico_Mail, enabled: true },
+                                        { icon: FluentIcon.ico_FavoriteStarFill, enabled: true },
+                                        { icon: FluentIcon.ico_Send, enabled: true }
+                                    ]
+                                    onSubClicked: (index)=> {
+                                        if(index === 0) floatLabel.text = "向右弹出(红色) - 点击了: 邮件"
+                                        else if(index === 1) floatLabel.text = "向右弹出(红色) - 点击了: 收藏"
+                                        else floatLabel.text = "向右弹出(红色) - 点击了: 发送"
+                                    }
                                 }
                                 Text{
                                     anchors.horizontalCenter: parent.horizontalCenter

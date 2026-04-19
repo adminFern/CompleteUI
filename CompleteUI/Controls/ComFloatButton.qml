@@ -24,31 +24,30 @@ Item {
     property alias expanded: d.expanded
 
     signal clicked
-    signal action1Clicked
-    signal action2Clicked
-    signal action3Clicked
+    signal subClicked(int index)
 
-    property string action1Icon: FluentIcon.ico_Edit
-    property string action2Icon: FluentIcon.ico_FavoriteStar
-    property string action3Icon: FluentIcon.ico_Share
+    property list<var> actions: [
+        { icon: FluentIcon.ico_Edit, enabled: true },
+        { icon: FluentIcon.ico_FavoriteStar, enabled: true },
+        { icon: FluentIcon.ico_Share, enabled: true }
+    ]
 
     QtObject {
         id: d
         property bool expanded: false
-        property real baseOpacity: 0
     }
 
     implicitWidth: {
         if (direction === ComFloatButton.Direction.Left ||
             direction === ComFloatButton.Direction.Right) {
-            return buttonSize * 2 + spacing + d.expanded * (buttonSize + spacing) * 2
+            return buttonSize * 2 + spacing
         }
         return buttonSize
     }
     implicitHeight: {
         if (direction === ComFloatButton.Direction.Up ||
             direction === ComFloatButton.Direction.Down) {
-            return buttonSize * 2 + spacing + d.expanded * (buttonSize + spacing) * 2
+            return buttonSize * 2 + spacing
         }
         return buttonSize
     }
@@ -59,15 +58,15 @@ Item {
 
         Repeater {
             id: repeater
-            model: 3
+            model: actions.length
             delegate: Rectangle {
                 id: subBtn
                 property int idx: index
-                property var iconSrc: [action1Icon, action2Icon, action3Icon][index]
                 width: buttonSize
                 height: buttonSize
                 radius: buttonSize / 2
                 z: 0
+                visible: actions[index].enabled
 
                 color: {
                     if (subMouse.pressed) return Theme.isDark ? Qt.darker(accentColor, 1.3) : Qt.darker(accentColor, 1.15)
@@ -77,7 +76,7 @@ Item {
                 border.width: 1
                 border.color: Theme.isDark ? Qt.rgba(1, 1, 1, 0.1) : Qt.rgba(0, 0, 0, 0.1)
 
-                property real tx: {
+                property real targetX: {
                     if (direction === ComFloatButton.Direction.Up || direction === ComFloatButton.Direction.Down) {
                         return mainBtn.x
                     }
@@ -86,7 +85,7 @@ Item {
                     }
                     return mainBtn.x - (idx + 1) * (buttonSize + spacing)
                 }
-                property real ty: {
+                property real targetY: {
                     if (direction === ComFloatButton.Direction.Left || direction === ComFloatButton.Direction.Right) {
                         return mainBtn.y
                     }
@@ -96,8 +95,8 @@ Item {
                     return mainBtn.y - (idx + 1) * (buttonSize + spacing)
                 }
 
-                x: d.expanded ? tx : mainBtn.x
-                y: d.expanded ? ty : mainBtn.y
+                x: d.expanded ? targetX : mainBtn.x
+                y: d.expanded ? targetY : mainBtn.y
                 scale: d.expanded ? 1 : 0
                 opacity: d.expanded ? 1 : 0
 
@@ -123,7 +122,7 @@ Item {
                     anchors.centerIn: parent
                     font.family: FluentIcon.fontLoader.name
                     font.pixelSize: buttonSize * 0.4
-                    text: subBtn.iconSrc
+                    text: actions[index].icon
                     color: "white"
                     renderType: Text.NativeRendering
                 }
@@ -133,12 +132,7 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        if (index === 0) control.action1Clicked()
-                        else if (index === 1) control.action2Clicked()
-                        else control.action3Clicked()
-                        d.expanded = false
-                    }
+                    onClicked: control.subClicked(index)
                 }
             }
         }
