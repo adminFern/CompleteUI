@@ -10,14 +10,14 @@ T.GroupBox {
     z: 0
     property color bordercolor:Theme.ButtonBorderNormalColor
     property color textcolor:Theme.Textcolor
-    property color normalcolor: Theme.setColorAlpha(Theme.ButtonNormalColor,180)
+    property color normalcolor: Theme.FillBackgroundColor
     QtObject{
         id:d
         property color color: {
             if (!enabled) {
                 return Theme.DisabledColor
             }
-            return Theme.isDark? Qt.rgba(48/255,48/255,48/255,0.5):Qt.rgba(255/255,255/255,255/255,0.98)
+            return normalcolor
         }
     }
     property int radius: 4

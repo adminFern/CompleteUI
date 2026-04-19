@@ -67,7 +67,6 @@ T.Button {
         return Theme.isDark? Qt.darker(control.primarycolor,0.9)
                            :Qt.lighter(control.primarycolor,1.1)
       }
-
       cornerRadius: background.radius + glowRadius
       opacity: (enabled &&!control.flat && control.hovered && !control.pressed) ? 0.3 : 0
       visible: opacity > 0

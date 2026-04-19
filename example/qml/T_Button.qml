@@ -10,21 +10,18 @@ Item {
         anchors.fill: parent
         ColumnLayout{
             anchors.fill: parent
-            anchors.margins: 20
-            spacing: 20
-
+            anchors.margins: 10
+            spacing: 10
             Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 100
-
-
+                Layout.preferredHeight: 85
                 ComGroupBox{
+                    id:bsicBox
                     anchors.fill: parent
                     padding: 8
                     title: "基础按钮"
                     RowLayout{
                         anchors.fill: parent
-                        spacing: 6
                         Column{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -84,80 +81,8 @@ Item {
                             Layout.fillHeight: true
                             spacing: 4
                             ComButton {
-                                display: DisplayType.TextUnderIcon
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                iconsource: FluentIcon.ico_MapPin
-                                text: "图标按钮"
-                            }
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                color: Theme.isDark? "dimgray":"gray"
-                                font.pixelSize: 11
-                                text: qsTr("TextUnderIcon模式")
-                            }
-                        }
-                        Column{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            spacing:4
-                            ComButton {
-                                height: 30
-                                display: DisplayType.IconBesideText
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                iconsource: "📉"
-                                text: "Emoji图标按钮"
-                            }
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                color: Theme.isDark? "dimgray":"gray"
-                                font.pixelSize: 11
-                                text: qsTr("Emoji模式")
-                            }
-                        }
-                        Column{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            spacing: 4
-                            ComButton {
-                                height: 30
-                                display: DisplayType.TextBesideIcon
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                iconsource: "📉"
-                                text: "Emoji图标按钮"
-                            }
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                color: Theme.isDark? "dimgray":"gray"
-                                font.pixelSize: 11
-                                text: qsTr("Emoji模式")
-                            }
-                        }
-                        Column{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            spacing:4
-                            ComButton {
-                                height: 30
-                                highlighted: true
-                                display: DisplayType.TextOnly
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: "颜色按钮"
-                            }
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                color: Theme.isDark? "dimgray":"gray"
-                                font.pixelSize: 11
-                                text: qsTr("highlighted模式")
-                            }
-                        }
-                        Column{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            spacing: 4
-                            ComButton {
                                 height: 30
                                 width: 30
-                                //   highlighted: true
                                 display: DisplayType.IconOnly
                                 iconsource: "📉"
                                 anchors.horizontalCenter: parent.horizontalCenter
@@ -177,7 +102,6 @@ Item {
                             ComButton {
                                 height: 30
                                 width: 30
-                                //   highlighted: true
                                 display: DisplayType.IconOnly
                                 iconsource: FluentIcon.ico_QuickNote
                                 anchors.horizontalCenter: parent.horizontalCenter
@@ -190,55 +114,175 @@ Item {
                                 text: qsTr("IconOnly模式")
                             }
                         }
-                    }
 
+                    }
+                }
+
+            }//基础案例ComGroupBox
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 80
+                ComGroupBox{
+                    id:colorBox
+                    anchors.fill: parent
+                    padding: 8
+                    title: "颜色按钮"
+                    RowLayout{
+                        anchors.fill: parent
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                text: "默认颜色按钮"
+                                height: 30
+                                highlighted: true
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                display: DisplayType.TextOnly
+
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("默认颜色按钮")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                display: DisplayType.TextBesideIcon
+                               // anchors.horizontalCenter: parent.horizontalCenter
+                                iconsource: FluentIcon.ico_Connect
+                                text: "绿色颜色按钮"
+                                height: 30
+                                highlighted: true
+                                highlightedcolor: "#008F40"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                               // display: DisplayType.TextOnly
+
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("绿色颜色按钮")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                text: "红色颜色按钮"
+                                height: 30
+                                highlighted: true
+                                highlightedcolor: "#E60013"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                display: DisplayType.TextOnly
+
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("红色颜色按钮")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                text: "紫色颜色按钮"
+                                height: 30
+                                highlighted: true
+                                highlightedcolor: "#B85489"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                display: DisplayType.TextOnly
+
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("紫色颜色按钮")
+                            }
+                        }
+                        Column{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 4
+                            ComButton {
+                                text: "藏青颜色按钮"
+                                height: 30
+                                highlighted: true
+                                highlightedcolor: "#209195"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                display: DisplayType.TextOnly
+
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: Theme.isDark? "dimgray":"gray"
+                                font.pixelSize: 11
+                                text: qsTr("藏青颜色按钮")
+                            }
+                        }
+                    }
                 }
             }
-
-
-            /*ComGroupBox{
-                width: parent.width
-
-                title: "基础按钮"
-                padding: 8
-                Row{
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 80
+                ComGroupBox{
                     anchors.fill: parent
-                    spacing: 20
-
-                    Column{
+                    padding: 8
+                    title: "延时按钮"
+                    RowLayout{
                         anchors.fill: parent
-                        spacing:8
-                        ComButton {
-                            anchors.left:parent.left
-                            anchors.top:parent.top
-                            id:defaultbut
-                            text: "默认按钮"
+
+                        ComDelayButton{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            delay: 3000
+                            text: "延时3000ms"
                         }
-                        Text {
-                            id: name
-                            text: qsTr("text")
+                        ComDelayButton{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            delay: 500
+                            text: "延时500ms"
+                            progressbarcolor: Theme.setColorAlpha("#8DC500",150)
+                            primarycolor: "#8DC500"
                         }
-                    }
+                        ComDelayButton{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            progressbarcolor: Theme.setColorAlpha("#E50162",150)
+                            primarycolor: "#E50162"
+                            text: "延时1000ms"
+                            delay: 1000
+                            display: DisplayType.TextBesideIcon
+                            iconsource: FluentIcon.ico_Pin
+                        }
+                        ComDelayButton{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            progressbarcolor: Theme.setColorAlpha("#209195",150)
+                            primarycolor: "#209195"
+                            text: "延时1000ms"
+                            delay: 1000
+                            display: DisplayType.IconBesideText
+                            iconsource: FluentIcon.ico_Link
 
-
-                    // Item {
-
-                    //
-                    // }
-
-
-
-                    ComButton {
-                        text: "默认按钮"
+                        }
                     }
                 }
-
-
-
-            }*/
-
-
-
+            }
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -248,7 +292,98 @@ Item {
         }//ColumnLayout
     }
 }
+/* Column{
+     Layout.fillWidth: true
+     Layout.fillHeight: true
+     spacing: 4
+     ComButton {
+         display: DisplayType.TextUnderIcon
+         anchors.horizontalCenter: parent.horizontalCenter
+         iconsource: FluentIcon.ico_MapPin
+         text: "图标按钮"
+     }
+     Text {
+         anchors.horizontalCenter: parent.horizontalCenter
+         color: Theme.isDark? "dimgray":"gray"
+         font.pixelSize: 11
+         text: qsTr("TextUnderIcon模式")
+     }
+ }
+ Column{
+     Layout.fillWidth: true
+     Layout.fillHeight: true
+     spacing:4
+     ComButton {
+         height: 30
+         display: DisplayType.IconBesideText
+         anchors.horizontalCenter: parent.horizontalCenter
+         iconsource: "📉"
+         text: "Emoji图标按钮"
+     }
+     Text {
+         anchors.horizontalCenter: parent.horizontalCenter
+         color: Theme.isDark? "dimgray":"gray"
+         font.pixelSize: 11
+         text: qsTr("Emoji模式")
+     }
+ }
+ Column{
+     Layout.fillWidth: true
+     Layout.fillHeight: true
+     spacing: 4
+     ComButton {
+         height: 30
+         display: DisplayType.TextBesideIcon
+         anchors.horizontalCenter: parent.horizontalCenter
+         iconsource: "📉"
+         text: "Emoji图标按钮"
+     }
+     Text {
+         anchors.horizontalCenter: parent.horizontalCenter
+         color: Theme.isDark? "dimgray":"gray"
+         font.pixelSize: 11
+         text: qsTr("Emoji模式")
+     }
+ }
+ Column{
+     Layout.fillWidth: true
+     Layout.fillHeight: true
+     spacing:4
+     ComButton {
+         height: 30
+         highlighted: true
+         display: DisplayType.TextOnly
+         anchors.horizontalCenter: parent.horizontalCenter
+         text: "颜色按钮"
+     }
+     Text {
+         anchors.horizontalCenter: parent.horizontalCenter
+         color: Theme.isDark? "dimgray":"gray"
+         font.pixelSize: 11
+         text: qsTr("highlighted模式")
+     }
+ }
 
+ Column{
+     Layout.fillWidth: true
+     Layout.fillHeight: true
+     spacing: 4
+     ComButton {
+         height: 30
+         width: 30
+         //   highlighted: true
+         display: DisplayType.IconOnly
+         iconsource: FluentIcon.ico_QuickNote
+         anchors.horizontalCenter: parent.horizontalCenter
+         text: "颜色按钮"
+     }
+     Text {
+         anchors.horizontalCenter: parent.horizontalCenter
+         color: Theme.isDark? "dimgray":"gray"
+         font.pixelSize: 11
+         text: qsTr("IconOnly模式")
+     }
+ }*/
 /*  ScrollBar.vertical: ComScrollBar {
          id: verticalScrollBar
          anchors.top: parent.top
