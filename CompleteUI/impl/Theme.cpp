@@ -67,9 +67,10 @@ void Theme::refreshColors()
         ButtonNormalColor(dark?QColor(42, 42, 42) : QColor(252, 252, 252));
         ButtonHoverColor(dark?QColor(48, 48, 48) : QColor(255, 255, 255));
         ButtonPressColor(dark?QColor(48, 48, 48,220) : QColor(255, 255, 255,220));
-        ButtonBorderNormalColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
+        ButtonBorderNormalColor(dark ? QColor(80, 80, 80, 255) : QColor(230, 230, 230, 255));
         Textcolor(dark ? Qt::white:Qt::black);
         FillBackgroundColor(dark ? QColor(40, 40, 40, 180) : QColor(255, 255, 255, 180));
+        FillBorderColor(dark ? QColor(40, 40, 40, 180) : QColor(210, 210, 210, 255));
         break;
     }
 }

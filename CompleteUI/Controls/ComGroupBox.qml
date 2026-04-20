@@ -8,7 +8,7 @@ import CompleteUI
 T.GroupBox {
     id: control
     z: 0
-    property color bordercolor:Theme.ButtonBorderNormalColor
+    property color bordercolor:Theme.FillBorderColor
     property color textcolor:Theme.Textcolor
     property color normalcolor: Theme.FillBackgroundColor
     QtObject{

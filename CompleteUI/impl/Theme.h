@@ -27,6 +27,7 @@ class Theme : public QObject
     Q_PROPERTY_AUTO(QColor, ButtonPressColor)
     Q_PROPERTY_AUTO(QColor, ButtonBorderNormalColor)
     Q_PROPERTY_AUTO(QColor, FillBackgroundColor)
+    Q_PROPERTY_AUTO(QColor, FillBorderColor)
     Q_PROPERTY_AUTO(QColor, Textcolor)
     //textcolor
     QML_SINGLETON

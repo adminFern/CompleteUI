@@ -238,7 +238,7 @@ Item {
             }
             Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 220
+                Layout.preferredHeight: 260
                 ComGroupBox{
                     anchors.fill: parent
                     padding: 8
@@ -259,20 +259,18 @@ Item {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     actions: [
                                         { icon: FluentIcon.ico_Edit, enabled: true },
-                                        { icon: FluentIcon.ico_Delete, enabled: true },
-                                        { icon: FluentIcon.ico_Share, enabled: true }
+                                        { icon: FluentIcon.ico_Delete, enabled: true }
                                     ]
                                     onSubClicked: (index)=> {
-                                        if(index === 0) floatLabel.text = "向上弹出 - 点击了: 编辑"
-                                        else if(index === 1) floatLabel.text = "向上弹出 - 点击了: 删除"
-                                        else floatLabel.text = "向上弹出 - 点击了: 分享"
+                                        if(index === 0) floatLabel.text = "2按钮 - 点击了: 编辑"
+                                        else floatLabel.text = "2按钮 - 点击了: 删除"
                                     }
                                 }
                                 Text{
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     color: Theme.isDark? "dimgray":"gray"
                                     font.pixelSize: 11
-                                    text: qsTr("向上弹出")
+                                    text: qsTr("2个按钮")
                                 }
                             }
                             Column{
@@ -288,16 +286,16 @@ Item {
                                         { icon: FluentIcon.ico_Print, enabled: true }
                                     ]
                                     onSubClicked: (index)=> {
-                                        if(index === 0) floatLabel.text = "向下弹出 - 点击了: 复制"
-                                        else if(index === 1) floatLabel.text = "向下弹出 - 点击了: 保存"
-                                        else floatLabel.text = "向下弹出 - 点击了: 打印"
+                                        if(index === 0) floatLabel.text = "3按钮 - 点击了: 复制"
+                                        else if(index === 1) floatLabel.text = "3按钮 - 点击了: 保存"
+                                        else floatLabel.text = "3按钮 - 点击了: 打印"
                                     }
                                 }
                                 Text{
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     color: Theme.isDark? "dimgray":"gray"
                                     font.pixelSize: 11
-                                    text: qsTr("向下弹出")
+                                    text: qsTr("3个按钮")
                                 }
                             }
                             Column{
@@ -310,19 +308,21 @@ Item {
                                     actions: [
                                         { icon: FluentIcon.ico_Search, enabled: true },
                                         { icon: FluentIcon.ico_Filter, enabled: true },
-                                        { icon: FluentIcon.ico_Settings, enabled: true }
+                                        { icon: FluentIcon.ico_Settings, enabled: true },
+                                        { icon: FluentIcon.ico_Delete, enabled: true }
                                     ]
                                     onSubClicked: (index)=> {
-                                        if(index === 0) floatLabel.text = "向左弹出 - 点击了: 搜索"
-                                        else if(index === 1) floatLabel.text = "向左弹出 - 点击了: 筛选"
-                                        else floatLabel.text = "向左弹出 - 点击了: 设置"
+                                        if(index === 0) floatLabel.text = "4按钮 - 点击了: 搜索"
+                                        else if(index === 1) floatLabel.text = "4按钮 - 点击了: 筛选"
+                                        else if(index === 2) floatLabel.text = "4按钮 - 点击了: 设置"
+                                        else floatLabel.text = "4按钮 - 点击了: 删除"
                                     }
                                 }
                                 Text{
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     color: Theme.isDark? "dimgray":"gray"
                                     font.pixelSize: 11
-                                    text: qsTr("向左弹出")
+                                    text: qsTr("4个按钮")
                                 }
                             }
                             Column{
@@ -335,20 +335,24 @@ Item {
                                     accentColor: "#E60013"
                                     actions: [
                                         { icon: FluentIcon.ico_Mail, enabled: true },
-                                        { icon: FluentIcon.ico_FavoriteStarFill, enabled: true },
-                                        { icon: FluentIcon.ico_Send, enabled: true }
+                                        { icon: FluentIcon.ico_FavoriteStarFill, enabled: false },
+                                        { icon: FluentIcon.ico_Send, enabled: true },
+                                        { icon: FluentIcon.ico_Delete, enabled: true },
+                                        { icon: FluentIcon.ico_Save, enabled: true }
                                     ]
                                     onSubClicked: (index)=> {
-                                        if(index === 0) floatLabel.text = "向右弹出(红色) - 点击了: 邮件"
-                                        else if(index === 1) floatLabel.text = "向右弹出(红色) - 点击了: 收藏"
-                                        else floatLabel.text = "向右弹出(红色) - 点击了: 发送"
+                                        if(index === 0) floatLabel.text = "5按钮(禁用1) - 点击了: 邮件"
+                                        else if(index === 1) floatLabel.text = "5按钮(禁用1) - 点击了: 收藏"
+                                        else if(index === 2) floatLabel.text = "5按钮(禁用1) - 点击了: 发送"
+                                        else if(index === 3) floatLabel.text = "5按钮(禁用1) - 点击了: 删除"
+                                        else floatLabel.text = "5按钮(禁用1) - 点击了: 保存"
                                     }
                                 }
                                 Text{
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     color: Theme.isDark? "dimgray":"gray"
                                     font.pixelSize: 11
-                                    text: qsTr("向右弹出(红色)")
+                                    text: qsTr("5个按钮(禁用1)")
                                 }
                             }
                         }
