@@ -114,7 +114,7 @@ Item {
     */
     implicitWidth: {
         if (direction === ComFloatButton.Direction.Left ||
-            direction === ComFloatButton.Direction.Right) {
+                direction === ComFloatButton.Direction.Right) {
             // 左右展开：主按钮 + spacing + 每个子按钮(直径+间距)
             return buttonSize * 2 + spacing
         }
@@ -128,7 +128,7 @@ Item {
     */
     implicitHeight: {
         if (direction === ComFloatButton.Direction.Up ||
-            direction === ComFloatButton.Direction.Down) {
+                direction === ComFloatButton.Direction.Down) {
             // 上下展开：主按钮 + spacing + 每个子按钮(直径+间距)
             return buttonSize * 2 + spacing
         }
@@ -146,7 +146,7 @@ Item {
         */
         Repeater {
             id: repeater
-            model: actions.length  ///< 根据 actions 数量创建按钮
+            model: control.actions.length > 0 ? control.actions.length : 0
 
             delegate: Rectangle {
                 id: subBtn
@@ -155,7 +155,7 @@ Item {
                 width: buttonSize
                 height: buttonSize
                 radius: buttonSize / 2  ///< 圆形按钮
-                z: 0  ///< 在主按钮下方
+                z: 0  ///< 在子按钮下方
 
                 /*!
                     按钮颜色状态：
@@ -164,15 +164,15 @@ Item {
                     3. 悬停状态 -> 浅色
                     4. 默认状态 -> accentColor
                 */
+                property var actionData: control.actions[idx]
                 color: {
-                    if (!actions[idx].enabled) return Theme.DisabledColor
+                    if (!actionData || !actionData.enabled) return Theme.DisabledColor
                     if (subMouse.pressed) return Theme.isDark ? Qt.darker(accentColor, 1.3) : Qt.darker(accentColor, 1.15)
                     if (subMouse.hovered) return Theme.isDark ? Qt.lighter(accentColor, 1.2) : Qt.lighter(accentColor, 1.1)
                     return accentColor
                 }
-                border.width: 1
-                border.color: Theme.isDark ? Qt.rgba(1, 1, 1, 0.1) : Qt.rgba(0, 0, 0, 0.1)
-                opacity: actions[idx].enabled ? 1 : 0.5  ///< 禁用时半透明
+                border.width: 0
+                opacity: (actionData && actionData.enabled) ? 1 : 0.5
 
                 /*!
                     计算子按钮展开后的目标X坐标
@@ -250,7 +250,7 @@ Item {
                         3. 未按下
                         4. 按钮启用
                     */
-                    opacity: subMouse.hovered && !subMouse.pressed && actions[idx].enabled ? 0.3 : 0
+                    opacity: subMouse.hovered && !subMouse.pressed && (actionData && actionData.enabled) ? 0.3 : 0
                     visible: opacity > 0
                     z: -1  ///< 在按钮下方
                     Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
@@ -261,7 +261,7 @@ Item {
                     anchors.centerIn: parent
                     width: buttonSize * 0.6
                     height: buttonSize * 0.6
-                    iconsource: actions[idx].icon
+                    iconsource: actionData ? actionData.icon : ""
                     iconsize: buttonSize * 0.4
                     icocolor: "white"
                 }
@@ -270,7 +270,7 @@ Item {
                 MouseArea {
                     id: subMouse
                     anchors.fill: parent
-                    enabled: actions[idx].enabled  ///< 跟随按钮启用状态
+                    enabled: actionData ? actionData.enabled : false  ///< 跟随按钮启用状态
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
@@ -317,8 +317,6 @@ Item {
                 if (mainMouse.hovered) return Theme.isDark ? Qt.lighter(accentColor, 1.2) : Qt.lighter(accentColor, 1.1)
                 return accentColor
             }
-            border.width: 1
-            border.color: Theme.isDark ? Qt.rgba(1, 1, 1, 0.1) : Qt.rgba(0, 0, 0, 0.1)
 
             Behavior on color { ColorAnimation { duration: 150 } }
 

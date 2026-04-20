@@ -236,7 +236,7 @@ Item {
                     }
                 }
             }
-            Item {
+            /*Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 260
                 ComGroupBox{
@@ -364,7 +364,7 @@ Item {
                         }
                     }
                 }
-            }
+            }*/
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 80
