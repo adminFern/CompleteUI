@@ -20,7 +20,7 @@ T.Button {
     font: Qt.font({family: Theme.defaultFontFamily, pixelSize: 13, weight: Font.Normal})
     property color color: {
         if (!enabled) {
-            return disableColor
+            return Theme.DisabledColor
         }
         if (pressed) {
             return pressedColor

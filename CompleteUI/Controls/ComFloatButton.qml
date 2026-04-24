@@ -6,7 +6,7 @@ import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import CompleteUI
 
-Item {
+T.Control {
     id: control
 
     enum Direction {
@@ -18,7 +18,7 @@ Item {
 
     property int direction: ComFloatButton.Direction.Down
     property int buttonSize: 48
-    property int spacing: 12
+    property int buttonSpacing: 12
     property string iconsource: FluentIcon.ico_Add
     property color accentColor: Theme.PrimaryColor
     property alias expanded: d.expanded
@@ -34,6 +34,8 @@ Item {
 
     property var actions: []
 
+    hoverEnabled: true
+
     QtObject {
         id: d
         property bool expanded: false
@@ -46,7 +48,6 @@ Item {
             id: subBtnWrapper
             property int idx: index
             property var actionData: control.actions[idx]
-            property bool isHovered: false
 
             width: control.buttonSize * 0.9
             height: control.buttonSize * 0.9
@@ -56,9 +57,9 @@ Item {
                     return mainBtnWrapper.x + (mainBtnWrapper.width - width) / 2
                 }
                 if (direction === ComFloatButton.Direction.Right) {
-                    return mainBtnWrapper.x + (idx + 1) * (control.buttonSize + spacing)
+                    return mainBtnWrapper.x + (idx + 1) * (control.buttonSize + control.buttonSpacing)
                 }
-                return mainBtnWrapper.x - (idx + 1) * (control.buttonSize + spacing)
+                return mainBtnWrapper.x - (idx + 1) * (control.buttonSize + control.buttonSpacing)
             }
 
             property real targetY: {
@@ -66,9 +67,9 @@ Item {
                     return mainBtnWrapper.y + (mainBtnWrapper.height - height) / 2
                 }
                 if (direction === ComFloatButton.Direction.Down) {
-                    return mainBtnWrapper.y + (idx + 1) * (control.buttonSize + spacing)
+                    return mainBtnWrapper.y + (idx + 1) * (control.buttonSize + control.buttonSpacing)
                 }
-                return mainBtnWrapper.y - (idx + 1) * (control.buttonSize + spacing)
+                return mainBtnWrapper.y - (idx + 1) * (control.buttonSize + control.buttonSpacing)
             }
 
             x: d.expanded ? targetX : mainBtnWrapper.x + (mainBtnWrapper.width - width) / 2
@@ -94,7 +95,7 @@ Item {
                 border.width: 0
                 opacity: (actionData && actionData.enabled) ? 1 : 0.5
 
-                layer.enabled: (control.glowEnabled && subBtnWrapper.isHovered && actionData && actionData.enabled === true) ? true : false
+                layer.enabled: (control.glowEnabled && subMouse.hovered && actionData && actionData.enabled === true) ? true : false
                 layer.effect: DropShadow {
                     horizontalOffset: 0
                     verticalOffset: 0
@@ -123,8 +124,6 @@ Item {
                 enabled: actionData ? actionData.enabled : false
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onEntered: subBtnWrapper.isHovered = true
-                onExited: subBtnWrapper.isHovered = false
                 onClicked: {
                     control.subClicked(index)
                     d.expanded = false
@@ -135,7 +134,6 @@ Item {
 
     Item {
         id: mainBtnWrapper
-        property bool isHovered: false
         x: 0
         y: 0
         width: control.buttonSize
@@ -153,7 +151,7 @@ Item {
                 return accentColor
             }
 
-            layer.enabled: (control.glowEnabled && mainBtnWrapper.isHovered) ? true : false
+            layer.enabled: (control.glowEnabled && mainMouse.hovered) ? true : false
             layer.effect: DropShadow {
                 horizontalOffset: 0
                 verticalOffset: 0
@@ -185,8 +183,6 @@ Item {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onEntered: mainBtnWrapper.isHovered = true
-            onExited: mainBtnWrapper.isHovered = false
             onClicked: {
                 d.expanded = !d.expanded
                 control.clicked()
