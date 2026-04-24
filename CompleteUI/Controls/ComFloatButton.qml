@@ -3,6 +3,7 @@ import QtQuick.Controls.impl
 import QtQuick.Templates as T
 import QtQuick.Layouts
 import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
 import CompleteUI
 
 Item {
@@ -15,12 +16,18 @@ Item {
         Right
     }
 
-    property int direction: ComFloatButton.Direction.Right
+    property int direction: ComFloatButton.Direction.Down
     property int buttonSize: 48
     property int spacing: 12
     property string iconsource: FluentIcon.ico_Add
     property color accentColor: Theme.PrimaryColor
     property alias expanded: d.expanded
+
+    // 发光特效相关属性
+    property bool glowEnabled: true
+    property color glowColor: accentColor
+    property real glowRadius: 15
+    property real glowSpread: 0.4
 
     signal clicked
     signal subClicked(int index)
@@ -32,68 +39,82 @@ Item {
         property bool expanded: false
     }
 
-    implicitWidth: buttonSize
-    implicitHeight: buttonSize
-
     Repeater {
         id: repeater
         model: control.actions.length > 0 ? control.actions.length : 0
-
-        delegate: Rectangle {
-            id: subBtn
+        delegate: Item {
+            id: subBtnWrapper
             property int idx: index
+            property var actionData: control.actions[idx]
+            property bool isHovered: false
 
             width: control.buttonSize * 0.9
             height: control.buttonSize * 0.9
-            radius: width / 2
-            z: 0
-
-            property var actionData: control.actions[idx]
-            color: {
-                if (!actionData || !actionData.enabled) return Theme.DisabledColor
-                if (subMouse.pressed) return Theme.isDark ? Qt.darker(accentColor, 1.3) : Qt.darker(accentColor, 1.15)
-                if (subMouse.hovered) return Theme.isDark ? Qt.lighter(accentColor, 1.2) : Qt.lighter(accentColor, 1.1)
-                return accentColor
-            }
-            border.width: 0
-            opacity: (actionData && actionData.enabled) ? 1 : 0.5
 
             property real targetX: {
                 if (direction === ComFloatButton.Direction.Up || direction === ComFloatButton.Direction.Down) {
-                    return mainBtn.x + (mainBtn.width - width) / 2
+                    return mainBtnWrapper.x + (mainBtnWrapper.width - width) / 2
                 }
                 if (direction === ComFloatButton.Direction.Right) {
-                    return mainBtn.x + (idx + 1) * (control.buttonSize + spacing)
+                    return mainBtnWrapper.x + (idx + 1) * (control.buttonSize + spacing)
                 }
-                return mainBtn.x - (idx + 1) * (control.buttonSize + spacing)
+                return mainBtnWrapper.x - (idx + 1) * (control.buttonSize + spacing)
             }
 
             property real targetY: {
                 if (direction === ComFloatButton.Direction.Left || direction === ComFloatButton.Direction.Right) {
-                    return mainBtn.y + (mainBtn.height - height) / 2
+                    return mainBtnWrapper.y + (mainBtnWrapper.height - height) / 2
                 }
                 if (direction === ComFloatButton.Direction.Down) {
-                    return mainBtn.y + (idx + 1) * (control.buttonSize + spacing)
+                    return mainBtnWrapper.y + (idx + 1) * (control.buttonSize + spacing)
                 }
-                return mainBtn.y - (idx + 1) * (control.buttonSize + spacing)
+                return mainBtnWrapper.y - (idx + 1) * (control.buttonSize + spacing)
             }
 
-            x: d.expanded ? targetX : mainBtn.x + (mainBtn.width - width) / 2
-            y: d.expanded ? targetY : mainBtn.y + (mainBtn.height - height) / 2
+            x: d.expanded ? targetX : mainBtnWrapper.x + (mainBtnWrapper.width - width) / 2
+            y: d.expanded ? targetY : mainBtnWrapper.y + (mainBtnWrapper.height - height) / 2
             scale: d.expanded ? 1 : 0
+            z: 0
 
             Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             Behavior on scale { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-            Behavior on color { ColorAnimation { duration: 150 } }
 
-            ComImage {
-                anchors.centerIn: parent
-                width: subBtn.width * 0.6
-                height: subBtn.height * 0.6
-                iconsource: actionData ? actionData.icon : ""
-                iconsize: control.buttonSize * 0.4
-                icocolor: "white"
+            Rectangle {
+                id: subBtn
+                anchors.fill: parent
+                radius: width / 2
+
+                color: {
+                    if (!actionData || !actionData.enabled) return Theme.DisabledColor
+                    if (subMouse.pressed) return Theme.isDark ? Qt.darker(accentColor, 1.3) : Qt.darker(accentColor, 1.15)
+                    if (subMouse.hovered) return Theme.isDark ? Qt.lighter(accentColor, 1.2) : Qt.lighter(accentColor, 1.1)
+                    return accentColor
+                }
+                border.width: 0
+                opacity: (actionData && actionData.enabled) ? 1 : 0.5
+
+                layer.enabled: (control.glowEnabled && subBtnWrapper.isHovered && actionData && actionData.enabled === true) ? true : false
+                layer.effect: DropShadow {
+                    horizontalOffset: 0
+                    verticalOffset: 0
+                    radius: control.glowRadius * 0.8
+                    samples: control.glowRadius * 2 + 1
+                    color: control.glowColor
+                    spread: control.glowSpread * 0.8
+                    transparentBorder: true
+                }
+
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                ComImage {
+                    anchors.centerIn: parent
+                    width: subBtn.width * 0.6
+                    height: subBtn.height * 0.6
+                    iconsource: actionData ? actionData.icon : ""
+                    iconsize: control.buttonSize * 0.4
+                    icocolor: "white"
+                }
             }
 
             MouseArea {
@@ -102,6 +123,8 @@ Item {
                 enabled: actionData ? actionData.enabled : false
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+                onEntered: subBtnWrapper.isHovered = true
+                onExited: subBtnWrapper.isHovered = false
                 onClicked: {
                     control.subClicked(index)
                     d.expanded = false
@@ -110,38 +133,50 @@ Item {
         }
     }
 
-    Rectangle {
-        id: mainBtn
+    Item {
+        id: mainBtnWrapper
+        property bool isHovered: false
         x: 0
         y: 0
         width: control.buttonSize
         height: control.buttonSize
-        radius: width / 2
         z: 1
 
-        color: {
-            if (mainMouse.pressed) return Theme.isDark ? Qt.darker(accentColor, 1.3) : Qt.darker(accentColor, 1.15)
-            if (mainMouse.hovered) return Theme.isDark ? Qt.lighter(accentColor, 1.2) : Qt.lighter(accentColor, 1.1)
-            return accentColor
-        }
+        Rectangle {
+            id: mainBtn
+            anchors.fill: parent
+            radius: width / 2
 
-        Behavior on color { ColorAnimation { duration: 150 } }
-        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
-        scale: mainMouse.pressed ? 0.92 : 1.0
+            color: {
+                if (mainMouse.pressed) return Theme.isDark ? Qt.darker(accentColor, 1.3) : Qt.darker(accentColor, 1.15)
+                if (mainMouse.hovered) return Theme.isDark ? Qt.lighter(accentColor, 1.2) : Qt.lighter(accentColor, 1.1)
+                return accentColor
+            }
 
-        Item {
-            anchors.centerIn: parent
-            width: mainBtn.width * 0.6
-            height: mainBtn.height * 0.6
+            layer.enabled: (control.glowEnabled && mainBtnWrapper.isHovered) ? true : false
+            layer.effect: DropShadow {
+                horizontalOffset: 0
+                verticalOffset: 0
+                radius: control.glowRadius
+                samples: control.glowRadius * 2 + 1
+                color: control.glowColor
+                spread: control.glowSpread
+                transparentBorder: true
+            }
 
-            rotation: d.expanded ? 45 : 0
-            Behavior on rotation { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            Behavior on color { ColorAnimation { duration: 150 } }
+            Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
+            scale: mainMouse.pressed ? 0.92 : 1.0
 
             ComImage {
-                anchors.fill: parent
+                anchors.centerIn: parent
+                width: mainBtn.width * 0.6
+                height: mainBtn.height * 0.6
                 iconsource: control.iconsource
                 iconsize: control.buttonSize * 0.4
                 icocolor: "white"
+                rotation: d.expanded ? 45 : 0
+                Behavior on rotation { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             }
         }
 
@@ -150,10 +185,15 @@ Item {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
+            onEntered: mainBtnWrapper.isHovered = true
+            onExited: mainBtnWrapper.isHovered = false
             onClicked: {
                 d.expanded = !d.expanded
                 control.clicked()
             }
         }
     }
+
+    implicitWidth: buttonSize
+    implicitHeight: buttonSize
 }

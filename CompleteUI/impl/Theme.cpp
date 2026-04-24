@@ -72,6 +72,9 @@ void Theme::refreshColors()
         FillBackgroundColor(dark ? QColor(40, 40, 40, 180) : QColor(255, 255, 255, 180));
         FillBorderColor(dark ? QColor(40, 40, 40, 180) : QColor(210, 210, 210, 255));
         break;
+
+          
+
     }
 }
 

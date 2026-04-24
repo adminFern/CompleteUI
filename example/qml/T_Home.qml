@@ -7,6 +7,8 @@ Item {
     id: root
 
     ComFloatButton{
+        x:50
+        y:60
         actions: [
             { icon: FluentIcon.ico_Mail, enabled: true },
             { icon: FluentIcon.ico_FavoriteStarFill, enabled: false },
@@ -15,4 +17,7 @@ Item {
             { icon: FluentIcon.ico_Save, enabled: true }
         ]
     }
+
+
+    
 }
