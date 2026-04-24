@@ -33,6 +33,16 @@ Item {
                 }
 
             }
+            PaneItemExpander{
+                title: "数据展示"
+                isExpand: true
+                icon: "📋"
+                PaneItem{
+                    title: "时间轴"
+                    icon: "🕐"
+                    page:"qrc:/qml/T_Timeline.qml"
+                }
+            }
         }
     }
 }

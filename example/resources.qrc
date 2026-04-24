@@ -9,5 +9,6 @@
         <file>qml/T_InputNumber.qml</file>
         <file>qml/T_ListView.qml</file>
         <file>qml/T_TreeView.qml</file>
+        <file>qml/T_Timeline.qml</file>
     </qresource>
 </RCC>
