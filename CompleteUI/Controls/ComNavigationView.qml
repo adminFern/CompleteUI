@@ -84,6 +84,17 @@ Item {
                 stack.replace(page)
             }
         }
+        // 当 expander 折叠时，如果当前选中项是其子项，则回退选中到 expander 自身
+        function collapseCheck(expanderItem){
+            if(nav_list.currentIndex < 0) return
+            var curData = nav_list.model
+            if(nav_list.currentIndex < curData.length){
+                var curItem = curData[nav_list.currentIndex]
+                if(curItem && curItem._parent === expanderItem){
+                    nav_list.currentIndex = expanderItem._idx
+                }
+            }
+        }
 
     }
     Component.onCompleted: {
@@ -317,6 +328,7 @@ Item {
                 radius: 4
                 color: {
                     if (!item_expander.enabled) return  Theme.DisabledColor
+                    if (nav_list.currentIndex === model._idx) return Theme.setColorAlpha(control.primaryColor,200)
                     if (item_expander_mouse.containsMouse){
                         return Theme.setColorAlpha(Theme.isDark? Qt.darker(control.primaryColor,1.2):
                                                              Qt.lighter(control.primaryColor,1.2)  ,100)
@@ -392,7 +404,16 @@ Item {
                             return
                         }
 
-                        if(!d.isCompactAndNotPanel) model.isExpand = !model.isExpand
+                        nav_list.currentIndex = model._idx
+                        layout_footer.currentIndex = -1
+                        if(!d.isCompactAndNotPanel){
+                            var wasExpand = model.isExpand
+                            model.isExpand = !model.isExpand
+                            // 折叠时：如果当前选中子项属于此 expander，回退选中到 expander
+                            if(wasExpand){
+                                d.collapseCheck(model)
+                            }
+                        }
                         control.itemclicked(model.title)
                     }
                 }
@@ -424,28 +445,152 @@ Item {
             anchors.margins: 0
             spacing: 0
             // 主导航列表 - 填充剩余空间
-            ListView{
-                id: nav_list
+            Item{
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                boundsBehavior: Flickable.StopAtBounds
                 clip: true
-                model: d.handleItems()//添加列表数据
-                reuseItems: true
-                interactive: false
-                cacheBuffer: control.itemHeight * 2
-                currentIndex: -1
-                spacing:0
-                delegate: Loader {
-                    property var model: modelData
-                    property var _idx: index
-                    property int type: 0
-                    sourceComponent: {
-                        if (!model) return undefined
-                        if (model instanceof PaneItem) return com_panel_item
-                        if (model instanceof PaneItemSeparator) return com_panel_item_separator
-                        if (model instanceof PaneItemExpander) return com_panel_item_expander
-                        return undefined
+
+                ListView{
+                    id: nav_list
+                    anchors.fill: parent
+                    boundsBehavior: Flickable.StopAtBounds
+                    clip: true
+                    model: d.handleItems()//添加列表数据
+                    reuseItems: true
+                    interactive: false
+                    cacheBuffer: control.itemHeight * 2
+                    currentIndex: -1
+                    spacing:0
+                    delegate: Loader {
+                        property var model: modelData
+                        property var _idx: index
+                        property int type: 0
+                        sourceComponent: {
+                            if (!model) return undefined
+                            if (model instanceof PaneItem) return com_panel_item
+                            if (model instanceof PaneItemSeparator) return com_panel_item_separator
+                            if (model instanceof PaneItemExpander) return com_panel_item_expander
+                            return undefined
+                        }
+                    }
+                }
+
+                // 胶囊指示器（移植自 HighlightRectangle 的拉伸/吸附动画）
+                // 核心思路：topPos/bottomPos 为指示器上下边位置
+                //   - 切换索引时：通过状态机实现拉伸/吸附动画
+                //   - 展开/折叠时：Behavior 提供平滑跟随（与项目高度动画同步）
+                Rectangle{
+                    id: navCapsuleIndicator
+                    z: 1
+                    width: 3
+                    radius: 1.5
+                    color: control.primaryColor
+
+                    property int highlightSize: 20
+                    property real topPos: 0
+                    property real bottomPos: highlightSize
+                    property real oldTopPos: 0
+
+                    x: 4
+                    y: topPos
+                    height: bottomPos - topPos
+
+                    visible: nav_list.currentIndex >= 0
+
+                    property int lastIndex: -1
+
+                    // 目标位置：跟随当前选中项的 y 坐标，展开/折叠时自动更新
+                    property real targetTop: {
+                        if (nav_list.currentIndex < 0 || !nav_list.currentItem) return 0
+                        return nav_list.currentItem.y - nav_list.contentY
+                                + (nav_list.currentItem.height - highlightSize) / 2
+                    }
+                    property real targetBottom: {
+                        if (nav_list.currentIndex < 0 || !nav_list.currentItem) return highlightSize
+                        return nav_list.currentItem.y - nav_list.contentY
+                                + (nav_list.currentItem.height + highlightSize) / 2
+                    }
+
+                    state: "normal"
+
+                    Connections{
+                        target: nav_list
+                        function onCurrentIndexChanged(){
+                            if(nav_list.currentIndex >= 0){
+                                var dir = nav_list.currentIndex - navCapsuleIndicator.lastIndex
+                                if(dir > 0 && navCapsuleIndicator.lastIndex >= 0 && !trans_enter.running){
+                                    // 向下移动：底边先拉伸到新位置，顶边保持旧位置
+                                    navCapsuleIndicator.oldTopPos = navCapsuleIndicator.topPos
+                                    navCapsuleIndicator.state = "startEnter"
+                                    navCapsuleIndicator.state = "normal"
+                                }else if(dir < 0 && navCapsuleIndicator.lastIndex >= 0 && !trans_enter.running){
+                                    // 向上移动：顶边先拉伸到新位置，底边保持旧位置
+                                    navCapsuleIndicator.oldTopPos = navCapsuleIndicator.topPos
+                                    navCapsuleIndicator.state = "endEnter"
+                                    navCapsuleIndicator.state = "normal"
+                                }else{
+                                    navCapsuleIndicator.state = "normal"
+                                }
+                                navCapsuleIndicator.lastIndex = nav_list.currentIndex
+                            }
+                        }
+                    }
+
+                    states: [
+                        State{
+                            name: "endEnter"
+                            // 向上移动：顶边到达新位置，底边保持旧位置 → 产生向上拉伸
+                            PropertyChanges {
+                                target: navCapsuleIndicator
+                                topPos: navCapsuleIndicator.targetTop
+                                bottomPos: navCapsuleIndicator.oldTopPos + navCapsuleIndicator.highlightSize
+                            }
+                        },
+                        State{
+                            name: "startEnter"
+                            // 向下移动：底边到达新位置，顶边保持旧位置 → 产生向下拉伸
+                            PropertyChanges {
+                                target: navCapsuleIndicator
+                                topPos: navCapsuleIndicator.oldTopPos
+                                bottomPos: navCapsuleIndicator.targetBottom
+                            }
+                        },
+                        State{
+                            name: "normal"
+                            // 正常状态：两边都贴合目标位置
+                            PropertyChanges {
+                                target: navCapsuleIndicator
+                                topPos: navCapsuleIndicator.targetTop
+                                bottomPos: navCapsuleIndicator.targetBottom
+                            }
+                        }
+                    ]
+
+                    transitions: [
+                        Transition{
+                            id: trans_enter
+                            to: "normal"
+                            SequentialAnimation{
+                                PauseAnimation { duration: 80 }
+                                PropertyAnimation {
+                                    target: navCapsuleIndicator
+                                    properties: "topPos,bottomPos"
+                                    duration: 200
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+                        }
+                    ]
+
+                    // 展开/折叠时的平滑跟随（拉伸/吸附过渡期间禁用，避免冲突）
+                    // 时长 250ms 与项目高度动画 Behavior on height 一致
+                    Behavior on topPos {
+                        enabled: !trans_enter.running
+                        NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
+                    }
+                    Behavior on bottomPos {
+                        enabled: !trans_enter.running
+                        NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
                     }
                 }
             }
