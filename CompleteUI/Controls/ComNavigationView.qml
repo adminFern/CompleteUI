@@ -475,123 +475,12 @@ Item {
                     }
                 }
 
-                // 胶囊指示器（移植自 HighlightRectangle 的拉伸/吸附动画）
-                // 核心思路：topPos/bottomPos 为指示器上下边位置
-                //   - 切换索引时：通过状态机实现拉伸/吸附动画
-                //   - 展开/折叠时：Behavior 提供平滑跟随（与项目高度动画同步）
-                Rectangle{
-                    id: navCapsuleIndicator
-                    z: 1
-                    width: 3
-                    radius: 1.5
-                    color: control.primaryColor
-
-                    property int highlightSize: 20
-                    property real topPos: 0
-                    property real bottomPos: highlightSize
-                    property real oldTopPos: 0
-
-                    x: 4
-                    y: topPos
-                    height: bottomPos - topPos
-
-                    visible: nav_list.currentIndex >= 0
-
-                    property int lastIndex: -1
-
-                    // 目标位置：跟随当前选中项的 y 坐标，展开/折叠时自动更新
-                    property real targetTop: {
-                        if (nav_list.currentIndex < 0 || !nav_list.currentItem) return 0
-                        return nav_list.currentItem.y - nav_list.contentY
-                                + (nav_list.currentItem.height - highlightSize) / 2
-                    }
-                    property real targetBottom: {
-                        if (nav_list.currentIndex < 0 || !nav_list.currentItem) return highlightSize
-                        return nav_list.currentItem.y - nav_list.contentY
-                                + (nav_list.currentItem.height + highlightSize) / 2
-                    }
-
-                    state: "normal"
-
-                    Connections{
-                        target: nav_list
-                        function onCurrentIndexChanged(){
-                            if(nav_list.currentIndex >= 0){
-                                var dir = nav_list.currentIndex - navCapsuleIndicator.lastIndex
-                                if(dir > 0 && navCapsuleIndicator.lastIndex >= 0 && !trans_enter.running){
-                                    // 向下移动：底边先拉伸到新位置，顶边保持旧位置
-                                    navCapsuleIndicator.oldTopPos = navCapsuleIndicator.topPos
-                                    navCapsuleIndicator.state = "startEnter"
-                                    navCapsuleIndicator.state = "normal"
-                                }else if(dir < 0 && navCapsuleIndicator.lastIndex >= 0 && !trans_enter.running){
-                                    // 向上移动：顶边先拉伸到新位置，底边保持旧位置
-                                    navCapsuleIndicator.oldTopPos = navCapsuleIndicator.topPos
-                                    navCapsuleIndicator.state = "endEnter"
-                                    navCapsuleIndicator.state = "normal"
-                                }else{
-                                    navCapsuleIndicator.state = "normal"
-                                }
-                                navCapsuleIndicator.lastIndex = nav_list.currentIndex
-                            }
-                        }
-                    }
-
-                    states: [
-                        State{
-                            name: "endEnter"
-                            // 向上移动：顶边到达新位置，底边保持旧位置 → 产生向上拉伸
-                            PropertyChanges {
-                                target: navCapsuleIndicator
-                                topPos: navCapsuleIndicator.targetTop
-                                bottomPos: navCapsuleIndicator.oldTopPos + navCapsuleIndicator.highlightSize
-                            }
-                        },
-                        State{
-                            name: "startEnter"
-                            // 向下移动：底边到达新位置，顶边保持旧位置 → 产生向下拉伸
-                            PropertyChanges {
-                                target: navCapsuleIndicator
-                                topPos: navCapsuleIndicator.oldTopPos
-                                bottomPos: navCapsuleIndicator.targetBottom
-                            }
-                        },
-                        State{
-                            name: "normal"
-                            // 正常状态：两边都贴合目标位置
-                            PropertyChanges {
-                                target: navCapsuleIndicator
-                                topPos: navCapsuleIndicator.targetTop
-                                bottomPos: navCapsuleIndicator.targetBottom
-                            }
-                        }
-                    ]
-
-                    transitions: [
-                        Transition{
-                            id: trans_enter
-                            to: "normal"
-                            SequentialAnimation{
-                                PauseAnimation { duration: 80 }
-                                PropertyAnimation {
-                                    target: navCapsuleIndicator
-                                    properties: "topPos,bottomPos"
-                                    duration: 200
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-                        }
-                    ]
-
-                    // 展开/折叠时的平滑跟随（拉伸/吸附过渡期间禁用，避免冲突）
-                    // 时长 250ms 与项目高度动画 Behavior on height 一致
-                    Behavior on topPos {
-                        enabled: !trans_enter.running
-                        NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
-                    }
-                    Behavior on bottomPos {
-                        enabled: !trans_enter.running
-                        NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
-                    }
+                // 导航指示器（使用封装的 ComNavIndicator 组件）
+                ComNavIndicator {
+                    targetListView: nav_list
+                    indicatorColor: control.primaryColor
+                    highlightSize: 20
+                    indicatorX: 4
                 }
             }
             // 页脚列表区域 - 高度自适应内容
