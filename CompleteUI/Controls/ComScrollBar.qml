@@ -51,8 +51,10 @@ T.ScrollBar {
         height: 12
         iconsize: 8
         handCursor: true
-        verticalPadding: 0
-        horizontalPadding: 0
+        leftPadding: 0
+        rightPadding: 0
+        topPadding: 0
+        bottomPadding: 0
         visible: control.horizontal
         opacity: back_rect.opacity
         iconColor: {
@@ -79,8 +81,10 @@ T.ScrollBar {
         width: 12
         height: 12
         iconsize: 8
-        verticalPadding: 0
-        horizontalPadding: 0
+        leftPadding: 0
+        rightPadding: 0
+        topPadding: 0
+        bottomPadding: 0
         handCursor: true
         opacity: back_rect.opacity
         iconColor: {
@@ -108,8 +112,10 @@ T.ScrollBar {
         width: 12
         height: 12
         iconsize: 8
-        verticalPadding: 0
-        horizontalPadding: 0
+        leftPadding: 0
+        rightPadding: 0
+        topPadding: 0
+        bottomPadding: 0
         handCursor: true
         opacity: back_rect.opacity
         iconColor: {
@@ -137,8 +143,10 @@ T.ScrollBar {
         width: 12
         height: 12
         iconsize: 8
-        verticalPadding: 0
-        horizontalPadding: 0
+        leftPadding: 0
+        rightPadding: 0
+        topPadding: 0
+        bottomPadding: 0
         handCursor: true
         opacity: back_rect.opacity
         iconColor: {
@@ -192,14 +200,14 @@ T.ScrollBar {
                 if (control.horizontal) {
                     return control.position * (parent.width - width)
                 }
-                return 0
+                return (parent.width - width) / 2
             }
 
             y: {
                 if (control.vertical) {
                     return control.position * (parent.height - height)
                 }
-                return 0
+                return (parent.height - height) / 2
             }
 
             width: {

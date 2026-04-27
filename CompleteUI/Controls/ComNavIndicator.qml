@@ -10,13 +10,22 @@ Rectangle {
     property var targetListView           // 关联的目标 ListView
     property color indicatorColor: Theme.PrimaryColor  // 指示器颜色
     property int highlightSize: 20        // 高亮条长度
-    property int indicatorX: 4            // X轴位置
+    property int indicatorX: 4            // X轴位置（一级菜单基准）
+    property int levelIndent: 14          // 每级菜单内缩量
 
     // === 内部状态属性 ===
     property real topPos: 0
     property real bottomPos: highlightSize
     property real oldTopPos: 0
     property int lastIndex: -1
+
+    // === 计算当前项的菜单深度 ===
+    property int itemDepth: {
+        if (!targetListView || targetListView.currentIndex < 0) return 0
+        var model = targetListView.model
+        if (!model || targetListView.currentIndex >= model.length) return 0
+        return d.getItemDepth(model[targetListView.currentIndex])
+    }
 
     // === 目标位置计算 ===
     property real targetTop: {
@@ -36,13 +45,23 @@ Rectangle {
     radius: 1.5
     color: control.indicatorColor
 
-    x: control.indicatorX
+    x: control.indicatorX + (itemDepth * levelIndent)
     y: topPos
     height: bottomPos - topPos
 
     visible: targetListView && targetListView.currentIndex >= 0
 
     state: "normal"
+
+    // === 辅助对象：计算菜单深度 ===
+    QtObject {
+        id: d
+        // 递归计算菜单项深度（0=一级，1=二级，2=三级...）
+        function getItemDepth(item) {
+            if (!item || item._parent === undefined) return 0
+            return 1 + getItemDepth(item._parent)
+        }
+    }
 
     // === 索引变化处理 ===
     Connections {

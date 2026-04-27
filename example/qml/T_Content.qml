@@ -12,8 +12,8 @@ Item {
         items: Objects{
             PaneItem{
                 title: "首页"
-                icon: "🏠"
-                page:"qrc:/qml/T_Home.qml"
+                icon: FluentIcon.ico_Home
+                page:"qrc:/qml/T_VirtualBackground.qml"
             }
             PaneItemSeparator{}
             PaneItemExpander{

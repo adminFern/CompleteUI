@@ -239,7 +239,10 @@ Item {
                 id: item_panel
                 enabled: !model.disabled
                 anchors.fill: parent
-                anchors.margins: 1
+                anchors.leftMargin: model._parent !== undefined ? 15 : 1
+                anchors.rightMargin: 1
+                anchors.topMargin: 1
+                anchors.bottomMargin: 1
                 radius: 4
                 color: {
                     if (!item_panel.enabled) return Theme.DisabledColor //禁止颜色
@@ -257,7 +260,7 @@ Item {
                     id: com_icon
                     anchors.left: parent.left
                     anchors.leftMargin: {
-                        if(model._parent!==undefined) return 30
+                        if(model._parent!==undefined) return 16
                         if(!d.isCompactAndNotPanel) return 8
                         return undefined
                     }

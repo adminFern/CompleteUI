@@ -13,7 +13,7 @@ Item {
         contentWidth: width
         contentHeight: layout.implicitHeight + 40
 
-        ScrollBar.vertical: ScrollBar {}
+        ScrollBar.vertical: ComScrollBar {}
 
         ColumnLayout {
             id: layout
