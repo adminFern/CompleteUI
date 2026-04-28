@@ -42,6 +42,11 @@ Item {
                     icon: "🕐"
                     page:"qrc:/qml/T_Timeline.qml"
                 }
+                PaneItem{
+                    title: "表格组件"
+                    icon: "📊"
+                    page:"qrc:/qml/T_TableView.qml"
+                }
             }
         }
     }

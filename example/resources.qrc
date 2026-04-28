@@ -10,6 +10,7 @@
         <file>qml/T_ListView.qml</file>
         <file>qml/T_TreeView.qml</file>
         <file>qml/T_Timeline.qml</file>
+        <file>qml/T_TableView.qml</file>
         <file>qml/T_VirtualBackground.qml</file>
     </qresource>
 </RCC>

@@ -1,0 +1,1644 @@
+{
+  "version": "1.0",
+  "name": "CompleteUI Homepage",
+  "width": 1200,
+  "height": 2400,
+  "children": [
+    {
+      "id": "bg",
+      "type": "rectangle",
+      "x": 0,
+      "y": 0,
+      "width": 1200,
+      "height": 2400,
+      "fill": "#0D1117"
+    },
+    {
+      "id": "header",
+      "type": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 1200,
+      "height": 140,
+      "fill": "#161B22",
+      "children": [
+        {
+          "id": "title",
+          "type": "text",
+          "x": 60,
+          "y": 30,
+          "width": 400,
+          "fontSize": 42,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#00D4FF",
+          "content": "CompleteUI"
+        },
+        {
+          "id": "subtitle",
+          "type": "text",
+          "x": 60,
+          "y": 82,
+          "width": 500,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Fluent Design QML Component Library for Qt Quick"
+        },
+        {
+          "id": "navline",
+          "type": "rectangle",
+          "x": 0,
+          "y": 139,
+          "width": 1200,
+          "height": 1,
+          "fill": "#00D4FF"
+        },
+        {
+          "id": "version_badge",
+          "type": "frame",
+          "x": 1000,
+          "y": 45,
+          "width": 120,
+          "height": 40,
+          "fill": "#238636",
+          "cornerRadius": 20,
+          "children": [
+            {
+              "id": "version_text",
+              "type": "text",
+              "x": 0,
+              "y": 8,
+              "width": 120,
+              "fontSize": 14,
+              "fontFamily": "Segoe UI",
+              "fontWeight": "Bold",
+              "fill": "#FFFFFF",
+              "content": "v1.0",
+              "textAlign": "center"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hero_section",
+      "type": "frame",
+      "x": 0,
+      "y": 140,
+      "width": 1200,
+      "height": 220,
+      "fill": "#0D1117",
+      "children": [
+        {
+          "id": "hero_desc",
+          "type": "text",
+          "x": 60,
+          "y": 40,
+          "width": 550,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "lineHeight": 1.6,
+          "fill": "#C9D1D9",
+          "content": "A modern, elegant and fully customizable UI component library built on Qt Quick/QML with Fluent Design language. Features include theme support, animations, and seamless integration."
+        },
+        {
+          "id": "stat_card_1",
+          "type": "frame",
+          "x": 700,
+          "y": 40,
+          "width": 140,
+          "height": 140,
+          "fill": "#161B22",
+          "cornerRadius": 12,
+          "stroke": "#30363D",
+          "strokeWidth": 1,
+          "children": [
+            {
+              "id": "stat1_num",
+              "type": "text",
+              "x": 0,
+              "y": 25,
+              "width": 140,
+              "fontSize": 48,
+              "fontFamily": "Segoe UI",
+              "fontWeight": "Bold",
+              "fill": "#00D4FF",
+              "content": "16+",
+              "textAlign": "center"
+            },
+            {
+              "id": "stat1_label",
+              "type": "text",
+              "x": 0,
+              "y": 95,
+              "width": 140,
+              "fontSize": 14,
+              "fontFamily": "Segoe UI",
+              "fill": "#8B949E",
+              "content": "Components",
+              "textAlign": "center"
+            }
+          ]
+        },
+        {
+          "id": "stat_card_2",
+          "type": "frame",
+          "x": 860,
+          "y": 40,
+          "width": 140,
+          "height": 140,
+          "fill": "#161B22",
+          "cornerRadius": 12,
+          "stroke": "#30363D",
+          "strokeWidth": 1,
+          "children": [
+            {
+              "id": "stat2_num",
+              "type": "text",
+              "x": 0,
+              "y": 25,
+              "width": 140,
+              "fontSize": 48,
+              "fontFamily": "Segoe UI",
+              "fontWeight": "Bold",
+              "fill": "#E040FB",
+              "content": "Qt6",
+              "textAlign": "center"
+            },
+            {
+              "id": "stat2_label",
+              "type": "text",
+              "x": 0,
+              "y": 95,
+              "width": 140,
+              "fontSize": 14,
+              "fontFamily": "Segoe UI",
+              "fill": "#8B949E",
+              "content": "Framework",
+              "textAlign": "center"
+            }
+          ]
+        },
+        {
+          "id": "stat_card_3",
+          "type": "frame",
+          "x": 1020,
+          "y": 40,
+          "width": 140,
+          "height": 140,
+          "fill": "#161B22",
+          "cornerRadius": 12,
+          "stroke": "#30363D",
+          "strokeWidth": 1,
+          "children": [
+            {
+              "id": "stat3_num",
+              "type": "text",
+              "x": 0,
+              "y": 25,
+              "width": 140,
+              "fontSize": 42,
+              "fontFamily": "Segoe UI",
+              "fill": "#58A6FF",
+              "content": "\uE73E",
+              "textAlign": "center"
+            },
+            {
+              "id": "stat3_label",
+              "type": "text",
+              "x": 0,
+              "y": 95,
+              "width": 140,
+              "fontSize": 14,
+              "fontFamily": "Segoe UI",
+              "fill": "#8B949E",
+              "content": "Fluent Icons",
+              "textAlign": "center"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section1_title",
+      "type": "text",
+      "x": 60,
+      "y": 400,
+      "width": 500,
+      "fontSize": 28,
+      "fontFamily": "Segoe UI",
+      "fontWeight": "Bold",
+      "fill": "#FFFFFF",
+      "content": "Core Components"
+    },
+    {
+      "id": "section1_sub",
+      "type": "text",
+      "x": 60,
+      "y": 440,
+      "width": 500,
+      "fontSize": 14,
+      "fontFamily": "Segoe UI",
+      "fill": "#8B949E",
+      "content": "Essential building blocks for modern desktop applications"
+    },
+    {
+      "id": "comp_button",
+      "type": "frame",
+      "x": 60,
+      "y": 490,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_button_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#00D4FF",
+          "content": "\uE70F"
+        },
+        {
+          "id": "comp_button_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 200,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComButton"
+        },
+        {
+          "id": "comp_button_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Animated button with icon, glow effect, and press/scale animation"
+        }
+      ]
+    },
+    {
+      "id": "comp_window",
+      "type": "frame",
+      "x": 430,
+      "y": 490,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_window_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#58A6FF",
+          "content": "\uE73F"
+        },
+        {
+          "id": "comp_window_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 200,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComWindow"
+        },
+        {
+          "id": "comp_window_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Frameless window with custom title bar, maximize, minimize, close"
+        }
+      ]
+    },
+    {
+      "id": "comp_nav",
+      "type": "frame",
+      "x": 800,
+      "y": 490,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_nav_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#E040FB",
+          "content": "\uE700"
+        },
+        {
+          "id": "comp_nav_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 250,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComNavigationView"
+        },
+        {
+          "id": "comp_nav_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Side navigation with Open/Compact/Minimal modes and StackView"
+        }
+      ]
+    },
+    {
+      "id": "comp_progress",
+      "type": "frame",
+      "x": 60,
+      "y": 640,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_progress_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#3FB950",
+          "content": "\uE930"
+        },
+        {
+          "id": "comp_progress_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 250,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComProgressBar"
+        },
+        {
+          "id": "comp_progress_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Linear progress bar with glow effect and animated fill"
+        }
+      ]
+    },
+    {
+      "id": "comp_circular",
+      "type": "frame",
+      "x": 430,
+      "y": 640,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_circular_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#FFA657",
+          "content": "\uE94B"
+        },
+        {
+          "id": "comp_circular_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 250,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComCircularProgressBar"
+        },
+        {
+          "id": "comp_circular_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Circular progress indicator with customizable stroke and glow"
+        }
+      ]
+    },
+    {
+      "id": "comp_float",
+      "type": "frame",
+      "x": 800,
+      "y": 640,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_float_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#F78166",
+          "content": "\uE710"
+        },
+        {
+          "id": "comp_float_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 250,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComFloatButton"
+        },
+        {
+          "id": "comp_float_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Floating action button with expandable sub-actions and glow"
+        }
+      ]
+    },
+    {
+      "id": "comp_input",
+      "type": "frame",
+      "x": 60,
+      "y": 790,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_input_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#79C0FF",
+          "content": "\uE8CB"
+        },
+        {
+          "id": "comp_input_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 250,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComInputNumber"
+        },
+        {
+          "id": "comp_input_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Numeric input with spin buttons, prefix/suffix, and keyboard support"
+        }
+      ]
+    },
+    {
+      "id": "comp_timeline",
+      "type": "frame",
+      "x": 430,
+      "y": 790,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_timeline_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#D2A8FF",
+          "content": "\uE81C"
+        },
+        {
+          "id": "comp_timeline_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 250,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComTimeline"
+        },
+        {
+          "id": "comp_timeline_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Vertical/horizontal timeline with active states and pulse animation"
+        }
+      ]
+    },
+    {
+      "id": "comp_group",
+      "type": "frame",
+      "x": 800,
+      "y": 790,
+      "width": 340,
+      "height": 120,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_group_icon",
+          "type": "text",
+          "x": 20,
+          "y": 20,
+          "width": 40,
+          "height": 40,
+          "fontSize": 28,
+          "fontFamily": "Segoe UI",
+          "fill": "#7EE787",
+          "content": "\uE902"
+        },
+        {
+          "id": "comp_group_name",
+          "type": "text",
+          "x": 70,
+          "y": 20,
+          "width": 250,
+          "fontSize": 18,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComGroupBox"
+        },
+        {
+          "id": "comp_group_desc",
+          "type": "text",
+          "x": 20,
+          "y": 65,
+          "width": 300,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Group box container with titled border and rounded corners"
+        }
+      ]
+    },
+    {
+      "id": "section2_title",
+      "type": "text",
+      "x": 60,
+      "y": 960,
+      "width": 500,
+      "fontSize": 28,
+      "fontFamily": "Segoe UI",
+      "fontWeight": "Bold",
+      "fill": "#FFFFFF",
+      "content": "Additional Components"
+    },
+    {
+      "id": "section2_sub",
+      "type": "text",
+      "x": 60,
+      "y": 1000,
+      "width": 500,
+      "fontSize": 14,
+      "fontFamily": "Segoe UI",
+      "fill": "#8B949E",
+      "content": "More utilities and helpers for complete UI coverage"
+    },
+    {
+      "id": "comp_appbar",
+      "type": "frame",
+      "x": 60,
+      "y": 1050,
+      "width": 260,
+      "height": 100,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_appbar_icon",
+          "type": "text",
+          "x": 16,
+          "y": 16,
+          "width": 36,
+          "height": 36,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fill": "#00D4FF",
+          "content": "\uE921"
+        },
+        {
+          "id": "comp_appbar_name",
+          "type": "text",
+          "x": 60,
+          "y": 18,
+          "width": 180,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComAppBar"
+        },
+        {
+          "id": "comp_appbar_desc",
+          "type": "text",
+          "x": 16,
+          "y": 60,
+          "width": 230,
+          "fontSize": 12,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Title bar with window controls"
+        }
+      ]
+    },
+    {
+      "id": "comp_scroll",
+      "type": "frame",
+      "x": 340,
+      "y": 1050,
+      "width": 260,
+      "height": 100,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_scroll_icon",
+          "type": "text",
+          "x": 16,
+          "y": 16,
+          "width": 36,
+          "height": 36,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fill": "#58A6FF",
+          "content": "\uE8BF"
+        },
+        {
+          "id": "comp_scroll_name",
+          "type": "text",
+          "x": 60,
+          "y": 18,
+          "width": 180,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComScrollBar"
+        },
+        {
+          "id": "comp_scroll_desc",
+          "type": "text",
+          "x": 16,
+          "y": 60,
+          "width": 230,
+          "fontSize": 12,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Custom styled scroll bar"
+        }
+      ]
+    },
+    {
+      "id": "comp_icon",
+      "type": "frame",
+      "x": 620,
+      "y": 1050,
+      "width": 260,
+      "height": 100,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_icon_icon",
+          "type": "text",
+          "x": 16,
+          "y": 16,
+          "width": 36,
+          "height": 36,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fill": "#E040FB",
+          "content": "\uE933"
+        },
+        {
+          "id": "comp_icon_name",
+          "type": "text",
+          "x": 60,
+          "y": 18,
+          "width": 180,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComIconLabel"
+        },
+        {
+          "id": "comp_icon_desc",
+          "type": "text",
+          "x": 16,
+          "y": 60,
+          "width": 230,
+          "fontSize": 12,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Icon + label combination"
+        }
+      ]
+    },
+    {
+      "id": "comp_image",
+      "type": "frame",
+      "x": 900,
+      "y": 1050,
+      "width": 260,
+      "height": 100,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_image_icon",
+          "type": "text",
+          "x": 16,
+          "y": 16,
+          "width": 36,
+          "height": 36,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fill": "#3FB950",
+          "content": "\uE8B9"
+        },
+        {
+          "id": "comp_image_name",
+          "type": "text",
+          "x": 60,
+          "y": 18,
+          "width": 180,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComImage"
+        },
+        {
+          "id": "comp_image_desc",
+          "type": "text",
+          "x": 16,
+          "y": 60,
+          "width": 230,
+          "fontSize": 12,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Image display component"
+        }
+      ]
+    },
+    {
+      "id": "comp_nav_ind",
+      "type": "frame",
+      "x": 60,
+      "y": 1170,
+      "width": 260,
+      "height": 100,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_nav_ind_icon",
+          "type": "text",
+          "x": 16,
+          "y": 16,
+          "width": 36,
+          "height": 36,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fill": "#FFA657",
+          "content": "\uE76C"
+        },
+        {
+          "id": "comp_nav_ind_name",
+          "type": "text",
+          "x": 60,
+          "y": 18,
+          "width": 180,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComNavIndicator"
+        },
+        {
+          "id": "comp_nav_ind_desc",
+          "type": "text",
+          "x": 16,
+          "y": 60,
+          "width": 230,
+          "fontSize": 12,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Navigation selection indicator"
+        }
+      ]
+    },
+    {
+      "id": "comp_delay",
+      "type": "frame",
+      "x": 340,
+      "y": 1170,
+      "width": 260,
+      "height": 100,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_delay_icon",
+          "type": "text",
+          "x": 16,
+          "y": 16,
+          "width": 36,
+          "height": 36,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fill": "#F78166",
+          "content": "\uE916"
+        },
+        {
+          "id": "comp_delay_name",
+          "type": "text",
+          "x": 60,
+          "y": 18,
+          "width": 180,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComDelayButton"
+        },
+        {
+          "id": "comp_delay_desc",
+          "type": "text",
+          "x": 16,
+          "y": 60,
+          "width": 230,
+          "fontSize": 12,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Button with delayed action"
+        }
+      ]
+    },
+    {
+      "id": "comp_icon_btn",
+      "type": "frame",
+      "x": 620,
+      "y": 1170,
+      "width": 260,
+      "height": 100,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_icon_btn_icon",
+          "type": "text",
+          "x": 16,
+          "y": 16,
+          "width": 36,
+          "height": 36,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fill": "#79C0FF",
+          "content": "\uE70E"
+        },
+        {
+          "id": "comp_icon_btn_name",
+          "type": "text",
+          "x": 60,
+          "y": 18,
+          "width": 180,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "ComIconButton"
+        },
+        {
+          "id": "comp_icon_btn_desc",
+          "type": "text",
+          "x": 16,
+          "y": 60,
+          "width": 230,
+          "fontSize": 12,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "Icon-only button component"
+        }
+      ]
+    },
+    {
+      "id": "comp_fluent",
+      "type": "frame",
+      "x": 900,
+      "y": 1170,
+      "width": 260,
+      "height": 100,
+      "fill": "#161B22",
+      "cornerRadius": 12,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "comp_fluent_icon",
+          "type": "text",
+          "x": 16,
+          "y": 16,
+          "width": 36,
+          "height": 36,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fill": "#D2A8FF",
+          "content": "\uE734"
+        },
+        {
+          "id": "comp_fluent_name",
+          "type": "text",
+          "x": 60,
+          "y": 18,
+          "width": 180,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "FluentIcon"
+        },
+        {
+          "id": "comp_fluent_desc",
+          "type": "text",
+          "x": 16,
+          "y": 60,
+          "width": 230,
+          "fontSize": 12,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "1400+ Fluent System Icons"
+        }
+      ]
+    },
+    {
+      "id": "section3_title",
+      "type": "text",
+      "x": 60,
+      "y": 1330,
+      "width": 500,
+      "fontSize": 28,
+      "fontFamily": "Segoe UI",
+      "fontWeight": "Bold",
+      "fill": "#FFFFFF",
+      "content": "Features"
+    },
+    {
+      "id": "section3_sub",
+      "type": "text",
+      "x": 60,
+      "y": 1370,
+      "width": 500,
+      "fontSize": 14,
+      "fontFamily": "Segoe UI",
+      "fill": "#8B949E",
+      "content": "What makes CompleteUI stand out"
+    },
+    {
+      "id": "feature1",
+      "type": "frame",
+      "x": 60,
+      "y": 1420,
+      "width": 530,
+      "height": 180,
+      "fill": "#161B22",
+      "cornerRadius": 16,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "feature1_icon",
+          "type": "text",
+          "x": 30,
+          "y": 30,
+          "width": 60,
+          "height": 60,
+          "fontSize": 48,
+          "fontFamily": "Segoe UI",
+          "fill": "#00D4FF",
+          "content": "\uE790"
+        },
+        {
+          "id": "feature1_title",
+          "type": "text",
+          "x": 110,
+          "y": 30,
+          "width": 380,
+          "fontSize": 20,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "Dark & Light Theme Support"
+        },
+        {
+          "id": "feature1_desc",
+          "type": "text",
+          "x": 110,
+          "y": 65,
+          "width": 390,
+          "fontSize": 14,
+          "fontFamily": "Segoe UI",
+          "lineHeight": 1.6,
+          "fill": "#8B949E",
+          "content": "Built-in Theme class provides seamless dark and light mode support. All components automatically adapt to the current theme with proper colors for backgrounds, text, borders, and accents."
+        }
+      ]
+    },
+    {
+      "id": "feature2",
+      "type": "frame",
+      "x": 610,
+      "y": 1420,
+      "width": 530,
+      "height": 180,
+      "fill": "#161B22",
+      "cornerRadius": 16,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "feature2_icon",
+          "type": "text",
+          "x": 30,
+          "y": 30,
+          "width": 60,
+          "height": 60,
+          "fontSize": 48,
+          "fontFamily": "Segoe UI",
+          "fill": "#E040FB",
+          "content": "\uE945"
+        },
+        {
+          "id": "feature2_title",
+          "type": "text",
+          "x": 110,
+          "y": 30,
+          "width": 380,
+          "fontSize": 20,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "Smooth Animations"
+        },
+        {
+          "id": "feature2_desc",
+          "type": "text",
+          "x": 110,
+          "y": 65,
+          "width": 390,
+          "fontSize": 14,
+          "fontFamily": "Segoe UI",
+          "lineHeight": 1.6,
+          "fill": "#8B949E",
+          "content": "Components feature polished animations including button press effects, progress bar transitions, navigation panel slide-in/out, and timeline pulse animations. All with proper easing curves."
+        }
+      ]
+    },
+    {
+      "id": "feature3",
+      "type": "frame",
+      "x": 60,
+      "y": 1620,
+      "width": 530,
+      "height": 180,
+      "fill": "#161B22",
+      "cornerRadius": 16,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "feature3_icon",
+          "type": "text",
+          "x": 30,
+          "y": 30,
+          "width": 60,
+          "height": 60,
+          "fontSize": 48,
+          "fontFamily": "Segoe UI",
+          "fill": "#3FB950",
+          "content": "\uE740"
+        },
+        {
+          "id": "feature3_title",
+          "type": "text",
+          "x": 110,
+          "y": 30,
+          "width": 380,
+          "fontSize": 20,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "Frameless Window"
+        },
+        {
+          "id": "feature3_desc",
+          "type": "text",
+          "x": 110,
+          "y": 65,
+          "width": 390,
+          "fontSize": 14,
+          "fontFamily": "Segoe UI",
+          "lineHeight": 1.6,
+          "fill": "#8B949E",
+          "content": "Custom frameless window with DWM special effects support on Windows 11. Includes acrylic/mica effects, proper hit-testing for window controls, and borderless resizing."
+        }
+      ]
+    },
+    {
+      "id": "feature4",
+      "type": "frame",
+      "x": 610,
+      "y": 1620,
+      "width": 530,
+      "height": 180,
+      "fill": "#161B22",
+      "cornerRadius": 16,
+      "stroke": "#30363D",
+      "strokeWidth": 1,
+      "children": [
+        {
+          "id": "feature4_icon",
+          "type": "text",
+          "x": 30,
+          "y": 30,
+          "width": 60,
+          "height": 60,
+          "fontSize": 48,
+          "fontFamily": "Segoe UI",
+          "fill": "#FFA657",
+          "content": "\uE74C"
+        },
+        {
+          "id": "feature4_title",
+          "type": "text",
+          "x": 110,
+          "y": 30,
+          "width": 380,
+          "fontSize": 20,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "Highly Customizable"
+        },
+        {
+          "id": "feature4_desc",
+          "type": "text",
+          "x": 110,
+          "y": 65,
+          "width": 390,
+          "fontSize": 14,
+          "fontFamily": "Segoe UI",
+          "lineHeight": 1.6,
+          "fill": "#8B949E",
+          "content": "Every component exposes properties for colors, sizes, fonts, and behavior. Override defaults easily with custom themes. Components follow Qt Quick Templates for consistent API design."
+        }
+      ]
+    },
+    {
+      "id": "section4_title",
+      "type": "text",
+      "x": 60,
+      "y": 1860,
+      "width": 500,
+      "fontSize": 28,
+      "fontFamily": "Segoe UI",
+      "fontWeight": "Bold",
+      "fill": "#FFFFFF",
+      "content": "Component Architecture"
+    },
+    {
+      "id": "section4_sub",
+      "type": "text",
+      "x": 60,
+      "y": 1900,
+      "width": 500,
+      "fontSize": 14,
+      "fontFamily": "Segoe UI",
+      "fill": "#8B949E",
+      "content": "Clean modular design with C++ backend and QML frontend"
+    },
+    {
+      "id": "arch_qml",
+      "type": "frame",
+      "x": 60,
+      "y": 1950,
+      "width": 530,
+      "height": 200,
+      "fill": "#161B22",
+      "cornerRadius": 16,
+      "stroke": "#00D4FF",
+      "strokeWidth": 2,
+      "children": [
+        {
+          "id": "arch_qml_badge",
+          "type": "frame",
+          "x": 20,
+          "y": 16,
+          "width": 80,
+          "height": 28,
+          "fill": "#00D4FF",
+          "cornerRadius": 14,
+          "children": [
+            {
+              "id": "arch_qml_badge_text",
+              "type": "text",
+              "x": 0,
+              "y": 3,
+              "width": 80,
+              "fontSize": 12,
+              "fontFamily": "Segoe UI",
+              "fontWeight": "Bold",
+              "fill": "#0D1117",
+              "content": "QML",
+              "textAlign": "center"
+            }
+          ]
+        },
+        {
+          "id": "arch_qml_title",
+          "type": "text",
+          "x": 20,
+          "y": 55,
+          "width": 490,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "Controls/ - QML Component Layer"
+        },
+        {
+          "id": "arch_qml_desc",
+          "type": "text",
+          "x": 20,
+          "y": 85,
+          "width": 490,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "lineHeight": 1.6,
+          "fill": "#8B949E",
+          "content": "All UI components are written in QML following Qt Quick Controls template patterns. Each component inherits from T.Control or T.Button for consistent behavior and API."
+        },
+        {
+          "id": "arch_qml_files",
+          "type": "text",
+          "x": 20,
+          "y": 140,
+          "width": 490,
+          "fontSize": 11,
+          "fontFamily": "Consolas",
+          "fill": "#79C0FF",
+          "content": "ComButton.qml | ComWindow.qml | ComNavigationView.qml | ComProgressBar.qml ..."
+        }
+      ]
+    },
+    {
+      "id": "arch_cpp",
+      "type": "frame",
+      "x": 610,
+      "y": 1950,
+      "width": 530,
+      "height": 200,
+      "fill": "#161B22",
+      "cornerRadius": 16,
+      "stroke": "#E040FB",
+      "strokeWidth": 2,
+      "children": [
+        {
+          "id": "arch_cpp_badge",
+          "type": "frame",
+          "x": 20,
+          "y": 16,
+          "width": 80,
+          "height": 28,
+          "fill": "#E040FB",
+          "cornerRadius": 14,
+          "children": [
+            {
+              "id": "arch_cpp_badge_text",
+              "type": "text",
+              "x": 0,
+              "y": 3,
+              "width": 80,
+              "fontSize": 12,
+              "fontFamily": "Segoe UI",
+              "fontWeight": "Bold",
+              "fill": "#FFFFFF",
+              "content": "C++",
+              "textAlign": "center"
+            }
+          ]
+        },
+        {
+          "id": "arch_cpp_title",
+          "type": "text",
+          "x": 20,
+          "y": 55,
+          "width": 490,
+          "fontSize": 16,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "impl/ - C++ Implementation Layer"
+        },
+        {
+          "id": "arch_cpp_desc",
+          "type": "text",
+          "x": 20,
+          "y": 85,
+          "width": 490,
+          "fontSize": 13,
+          "fontFamily": "Segoe UI",
+          "lineHeight": 1.6,
+          "fill": "#8B949E",
+          "content": "C++ backend provides Theme management, color palettes, frameless window handling, and DWM special effects. Exposed to QML as CompleteUI module singleton objects."
+        },
+        {
+          "id": "arch_cpp_files",
+          "type": "text",
+          "x": 20,
+          "y": 140,
+          "width": 490,
+          "fontSize": 11,
+          "fontFamily": "Consolas",
+          "fill": "#FF7B72",
+          "content": "Colors.cpp/h | Theme.cpp/h | Frameless.cpp/h | DwmSpecialEffect.cpp/h"
+        }
+      ]
+    },
+    {
+      "id": "footer",
+      "type": "frame",
+      "x": 0,
+      "y": 2200,
+      "width": 1200,
+      "height": 200,
+      "fill": "#161B22",
+      "children": [
+        {
+          "id": "footer_line",
+          "type": "rectangle",
+          "x": 0,
+          "y": 0,
+          "width": 1200,
+          "height": 1,
+          "fill": "#30363D"
+        },
+        {
+          "id": "footer_title",
+          "type": "text",
+          "x": 60,
+          "y": 40,
+          "width": 400,
+          "fontSize": 24,
+          "fontFamily": "Segoe UI",
+          "fontWeight": "Bold",
+          "fill": "#FFFFFF",
+          "content": "CompleteUI"
+        },
+        {
+          "id": "footer_desc",
+          "type": "text",
+          "x": 60,
+          "y": 75,
+          "width": 500,
+          "fontSize": 14,
+          "fontFamily": "Segoe UI",
+          "fill": "#8B949E",
+          "content": "A modern Fluent Design component library for Qt Quick/QML applications. Built with Qt6 and C++."
+        },
+        {
+          "id": "footer_tech1",
+          "type": "frame",
+          "x": 60,
+          "y": 120,
+          "width": 100,
+          "height": 32,
+          "fill": "#21262D",
+          "cornerRadius": 16,
+          "stroke": "#30363D",
+          "strokeWidth": 1,
+          "children": [
+            {
+              "id": "footer_tech1_text",
+              "type": "text",
+              "x": 0,
+              "y": 5,
+              "width": 100,
+              "fontSize": 12,
+              "fontFamily": "Segoe UI",
+              "fill": "#58A6FF",
+              "content": "Qt Quick",
+              "textAlign": "center"
+            }
+          ]
+        },
+        {
+          "id": "footer_tech2",
+          "type": "frame",
+          "x": 170,
+          "y": 120,
+          "width": 100,
+          "height": 32,
+          "fill": "#21262D",
+          "cornerRadius": 16,
+          "stroke": "#30363D",
+          "strokeWidth": 1,
+          "children": [
+            {
+              "id": "footer_tech2_text",
+              "type": "text",
+              "x": 0,
+              "y": 5,
+              "width": 100,
+              "fontSize": 12,
+              "fontFamily": "Segoe UI",
+              "fill": "#FF7B72",
+              "content": "C++",
+              "textAlign": "center"
+            }
+          ]
+        },
+        {
+          "id": "footer_tech3",
+          "type": "frame",
+          "x": 280,
+          "y": 120,
+          "width": 100,
+          "height": 32,
+          "fill": "#21262D",
+          "cornerRadius": 16,
+          "stroke": "#30363D",
+          "strokeWidth": 1,
+          "children": [
+            {
+              "id": "footer_tech3_text",
+              "type": "text",
+              "x": 0,
+              "y": 5,
+              "width": 100,
+              "fontSize": 12,
+              "fontFamily": "Segoe UI",
+              "fill": "#79C0FF",
+              "content": "QML",
+              "textAlign": "center"
+            }
+          ]
+        },
+        {
+          "id": "footer_tech4",
+          "type": "frame",
+          "x": 390,
+          "y": 120,
+          "width": 120,
+          "height": 32,
+          "fill": "#21262D",
+          "cornerRadius": 16,
+          "stroke": "#30363D",
+          "strokeWidth": 1,
+          "children": [
+            {
+              "id": "footer_tech4_text",
+              "type": "text",
+              "x": 0,
+              "y": 5,
+              "width": 120,
+              "fontSize": 12,
+              "fontFamily": "Segoe UI",
+              "fill": "#00D4FF",
+              "content": "Fluent Design",
+              "textAlign": "center"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
