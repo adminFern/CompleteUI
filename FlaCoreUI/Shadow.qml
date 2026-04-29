@@ -1,6 +1,6 @@
 ﻿import QtQuick
 import QtQuick.Controls
-import CompleteUI
+import FlaCoreUI
 
 // 阴影组件：通过多层叠加的边框矩形模拟阴影效果
 Item {

@@ -1,16 +1,29 @@
 ﻿import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import CompleteUI
+import FlaCoreUI
 
-ComWindow {
+
+
+
+Window {
    id:win
    width: 1128
    height: 700
    visible: true
    title: qsTr("CompleteUI 示例")
    color: "transparent"
-   initialItem:"qrc:/qml/T_Content.qml"
+
+   Rectangle{
+    anchors.centerIn: parent
+    width: 600
+    height: 400
+      Shadow{}
+   }
+
+
+
+   //initialItem:"qrc:/qml/T_Content.qml"
 
    // Row{
    //    y:50
@@ -26,7 +39,7 @@ ComWindow {
    // }
 
 
-   appBar: ComAppBar{
+   /*appBar: ComAppBar{
       winIcon:"qrc:/favicon.ico"
       title:win.title
       action: RowLayout{
@@ -74,6 +87,6 @@ ComWindow {
          }
       }
 
-   }
+   }*/
 }
 

@@ -8,24 +8,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #设置程序输出目录
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${COMPLETEUI_DIRECTORY}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FLACOREUI_DIRECTORY}/bin)
 
 #Library type
 
-if (COMPLETEUI_BUILD_STATIC_LIB)
-    set(LIBRARY_TYPE_NAME CompleteUIplugin)
+if (FLACOREUI_BUILD_STATIC_LIB)
+    set(LIBRARY_TYPE_NAME FlaCoreUIplugin)
 else ()
-    set(LIBRARY_TYPE_NAME CompleteUI)
+    set(LIBRARY_TYPE_NAME FlaCoreUI)
 endif ()
-
-
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
-
-
+find_package(Qt6 REQUIRED COMPONENTS Quick)
 set(PROJECT_SOURCES
     main.cpp
-   # Administrative.h
-   # Administrative.cpp
     resources.qrc
     ico.rc
 )
@@ -43,14 +37,13 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 target_link_libraries(${PROJECT_NAME}  PRIVATE
     Qt6::Quick
-    Qt6::Sql
     ${LIBRARY_TYPE_NAME}
 )
 #message("LIBRARY_TYPE_NAME:${LIBRARY_TYPE_NAME}")
 
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_QML_IMPORT_PATH="${COMPLETEUI_DIRECTORY}/bin/CompleteUI"
+    QT_QML_IMPORT_PATH="${FLACOREUI_DIRECTORY}/bin/FlaCoreUI"
 )
 
 install(TARGETS ${PROJECT_NAME}

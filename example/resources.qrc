@@ -2,15 +2,5 @@
     <qresource prefix="/">
         <file>qml/Main.qml</file>
         <file>favicon.ico</file>
-        <file>qml/T_Content.qml</file>
-        <file>qml/T_Button.qml</file>
-        <file>qml/T_Home.qml</file>
-        <file>qml/T_ProgressBar.qml</file>
-        <file>qml/T_InputNumber.qml</file>
-        <file>qml/T_ListView.qml</file>
-        <file>qml/T_TreeView.qml</file>
-        <file>qml/T_Timeline.qml</file>
-        <file>qml/T_TableView.qml</file>
-        <file>qml/T_VirtualBackground.qml</file>
     </qresource>
 </RCC>
