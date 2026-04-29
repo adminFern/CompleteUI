@@ -23,9 +23,6 @@ set(PROJECT_SOURCES
     resources.qrc
     ico.rc
 )
-
-
-
 qt_add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCES}
 )
