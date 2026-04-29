@@ -2,6 +2,7 @@
 #include <QFont>
 #include <QGuiApplication>
 #include <QStyleHints>
+#include <QCursor>
 #include"Def.h"
 #include "DwmSpecialEffect.h"
 Theme::Theme(QObject *parent)
@@ -88,4 +89,14 @@ bool Theme::isDark() const
 QString Theme::defaultFontFamily() const
 {
     return  QGuiApplication::font().family();
+}
+
+void Theme::setOverrideCursor(int shape)
+{
+    QGuiApplication::setOverrideCursor(QCursor(static_cast<Qt::CursorShape>(shape)));
+}
+
+void Theme::restoreOverrideCursor()
+{
+    QGuiApplication::restoreOverrideCursor();
 }

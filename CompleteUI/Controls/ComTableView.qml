@@ -216,8 +216,7 @@ Item {
                     Rectangle {
                         width: parent.width; height: 1
                         anchors.bottom: parent.bottom
-                        color: item_table_mouse.isRowSelected ? control.selectedBorderColor
-                            : ((row === table_view.rows - 1) ? control.borderColor : "transparent")
+                        color: item_table_mouse.isRowSelected ? control.selectedBorderColor : control.borderColor
                     }
                 }
             }
@@ -251,7 +250,7 @@ Item {
             onRowsChanged: {
                 control.closeEditor()
                 d.rowHoverIndex = -1
-                table_view.forceLayout()
+                Qt.callLater(table_view.forceLayout)
             }
 
             delegate: com_table_delegate
@@ -339,11 +338,11 @@ Item {
                 preventStealing: true
 
                 onPressed: function(mouse) {
-                    AppHelper.setOverrideCursor(Qt.SplitHCursor)
+                    Theme.setOverrideCursor(Qt.SplitHCursor)
                     clickPos = Qt.point(mouse.x, mouse.y)
                 }
-                onReleased: { AppHelper.restoreOverrideCursor() }
-                onCanceled: { AppHelper.restoreOverrideCursor() }
+                onReleased: { Theme.restoreOverrideCursor() }
+                onCanceled: { Theme.restoreOverrideCursor() }
                 // 拖拽调整列宽
                 onPositionChanged: function(mouse) {
                     if (!pressed) return
@@ -355,8 +354,10 @@ Item {
                     if (!minimumWidth) minimumWidth = d.defaultItemWidth
                     if (!maximumWidth) maximumWidth = 600
                     columnModel.width = Math.min(Math.max(minimumWidth, w + delta.x), maximumWidth)
-                    table_view.forceLayout()
-                    header_horizontal.forceLayout()
+                    Qt.callLater(function() {
+                        table_view.forceLayout()
+                        header_horizontal.forceLayout()
+                    })
                 }
             }
         }
@@ -477,11 +478,11 @@ Item {
                              && rowModel.height)
                 }
                 onPressed: function(mouse) {
-                    AppHelper.setOverrideCursor(Qt.SplitVCursor)
+                    Theme.setOverrideCursor(Qt.SplitVCursor)
                     clickPos = Qt.point(mouse.x, mouse.y)
                 }
-                onReleased: { AppHelper.restoreOverrideCursor() }
-                onCanceled: { AppHelper.restoreOverrideCursor() }
+                onReleased: { Theme.restoreOverrideCursor() }
+                onCanceled: { Theme.restoreOverrideCursor() }
                 // 拖拽调整行高
                 onPositionChanged: function(mouse) {
                     if (!pressed) return
@@ -496,7 +497,7 @@ Item {
                     if (!maximumHeight) maximumHeight = 65535
                     rm.height = Math.min(Math.max(minimumHeight, h + delta.y), maximumHeight)
                     control.setRow(row, rm)
-                    table_view.forceLayout()
+                    Qt.callLater(table_view.forceLayout)
                 }
             }
         }
@@ -655,5 +656,5 @@ Item {
         return index
     }
 
-    onWidthChanged: { table_view.forceLayout() }
+    onWidthChanged: { Qt.callLater(table_view.forceLayout) }
 }

@@ -69,6 +69,8 @@ public:
                                color.blue(),
                                alpha);
     }
+    Q_INVOKABLE void setOverrideCursor(int shape);
+    Q_INVOKABLE void restoreOverrideCursor();
 
 signals:
     void isDarkChanged();
