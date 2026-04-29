@@ -1,13 +1,10 @@
 ﻿import QtQuick
-import QtQuick.Controls
 import FlaCoreUI
-
 // 阴影组件：通过多层叠加的边框矩形模拟阴影效果
 Item {
     property color color: Theme.isDark ? "#000000" : "#999999"   // 阴影颜色
     property int elevation: 5        // 阴影层数（越大越明显）
     property int radius: 4           // 圆角半径
-
     id: control
     anchors.fill: parent
 

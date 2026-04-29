@@ -1,6 +1,5 @@
 ﻿pragma Singleton
 import QtQuick
-
 // Fluent 图标字体单例：提供 1400+ 图标常量
 // 使用方式：FluentIcon.ico_xxx（如 FluentIcon.ico_GlobalNavButton）
 QtObject {

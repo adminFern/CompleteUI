@@ -81,10 +81,10 @@ Q_PROPERTY(TYPE M READ M NOTIFY M##Changed FINAL)                               
 
 
 //导入库
-#if defined(COMPLETEUI_STATIC)
+#if defined(FLACOREUI_STATIC)
 #define COM_EXPORT  // 静态库不需要导出/导入
 #else
-#if defined(COMPLETEUI_LIBRARY)
+#if defined(FLACOREUI_LIBRARY)
 #define COM_EXPORT Q_DECL_EXPORT
 #else
 #define COM_EXPORT Q_DECL_IMPORT

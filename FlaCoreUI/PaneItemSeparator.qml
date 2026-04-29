@@ -1,5 +1,5 @@
 import QtQuick
-import CompleteUI
+import FlaCoreUI
 
 // 导航分隔符：在导航列表中显示分隔线
 QtObject {

@@ -3,90 +3,207 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import FlaCoreUI
 
-
-
-
 Window {
-   id:win
-   width: 1128
-   height: 700
-   visible: true
-   title: qsTr("CompleteUI 示例")
-   color: "transparent"
+    id: win
+    width: 1128
+    height: 700
+    visible: true
+    title: qsTr("CompleteUI 示例")
+    color: "transparent"
 
-   Rectangle{
-    anchors.centerIn: parent
-    width: 600
-    height: 400
-      Shadow{}
-   }
+    RowLayout {
+        anchors.fill: parent
+        anchors.margins: 20
+        spacing: 40
 
+        // 垂直滚动条示例
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 10
 
-
-   //initialItem:"qrc:/qml/T_Content.qml"
-
-   // Row{
-   //    y:50
-   //    anchors.fill: parent
-   //    padding: 5
-   //    spacing: 10
-
-   //    ComButton{
-   //       text: "中国移动"
-   //    }
-
-
-   // }
-
-
-   /*appBar: ComAppBar{
-      winIcon:"qrc:/favicon.ico"
-      title:win.title
-      action: RowLayout{
-         ComIconButton{
-            id: btn_dark
-            padding: 0
-            radius: 0
-            handCursor: true
-            Layout.preferredWidth:  40
-            Layout.preferredHeight: parent.height
-            iconsize: 12
-            iconbold: true
-            iconsource: FluentIcon.ico_GlobalNavButton  //FluentIcons.SettingsSolidFluentIcons.GlobalNavButton
-            onClicked: menu_dark.open()
-            Menu{
-               id: menu_dark
-               width: 110
-               x: btn_dark.x
-               y: btn_dark.y + btn_dark.height
-               MenuItem {
-                  text: "浅色"
-                  onClicked:Theme.ThemeType=Theme.Light
-               }
-               MenuItem {
-                  text: "深色"
-                  onClicked: Theme.ThemeType=Theme.Dark
-               }
-               MenuItem {
-                  text: "正常模式"
-                  onClicked:Theme.SpecialEffect=EffectType.Normal
-               }
-               MenuItem {
-                  text: "云母"
-                  onClicked: Theme.SpecialEffect=EffectType.Mica
-               }
-               MenuItem {
-                  text: "深云母"
-                  onClicked: Theme.SpecialEffect=EffectType.MicaAlt
-               }
-               MenuItem {
-                  text: "亚克力"
-                  onClicked: Theme.SpecialEffect=EffectType.Acrylic
-               }
+            Text {
+                text: "垂直滚动条"
+                font.pixelSize: 16
+                font.bold: true
+                color: Theme.isDark ? "white" : "black"
             }
-         }
-      }
 
-   }*/
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: Theme.isDark ? "#1E1E1E" : "#FFFFFF"
+                    border.color: Theme.isDark ? "#333333" : "#E0E0E0"
+                    radius: 4
+                }
+
+                Flickable {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    contentWidth: parent.width
+                    contentHeight: contentColumn.implicitHeight
+
+                    Column {
+                        id: contentColumn
+                        width: parent.width
+                        spacing: 10
+
+                        Repeater {
+                            model: 30
+                            Rectangle {
+                                width: parent.width
+                                height: 40
+                                color: index % 2 === 0 ? (Theme.isDark ? "#2A2A2A" : "#F5F5F5") : (Theme.isDark ? "#252525" : "#FAFAFA")
+                                radius: 4
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "项目 " + (index + 1)
+                                    color: Theme.isDark ? "white" : "black"
+                                }
+                            }
+                        }
+                    }
+
+                    ScrollBar.vertical: FlaScrollBar {
+                        enabled: true
+                    }
+                }
+            }
+        }
+
+        // 水平滚动条示例
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 10
+
+            Text {
+                text: "水平滚动条"
+                font.pixelSize: 16
+                font.bold: true
+                color: Theme.isDark ? "white" : "black"
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: Theme.isDark ? "#1E1E1E" : "#FFFFFF"
+                    border.color: Theme.isDark ? "#333333" : "#E0E0E0"
+                    radius: 4
+                }
+
+                Flickable {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    contentWidth: contentRow.implicitWidth
+                    contentHeight: parent.height
+
+                    Row {
+                        id: contentRow
+                        height: parent.height
+                        spacing: 10
+
+                        Repeater {
+                            model: 20
+                            Rectangle {
+                                width: 120
+                                height: parent.height
+                                color: index % 2 === 0 ? (Theme.isDark ? "#2A2A2A" : "#F5F5F5") : (Theme.isDark ? "#252525" : "#FAFAFA")
+                                radius: 4
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "卡片 " + (index + 1)
+                                    color: Theme.isDark ? "white" : "black"
+                                }
+                            }
+                        }
+                    }
+
+                    ScrollBar.horizontal: FlaScrollBar {
+                        enabled: true
+                    }
+                }
+            }
+        }
+
+        // 双向滚动条示例
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 10
+
+            Text {
+                text: "双向滚动条"
+                font.pixelSize: 16
+                font.bold: true
+                color: Theme.isDark ? "white" : "black"
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: Theme.isDark ? "#1E1E1E" : "#FFFFFF"
+                    border.color: Theme.isDark ? "#333333" : "#E0E0E0"
+                    radius: 4
+                }
+
+                Flickable {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    contentWidth: grid.implicitWidth
+                    contentHeight: grid.implicitHeight
+
+                    Grid {
+                        id: grid
+                        columns: 10
+                        spacing: 5
+
+                        Repeater {
+                            model: 100
+                            Rectangle {
+                                width: 80
+                                height: 40
+                                color: {
+                                    if (Theme.isDark) {
+                                        return index % 3 === 0 ? "#2A2A2A" : (index % 3 === 1 ? "#252525" : "#303030")
+                                    } else {
+                                        return index % 3 === 0 ? "#F5F5F5" : (index % 3 === 1 ? "#FAFAFA" : "#EEEEEE")
+                                    }
+                                }
+                                radius: 4
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: (index + 1)
+                                    color: Theme.isDark ? "white" : "black"
+                                }
+                            }
+                        }
+                    }
+
+                    ScrollBar.vertical: FlaScrollBar {
+                        enabled: true
+                    }
+
+                    ScrollBar.horizontal: FlaScrollBar {
+                        enabled: true
+                    }
+                }
+            }
+        }
+    }
 }
-

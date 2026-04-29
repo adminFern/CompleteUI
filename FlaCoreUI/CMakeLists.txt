@@ -67,7 +67,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 if(FLACOREUI_BUILD_STATIC_LIB)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC COMPLETEUI_STATIC)#静态库
+    target_compile_definitions(${PROJECT_NAME} PUBLIC FLACOREUI_STATIC)#静态库
 else()
-    target_compile_definitions(${PROJECT_NAME} PUBLIC COMPLETEUI_LIBRARY) #//动态库
+    target_compile_definitions(${PROJECT_NAME} PUBLIC FLACOREUI_LIBRARY) #//动态库
 endif()
