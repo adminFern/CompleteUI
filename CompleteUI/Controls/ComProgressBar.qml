@@ -4,13 +4,14 @@ import QtQuick.Templates as T
 import Qt5Compat.GraphicalEffects
 import CompleteUI
 
+// 进度条组件：带发光效果和平滑动画
 T.ProgressBar {
     id: control
 
-    property color progressColor: Theme.PrimaryColor
-    property real barHeight: 20
+    property color progressColor: Theme.PrimaryColor   // 进度颜色
+    property real barHeight: 20                          // 进度条高度
 
-    property bool showProgressText: true
+    property bool showProgressText: true                 // 显示进度文本
     property int progressTextFontSize: barHeight * 0.7
     property color progressTextColor: Theme.Textcolor
     property string progressTextFormat: "%1%"
@@ -31,6 +32,7 @@ T.ProgressBar {
         radius: control.barHeight / 2
         color: Theme.setColorAlpha(control.progressColor, 10)
 
+        // 发光效果
         RectangularGlow {
             id: glow
             x: 0
@@ -49,6 +51,7 @@ T.ProgressBar {
             }
         }
 
+        // 进度填充区域
         Item {
             id: progressClip
             anchors.fill: parent
@@ -67,14 +70,18 @@ T.ProgressBar {
                     property: "animatedWidth"
                     value: control.visualPosition * progressClip.width
                 }
+
+                // 进度宽度动画
                 Behavior on animatedWidth {
                     NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
                 }
+
                 Component.onCompleted: animatedWidth = control.visualPosition * progressClip.width
             }
         }
     }
 
+    // 进度文本
     contentItem: Text {
         visible: control.showProgressText
         text: control.progressTextFormat.arg(Math.round(control.value * 100))

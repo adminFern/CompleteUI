@@ -5,35 +5,37 @@ import QtQuick.Controls.impl
 import QtQuick.Templates as T
 import CompleteUI
 
+// 分组框组件：带标题的容器，用于组织相关控件
 T.GroupBox {
     id: control
     z: 0
-    property color bordercolor:Theme.FillBorderColor
-    property color textcolor:Theme.Textcolor
+
+    property color bordercolor: Theme.FillBorderColor
+    property color textcolor: Theme.Textcolor
     property color normalcolor: Theme.FillBackgroundColor
-    QtObject{
-        id:d
+    property int radius: 4
+
+    QtObject {
+        id: d
         property color color: {
-            if (!enabled) {
-                return Theme.DisabledColor
-            }
+            if (!enabled) return Theme.DisabledColor
             return normalcolor
         }
     }
-    property int radius: 4
+
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, contentWidth + leftPadding + rightPadding, implicitLabelWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, contentHeight + topPadding + bottomPadding)
     spacing: 4
-    padding:0
+    padding: 0
     font: Qt.font({
-                      family: Theme.defaultFontFamily,
-                      pixelSize: 14,
-                      weight: Font.Bold
-                  })
+        family: Theme.defaultFontFamily,
+        pixelSize: 14,
+        weight: Font.Bold
+    })
     topPadding: padding + (implicitLabelWidth > 0 ? implicitLabelHeight + spacing : 0)
-
     clip: true
 
+    // 标题标签
     label: Text {
         width: control.availableWidth
         text: control.title
@@ -42,6 +44,8 @@ T.GroupBox {
         verticalAlignment: Text.AlignVCenter
         color: textcolor
     }
+
+    // 背景
     background: Rectangle {
         y: control.topPadding - control.bottomPadding
         width: parent.width
@@ -49,6 +53,6 @@ T.GroupBox {
         radius: control.radius
         border.color: control.bordercolor
         border.width: 1
-        color:d.color
+        color: d.color
     }
 }

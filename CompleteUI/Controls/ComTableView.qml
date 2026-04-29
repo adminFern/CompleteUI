@@ -9,16 +9,17 @@ Item {
     // ==================== 公共属性 ====================
     readonly property alias rows: table_view.rows
     readonly property alias columns: table_view.columns
-    readonly property alias current: d.current
-    property alias view: table_view
+    readonly property alias current: d.current    // 当前选中行数据
+    property alias view: table_view               // TableView 实例引用
 
-    property var columnSource: []
+    property var columnSource: []                 // 列配置数组
     property color borderColor: Theme.DividerColor
-    property bool horizonalHeaderVisible: true
-    property bool verticalHeaderVisible: false
+    property bool horizonalHeaderVisible: true    // 水平表头可见性
+    property bool verticalHeaderVisible: false    // 垂直表头可见性
     property color selectedBorderColor: Theme.PrimaryColor
     property color selectedColor: Theme.setColorAlpha(Theme.PrimaryColor, 100)
 
+    // 列宽计算：优先使用配置宽度，否则使用默认宽度
     property var columnWidthProvider: function(column) {
         var columnModel = control.columnSource[column]
         if (columnModel.width) return columnModel.width
@@ -26,6 +27,7 @@ Item {
         return d.defaultItemWidth
     }
 
+    // 行高计算：优先使用行配置高度，否则使用默认高度
     property var rowHeightProvider: function(row) {
         var rowModel = control.getRow(row)
         if (rowModel && rowModel.height) return rowModel.height
@@ -36,17 +38,18 @@ Item {
     // ==================== 内部状态 ====================
     QtObject {
         id: d
-        property var current
-        property int rowHoverIndex: -1
+        property var current                    // 当前选中行数据对象
+        property int rowHoverIndex: -1          // 鼠标悬停行索引
         property int defaultItemWidth: 100
         property int defaultItemHeight: 42
-        property int _keyCounter: 0
+        property int _keyCounter: 0             // 行唯一键计数器
     }
 
-    // ==================== 数据模型（动态创建，列嵌入在定义字符串中） ====================
+    // ==================== 数据模型（动态创建） ====================
     property QtObject tableModel: null
     property QtObject headerColumnModel: null
 
+    // 根据列配置重建 TableModel
     function _rebuildModels() {
         if (columnSource.length === 0) return
 
@@ -58,6 +61,7 @@ Item {
         var mainCols = ''
         var offsetX = 0
 
+        // 遍历列配置，构建 TableModelColumn 字符串
         for (var i = 0; i < columnSource.length; i++) {
             var item = columnSource[i]
             if (!item.width) item.width = d.defaultItemWidth
@@ -68,10 +72,11 @@ Item {
             headerRow[di] = item
         }
 
-        // 一行构建：主数据模型 + 表头模型
+        // 动态创建主数据模型
         var modelStr = 'import Qt.labs.qmlmodels 1.0; TableModel { ' + mainCols + '}'
         tableModel = Qt.createQmlObject(modelStr, control)
 
+        // 动态创建表头模型
         modelStr = 'import Qt.labs.qmlmodels 1.0; TableModel { ' + mainCols + '}'
         headerColumnModel = Qt.createQmlObject(modelStr, control)
         headerColumnModel.rows = [headerRow]
@@ -91,9 +96,9 @@ Item {
         TableModelColumn { display: "rowIndex" }
     }
 
-    // ==================== 显示组件 ====================
+    // ==================== 单元格显示组件 ====================
 
-    // 文本单元格
+    // 文本单元格组件
     Component {
         id: com_text
         Text {
@@ -113,21 +118,20 @@ Item {
         }
     }
 
-    // 单元格委托
+    // 单元格委托组件
     Component {
         id: com_table_delegate
         MouseArea {
             id: item_table_mouse
-            // 从 TableView 上下文获取行列号
             readonly property int viewRow: row
             readonly property int viewColumn: column
-            // TableModel 不提供 rowModel/columnModel 角色，直接从外部获取
-            // 依赖 table_view.rows 确保模型行数变化后重新求值，避免委托复用时数据过期
+            // 获取当前行数据模型，依赖 table_view.rows 确保数据刷新
             property var rowModel: {
                 var _rows = table_view.rows
                 return control.getRow(viewRow)
             }
             property var columnModel: columnSource instanceof Array ? control.columnSource[viewColumn] : null
+            // 判断当前行是否为选中行
             property bool isRowSelected: {
                 var _rows = table_view.rows
                 if (!rowModel) return false
@@ -142,6 +146,7 @@ Item {
 
             Rectangle {
                 anchors.fill: parent
+                // 行背景色：选中 > 悬停 > 斑马纹
                 color: {
                     if (item_table_mouse.isRowSelected) return control.selectedColor
                     if (d.rowHoverIndex === viewRow)
@@ -150,6 +155,7 @@ Item {
                         : (Theme.isDark ? Qt.rgba(1, 1, 1, 0.03) : Qt.rgba(0, 0, 0, 0.03))
                 }
 
+                // 左键点击选中行
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton
@@ -159,6 +165,7 @@ Item {
                     }
                 }
 
+                // 单元格内容加载器，支持文本或自定义组件
                 Loader {
                     id: item_table_loader
                     readonly property var cellRowModel: item_table_mouse.rowModel
@@ -167,6 +174,7 @@ Item {
                     property int row: item_table_mouse.viewRow
                     property int column: item_table_mouse.viewColumn
                     property bool isObject: typeof (display) === "object"
+                    // 合并自定义组件选项
                     readonly property var _mergedOptions: {
                         if (!isObject) return {}
                         var base = display.options
@@ -260,6 +268,7 @@ Item {
             property bool canceled: false
             property var _model: model
             readonly property var columnModel: control.columnSource[_index]
+            // 查找当前列索引
             readonly property int _index: {
                 for (var i = 0; i < control.columnSource.length; i++) {
                     if (control.columnSource[i].dataIndex === display.dataIndex) return i
@@ -276,8 +285,9 @@ Item {
                 : Math.max(TableView.view.height, Number.MIN_VALUE)
 
             color: Theme.isDark ? Qt.rgba(50 / 255, 50 / 255, 50 / 255, 1)
-                                : Qt.rgba(247 / 255, 247 / 255, 247 / 255, 1)
+                                : Qt.rgba(247 / 255, 247 / 255, 247, 1)
 
+            // 表头边框
             Rectangle { border.color: control.borderColor; width: parent.width; height: 1; anchors.top: parent.top; color: "#00000000" }
             Rectangle { border.color: control.borderColor; width: parent.width; height: 1; anchors.bottom: parent.bottom; color: "#00000000" }
             Rectangle {
@@ -300,6 +310,7 @@ Item {
                 onClicked: function(event) { control.closeEditor() }
             }
 
+            // 表头内容加载器
             Loader {
                 id: item_column_loader
                 property var model: column_item_control._model
@@ -313,12 +324,13 @@ Item {
                 sourceComponent: isObject ? display.comId : com_column_text
             }
 
-            // 列宽调整手柄
+            // 列宽拖拽调整手柄
             MouseArea {
                 property point clickPos: "0,0"
                 height: parent.height; width: 6
                 anchors.right: parent.right
                 acceptedButtons: Qt.LeftButton; hoverEnabled: true
+                // 冻结列或固定宽度列不显示调整手柄
                 visible: !columnModel.frozen
                          && !(columnModel.width === columnModel.minimumWidth
                               && columnModel.width === columnModel.maximumWidth
@@ -332,6 +344,7 @@ Item {
                 }
                 onReleased: { AppHelper.restoreOverrideCursor() }
                 onCanceled: { AppHelper.restoreOverrideCursor() }
+                // 拖拽调整列宽
                 onPositionChanged: function(mouse) {
                     if (!pressed) return
                     var delta = Qt.point(mouse.x - clickPos.x, mouse.y - clickPos.y)
@@ -349,6 +362,7 @@ Item {
         }
     }
 
+    // 表头文本组件
     Component {
         id: com_column_text
         Text {
@@ -360,6 +374,7 @@ Item {
         }
     }
 
+    // 水平表头 TableView
     TableView {
         id: header_horizontal
         model: control.headerColumnModel
@@ -375,7 +390,7 @@ Item {
         syncDirection: Qt.Horizontal
         ScrollBar.horizontal: scroll_bar_h_2
         columnWidthProvider: table_view.columnWidthProvider
-        syncView: table_view.rows === 0 ? null : table_view
+        syncView: table_view.rows === 0 ? null : table_view    // 无数据时不与主表格同步
         onContentXChanged: { timer_horizontal_force_layout.restart() }
 
         Timer {
@@ -388,6 +403,7 @@ Item {
     }
 
     // ==================== 垂直表头 ====================
+    // 左上角空白区域
     Item {
         id: header_vertical_column
         anchors {
@@ -401,7 +417,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             color: Theme.isDark ? Qt.rgba(50 / 255, 50 / 255, 50 / 255, 1)
-                                : Qt.rgba(247 / 255, 247 / 255, 247 / 255, 1)
+                                : Qt.rgba(247 / 255, 247 / 255, 247, 1)
         }
         Rectangle { border.color: control.borderColor; width: parent.width; height: 1; anchors.top: parent.top; color: "#00000000" }
         Rectangle { border.color: control.borderColor; width: parent.width; height: 1; anchors.bottom: parent.bottom; color: "#00000000" }
@@ -409,6 +425,7 @@ Item {
         Rectangle { border.color: control.borderColor; width: 1; height: parent.height; anchors.right: parent.right; color: "#00000000" }
     }
 
+    // 行号单元格委托
     Component {
         id: com_row_header_delegate
         Rectangle {
@@ -419,7 +436,7 @@ Item {
             implicitWidth: Math.max(30, row_text.implicitWidth + (cellPadding * 2))
             implicitHeight: row_text.implicitHeight + (cellPadding * 2)
             color: Theme.isDark ? Qt.rgba(50 / 255, 50 / 255, 50 / 255, 1)
-                                : Qt.rgba(247 / 255, 247 / 255, 247 / 255, 1)
+                                : Qt.rgba(247 / 255, 247 / 255, 247, 1)
 
             Rectangle { border.color: control.borderColor; width: parent.width; height: 1; anchors.top: parent.top
                 visible: row !== 0; color: "#00000000" }
@@ -444,7 +461,7 @@ Item {
                 onClicked: function(event) { control.closeEditor() }
             }
 
-            // 行高调整手柄
+            // 行高拖拽调整手柄
             MouseArea {
                 property point clickPos: "0,0"
                 height: 6; width: parent.width
@@ -452,6 +469,7 @@ Item {
                 acceptedButtons: Qt.LeftButton
                 cursorShape: Qt.SplitVCursor
                 preventStealing: true
+                // 固定高度行不显示调整手柄
                 visible: {
                     if (!rowModel) return false
                     return !(rowModel.height === rowModel._minimumHeight
@@ -464,6 +482,7 @@ Item {
                 }
                 onReleased: { AppHelper.restoreOverrideCursor() }
                 onCanceled: { AppHelper.restoreOverrideCursor() }
+                // 拖拽调整行高
                 onPositionChanged: function(mouse) {
                     if (!pressed) return
                     var rm = control.getRow(row)
@@ -483,6 +502,7 @@ Item {
         }
     }
 
+    // 垂直表头 TableView
     TableView {
         id: header_vertical
         boundsBehavior: Flickable.StopAtBounds
@@ -501,6 +521,7 @@ Item {
 
         onContentYChanged: { timer_vertical_force_layout.restart() }
 
+        // 监听主表格行数变化，更新行号模型
         Connections {
             target: table_view
             function onRowsChanged() {
@@ -520,6 +541,7 @@ Item {
     }
 
     // ==================== 滚动条 ====================
+    // 主表格水平滚动条
     ComScrollBar {
         id: scroll_bar_h
         anchors {
@@ -531,6 +553,7 @@ Item {
         z: 999
     }
 
+    // 空表格时的水平滚动条
     ComScrollBar {
         id: scroll_bar_h_2
         anchors {
@@ -542,6 +565,7 @@ Item {
         z: 999
     }
 
+    // 垂直滚动条
     ComScrollBar {
         id: scroll_bar_v
         anchors {
@@ -553,7 +577,8 @@ Item {
         z: 999
     }
 
-    // ==================== 公共方法 — 委托给 TableModel 内置 CRUD ====================
+    // ==================== 公共方法 ====================
+    // 重置滚动位置
     function resetPosition() {
         scroll_bar_h.decrease()
         scroll_bar_v.decrease()
@@ -561,6 +586,7 @@ Item {
 
     function closeEditor() {}
 
+    // 创建自定义单元格组件配置对象
     function customItem(comId, options) {
         var o = {}
         o.comId = comId
@@ -568,22 +594,25 @@ Item {
         return o
     }
 
+    // 获取指定行数据
     function getRow(rowIndex) {
         if (!tableModel) return null
         return tableModel.getRow(rowIndex)
     }
 
+    // 清空所有行
     function clearRows() {
         if (!tableModel) return
         d.current = null
         tableModel.clear()
     }
 
+    // 删除指定行
     function removeRow(rowIndex, rows) {
         if (!tableModel) return
         if (rowIndex >= tableModel.rowCount) return
         var count = rows !== undefined ? rows : 1
-        // 删除行时清除选中状态引用，避免悬空引用导致选中颜色异常
+        // 删除选中行时清除引用，避免悬空引用
         if (d.current) {
             var curIdx = currentIndex()
             if (curIdx >= 0 && curIdx >= rowIndex && curIdx < rowIndex + count)
@@ -592,23 +621,27 @@ Item {
         tableModel.removeRow(rowIndex, count)
     }
 
+    // 在指定位置插入行
     function insertRow(rowIndex, obj) {
         if (!tableModel) return
         if (!obj._key) obj._key = "row_" + (++d._keyCounter)
         tableModel.insertRow(rowIndex, obj)
     }
 
+    // 追加行到末尾
     function appendRow(obj) {
         if (!tableModel) return
         if (!obj._key) obj._key = "row_" + (++d._keyCounter)
         tableModel.appendRow(obj)
     }
 
+    // 更新指定行数据
     function setRow(rowIndex, obj) {
         if (!tableModel) return
         tableModel.setRow(rowIndex, obj)
     }
 
+    // 获取当前选中行索引
     function currentIndex() {
         if (!tableModel) return -1
         var index = -1

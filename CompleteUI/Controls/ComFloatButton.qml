@@ -6,6 +6,7 @@ import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import CompleteUI
 
+// 浮动按钮：可展开多个子按钮，支持四个方向展开
 T.Control {
     id: control
 
@@ -16,12 +17,12 @@ T.Control {
         Right
     }
 
-    property int direction: ComFloatButton.Direction.Down
-    property int buttonSize: 48
-    property int buttonSpacing: 12
-    property string iconsource: FluentIcon.ico_Add
-    property color accentColor: Theme.PrimaryColor
-    property alias expanded: d.expanded
+    property int direction: ComFloatButton.Direction.Down   // 展开方向
+    property int buttonSize: 48                              // 按钮尺寸
+    property int buttonSpacing: 12                           // 按钮间距
+    property string iconsource: FluentIcon.ico_Add           // 主按钮图标
+    property color accentColor: Theme.PrimaryColor           // 强调色
+    property alias expanded: d.expanded                      // 是否展开
 
     // 发光特效相关属性
     property bool glowEnabled: true
@@ -32,7 +33,7 @@ T.Control {
     signal clicked
     signal subClicked(int index)
 
-    property var actions: []
+    property var actions: []    // 子按钮配置数组
 
     hoverEnabled: true
 
@@ -41,6 +42,7 @@ T.Control {
         property bool expanded: false
     }
 
+    // 子按钮列表
     Repeater {
         id: repeater
         model: control.actions.length > 0 ? control.actions.length : 0
@@ -52,6 +54,7 @@ T.Control {
             width: control.buttonSize * 0.9
             height: control.buttonSize * 0.9
 
+            // 根据方向计算目标位置
             property real targetX: {
                 if (direction === ComFloatButton.Direction.Up || direction === ComFloatButton.Direction.Down) {
                     return mainBtnWrapper.x + (mainBtnWrapper.width - width) / 2
@@ -81,6 +84,7 @@ T.Control {
             Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             Behavior on scale { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 
+            // 子按钮背景
             Rectangle {
                 id: subBtn
                 anchors.fill: parent
@@ -95,6 +99,7 @@ T.Control {
                 border.width: 0
                 opacity: (actionData && actionData.enabled) ? 1 : 0.5
 
+                // 发光效果
                 layer.enabled: (control.glowEnabled && subMouse.hovered && actionData && actionData.enabled === true) ? true : false
                 layer.effect: DropShadow {
                     horizontalOffset: 0
@@ -108,6 +113,7 @@ T.Control {
 
                 Behavior on color { ColorAnimation { duration: 150 } }
 
+                // 子按钮图标
                 ComImage {
                     anchors.centerIn: parent
                     width: subBtn.width * 0.6
@@ -132,6 +138,7 @@ T.Control {
         }
     }
 
+    // 主按钮
     Item {
         id: mainBtnWrapper
         x: 0
@@ -151,6 +158,7 @@ T.Control {
                 return accentColor
             }
 
+            // 发光效果
             layer.enabled: (control.glowEnabled && mainMouse.hovered) ? true : false
             layer.effect: DropShadow {
                 horizontalOffset: 0
@@ -166,6 +174,7 @@ T.Control {
             Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
             scale: mainMouse.pressed ? 0.92 : 1.0
 
+            // 主按钮图标（展开时旋转45度）
             ComImage {
                 anchors.centerIn: parent
                 width: mainBtn.width * 0.6

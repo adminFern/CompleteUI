@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import CompleteUI
 
+// 数字输入框：支持步进增减、格式化、前后缀
 T.Control {
     id: control
 
@@ -11,22 +12,22 @@ T.Control {
 
     property bool animationEnabled: true
     property bool active: hovered || activeFocus
-    property bool showHandler: true
-    property bool alwaysShowHandler: false
-    property bool useWheel: false
-    property bool useKeyboard: true
-    property real value: 0
-    property real min: Number.MIN_SAFE_INTEGER
-    property real max: Number.MAX_SAFE_INTEGER
-    property real step: 1
-    property int precision: 0
+    property bool showHandler: true               // 显示增减按钮
+    property bool alwaysShowHandler: false        // 始终显示增减按钮
+    property bool useWheel: false                 // 支持滚轮调节
+    property bool useKeyboard: true               // 支持键盘调节
+    property real value: 0                        // 当前值
+    property real min: Number.MIN_SAFE_INTEGER    // 最小值
+    property real max: Number.MAX_SAFE_INTEGER    // 最大值
+    property real step: 1                         // 步进值
+    property int precision: 0                     // 小数位数
     property bool readOnly: false
-    property string prefix: ''
-    property string suffix: ''
+    property string prefix: ''                    // 前缀
+    property string suffix: ''                    // 后缀
     property string upIcon: FluentIcon.ico_ChevronUp
     property string downIcon: FluentIcon.ico_ChevronDown
-    property var formatter: (v) => v.toFixed(precision)
-    property var parser: (text) => parseFloat(text)
+    property var formatter: (v) => v.toFixed(precision)   // 格式化函数
+    property var parser: (text) => parseFloat(text)       // 解析函数
     property int handlerWidth: 24
     property color colorBg: Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.03)
     property color colorBorder: {
@@ -40,14 +41,17 @@ T.Control {
 
     property alias input: __input
 
+    // 增加值
     function increase() {
         value = value + step > max ? max : value + step;
     }
 
+    // 减少值
     function decrease() {
         value = value - step < min ? min : value - step;
     }
 
+    // 全选
     function selectAll() {
         __input.selectAll();
     }
@@ -67,7 +71,7 @@ T.Control {
         id: __row
         spacing: 0
 
-        // Prefix
+        // 前缀
         Text {
             visible: control.prefix !== ''
             text: control.prefix
@@ -78,7 +82,7 @@ T.Control {
             rightPadding: 4
         }
 
-        // TextInput
+        // 输入框
         TextInput {
             id: __input
             Layout.fillWidth: true
@@ -115,6 +119,7 @@ T.Control {
                 control.valueModified();
             }
 
+            // 键盘快捷键
             Keys.onReturnPressed: editingFinished()
             Keys.onEnterPressed: editingFinished()
             Keys.onUpPressed: {
@@ -130,6 +135,7 @@ T.Control {
                 }
             }
 
+            // 滚轮调节
             WheelHandler {
                 enabled: control.enabled && control.useWheel
                 onWheel: function(wheel) {
@@ -146,7 +152,7 @@ T.Control {
             Component.onCompleted: editingFinished()
         }
 
-        // Suffix
+        // 后缀
         Text {
             visible: control.suffix !== ''
             text: control.suffix
@@ -157,12 +163,11 @@ T.Control {
             rightPadding: 4
         }
 
-        // Up/Down handler column
+        // 增减按钮区域
         Rectangle {
             id: __handlerRoot
             visible: control.showHandler && !control.readOnly
-            Layout.preferredWidth: control.enabled && (control.hovered || control.alwaysShowHandler)
-                                   ? control.handlerWidth : 0
+            Layout.preferredWidth: control.enabled && (control.hovered || control.alwaysShowHandler) ? control.handlerWidth : 0
             Layout.fillHeight: true
             color: "transparent"
             clip: true
@@ -176,6 +181,7 @@ T.Control {
                 NumberAnimation { easing.type: Easing.OutCubic; duration: 150 }
             }
 
+            // 左侧分隔线
             Rectangle {
                 anchors.left: parent.left
                 anchors.top: parent.top
@@ -184,21 +190,19 @@ T.Control {
                 color: control.colorBorder
             }
 
+            // 增加按钮
             ComIconButton {
                 id: __upButton
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: hovered ? parent.hoverHeight :
-                                  __downButton.hovered ? parent.noHoverHeight : parent.halfHeight
+                height: hovered ? parent.hoverHeight : __downButton.hovered ? parent.noHoverHeight : parent.halfHeight
                 padding: 0
                 radius: 0
                 iconsource: control.upIcon
                 iconsize: 10
                 iconbold: true
-                iconColor: control.enabled ?
-                               (hovered ? Theme.PrimaryColor : control.colorText) :
-                               Theme.DisabledTextColor
+                iconColor: control.enabled ? (hovered ? Theme.PrimaryColor : control.colorText) : Theme.DisabledTextColor
                 handCursor: control.value < control.max
                 autoRepeat: true
                 onClicked: {
@@ -212,6 +216,7 @@ T.Control {
                 }
             }
 
+            // 中间分隔线
             Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -220,22 +225,20 @@ T.Control {
                 color: control.colorBorder
             }
 
+            // 减少按钮
             ComIconButton {
                 id: __downButton
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: __upButton.bottom
                 anchors.topMargin: -1
-                height: (__downButton.hovered ? parent.hoverHeight :
-                           __upButton.hovered ? parent.noHoverHeight : parent.halfHeight) + 1
+                height: (__downButton.hovered ? parent.hoverHeight : __upButton.hovered ? parent.noHoverHeight : parent.halfHeight) + 1
                 padding: 0
                 radius: 0
                 iconsource: control.downIcon
                 iconsize: 10
                 iconbold: true
-                iconColor: control.enabled ?
-                               (hovered ? Theme.PrimaryColor : control.colorText) :
-                               Theme.DisabledTextColor
+                iconColor: control.enabled ? (hovered ? Theme.PrimaryColor : control.colorText) : Theme.DisabledTextColor
                 handCursor: control.value > control.min
                 autoRepeat: true
                 onClicked: {
@@ -251,6 +254,7 @@ T.Control {
         }
     }
 
+    // 背景
     background: Rectangle {
         radius: control.radius
         color: control.colorBg

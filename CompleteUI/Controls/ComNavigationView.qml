@@ -4,24 +4,28 @@ import QtQuick.Layouts
 import QtQuick.Controls.Basic
 import CompleteUI
 
+// 导航视图组件：支持三种显示模式（Open/Compact/Minimal）
+// 使用 items 和 footerItems 属性配置导航项
 Item {
     id: control
+
+    // 导航视图类型枚举
     enum NavViewType {
-        Open = 0,
-        Compact = 1,
-        Minimal = 2,
-        Auto = 4
+        Open = 0,      // 完整展开模式
+        Compact = 1,   // 紧凑模式（只显示图标）
+        Minimal = 2,   // 最小模式（隐藏侧边栏）
+        Auto = 4       // 自动模式（根据宽度切换）
     }
 
-    property Objects items          // 主导航项容器
-    property Objects footerItems   // 页脚项容器
-    property color primaryColor:Theme.PrimaryColor
-    property int displayMode:ComNavigationView.NavViewType.Auto //NavigationViewType.Auto
-    property int navCompactWidth: 40
-    property int itemHeight: 38
-    property int sidebarWidth: 200
+    property Objects items              // 主导航项容器
+    property Objects footerItems        // 页脚项容器
+    property color primaryColor: Theme.PrimaryColor
+    property int displayMode: ComNavigationView.NavViewType.Auto
+    property int navCompactWidth: 40    // 紧凑模式下侧边栏宽度
+    property int itemHeight: 38         // 导航项高度
+    property int sidebarWidth: 200      // 侧边栏宽度
     property color textcolor: Theme.Textcolor
-    property font textfont:Qt.font({family:Theme.defaultFontFamily,pixelSize : 13, weight: Font.Normal})
+    property font textfont: Qt.font({ family: Theme.defaultFontFamily, pixelSize: 13, weight: Font.Normal })
     signal itemclicked(string title)
 
     QtObject{
@@ -132,10 +136,10 @@ Item {
             color:model.dividercolor
         }
     }
-    //底部的代理UI
-    Component{
-        id:com_panel_item_header
-        Item{
+    // 页脚项委托组件
+    Component {
+        id: com_panel_item_header
+        Item {
             height:  control.itemHeight
             width: layout_list.width
             Rectangle{
@@ -208,10 +212,10 @@ Item {
             }
         }
     }
-    //普通导航
-    Component{
+    // 普通导航项委托组件
+    Component {
         id: com_panel_item
-        Item{
+        Item {
             height:{
                 if (model && model._parent) return model._parent.isExpand ? control.itemHeight : 0
                 return control.itemHeight
@@ -316,11 +320,10 @@ Item {
             }
         }
     }
-    //子节点展开代理
-
-    Component{
+    // 可展开分组项委托组件
+    Component {
         id: com_panel_item_expander
-        Item{
+        Item {
             height: control.itemHeight
             width: layout_list.width
             Rectangle{
@@ -427,7 +430,7 @@ Item {
 
 
 
-    //内容区域
+    // 侧边栏区域
     Item {
         id: layout_list
         anchors.left: parent.left
@@ -510,8 +513,8 @@ Item {
         }
     }//Item {
 
-    // === 内容区：StackView放在layout_list外部 ===
-    StackView{
+    // 内容区域：StackView 页面容器
+    StackView {
         id: stack
         anchors.left: layout_list.right
         anchors.leftMargin: 1
@@ -521,7 +524,8 @@ Item {
         clip: true
     }
 
-    function isExpand(isexpand){
+    // 展开/折叠所有分组
+    function isExpand(isexpand) {
         for(var i=0;i<nav_list.model.length;i++){
             var item = nav_list.model[i]
             if(item instanceof PaneItemExpander){

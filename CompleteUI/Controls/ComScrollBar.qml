@@ -3,10 +3,12 @@ import QtQuick.Controls.impl
 import QtQuick.Templates as T
 import CompleteUI
 
+// 滚动条组件：支持水平和垂直方向，带展开/收缩动画和步进按钮
 T.ScrollBar {
     id: control
 
     property bool enabled: true
+    // 颜色配置
     property color normalColor: Theme.isDark ? "#A0A0A0" : "#898989"
     property color hoverColor: Theme.isDark ? "#C0C0C0" : "#595959"
     property color pressedColor: Theme.isDark ? "#D0D0D0" : "#404040"
@@ -22,14 +24,17 @@ T.ScrollBar {
     padding: 2
     interactive: enabled
 
+    // 内部状态
     QtObject {
         id: d
-        property bool buttonVisible: Number(control.contentItem.implicitWidth) === 6
+        property bool buttonVisible: Number(control.contentItem.implicitWidth) === 6  // 展开状态时显示按钮
     }
 
+    // 垂直滚动条增加上下按钮空间
     verticalPadding: vertical ? padding + 12 : padding
     horizontalPadding: horizontal ? padding + 12 : padding
 
+    // 滑块：支持状态机控制展开/收缩动画
     contentItem: Rectangle {
         id: contentItemRect
         implicitWidth: 2
@@ -42,6 +47,7 @@ T.ScrollBar {
             return control.normalColor
         }
 
+        // 激活状态：滑块展开变大
         states: State {
             name: "active"
             when: control.policy === T.ScrollBar.AlwaysOn || (control.active && control.size < 1.0)
@@ -51,6 +57,7 @@ T.ScrollBar {
             }
         }
 
+        // 状态过渡动画
         transitions: [
             Transition {
                 from: "active"
@@ -81,6 +88,7 @@ T.ScrollBar {
         ]
     }
 
+    // 背景
     background: Rectangle {
         radius: 5
         color: Theme.isDark ? "#292929" : "#F8F8F8"
@@ -90,7 +98,7 @@ T.ScrollBar {
         }
     }
 
-    // 上按钮
+    // 上按钮（垂直滚动条）
     MouseArea {
         width: 8
         height: 8
@@ -112,7 +120,7 @@ T.ScrollBar {
         onClicked: control.decrease()
     }
 
-    // 下按钮
+    // 下按钮（垂直滚动条）
     MouseArea {
         width: 8
         height: 8
@@ -134,7 +142,7 @@ T.ScrollBar {
         onClicked: control.increase()
     }
 
-    // 左按钮
+    // 左按钮（水平滚动条）
     MouseArea {
         width: 8
         height: 8
@@ -156,7 +164,7 @@ T.ScrollBar {
         onClicked: control.decrease()
     }
 
-    // 右按钮
+    // 右按钮（水平滚动条）
     MouseArea {
         width: 8
         height: 8

@@ -1,10 +1,15 @@
 ﻿pragma Singleton
 import QtQuick
-QtObject {
-    property FontLoader fontLoader: FontLoader{
-          source: "Font/FluentIcons.ttf"
-      }
 
+// Fluent 图标字体单例：提供 1400+ 图标常量
+// 使用方式：FluentIcon.ico_xxx（如 FluentIcon.ico_GlobalNavButton）
+QtObject {
+    // 字体加载器
+    property FontLoader fontLoader: FontLoader {
+        source: "Font/FluentIcons.ttf"
+    }
+
+    // 图标常量定义（Unicode 码点）
     readonly property string ico_GlobalNavButton: "\ue700"
     readonly property string ico_Wifi: "\ue701"
     readonly property string ico_Bluetooth: "\ue702"

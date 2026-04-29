@@ -1,28 +1,19 @@
 # CompleteUI — AGENTS.md
 
-## 项目概述
-
-CompleteUI 是一个基于 Qt6 / Qt Quick 的 Fluent Design 组件库。QML 组件在 `CompleteUI/Controls/`，C++ 后端在 `CompleteUI/impl/`，示例应用在 `example/`。
+Qt6 / Qt Quick Fluent Design 组件库。QML 组件在 `CompleteUI/Controls/`，C++ 后端在 `CompleteUI/impl/`，示例应用在 `example/`。
 
 ## 构建
 
 ```bash
-# Debug 构建（已配置 MinGW）
 cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
-
-# Release 构建
-cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-- 构建依赖：Qt6（Quick, Qml, QuickControls2, Sql），MinGW（toolchain: `D:/Qt/Tools/mingw1310_64/bin/`，需在 PATH 中）
-- 输出：`bin/CompleteUI/`（QML 模块 + DLL）和 `bin/example.exe`
-- 仅编译 example：`cmake --build build --target example`
-- 静态/动态库由 `COMPLETEUI_BUILD_STATIC_LIB` 切换（默认 OFF=动态库）
-- **静态库链接目标名为 `CompleteUIplugin`，动态库为 `CompleteUI`**（example CMakeLists.txt 中依此选择）
-- example 编译时嵌入 `QT_QML_IMPORT_PATH` 指向 `bin/CompleteUI/`，运行时 DLL 需与 exe 同目录
-- 已存在 `build/` 目录和 CMakeCache，若配置错误需清空 build 后重新 cmake
+- 依赖：Qt6（Quick, Qml, QuickControls2, Sql），MinGW toolchain 需在 PATH 中
+- 输出：`bin/CompleteUI/`（QML 模块 + DLL）、`bin/example.exe`
+- **静态库链接目标名为 `CompleteUIplugin`，动态库为 `CompleteUI`**（`COMPLETEUI_BUILD_STATIC_LIB=ON` 切换）
+- 已有 `build/` 目录，配置错误需清空后重新 cmake
+- 运行 example 需将 DLL 复制到 `bin/` 与 exe 同目录
 
 ## QML 模块结构
 
