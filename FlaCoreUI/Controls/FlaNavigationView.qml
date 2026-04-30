@@ -26,7 +26,7 @@ Item {
     property font textfont: Qt.font({ family: Theme.defaultFontFamily, pixelSize: 13, weight: Font.Normal })
     property color hoverColor:Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05)
     property color selectedColor: Theme.setColorAlpha( Theme.PrimaryColor,100)
-    property int indicatorX: 0
+
     signal itemclicked(string title)
 
     QtObject{
@@ -484,7 +484,7 @@ Item {
                     property var targetListView: nav_list
                     property color indicatorColor: control.primaryColor
                     property int highlightSize: 20
-                    property int indicatorX: control.indicatorX
+                    property int indicatorX: 0
                     property int levelIndent: 14
 
                     property real topPos: 0
