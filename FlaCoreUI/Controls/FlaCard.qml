@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import FlaCoreUI
 
@@ -13,7 +14,7 @@ Item {
     property Objects items
     property int layout: FlaCards.LayoutType.Horizontal
     property int spacing: 20
-    property int cardRadius: 10
+    property int cardRadius: 15
     property int animationDuration: 400
 
     signal cardClicked(int index, var item)
@@ -41,37 +42,45 @@ Item {
         id: flickable
         anchors.fill: parent
         clip: true
-        contentWidth: control.layout === FlaCards.LayoutType.Horizontal
-                       ? contentRow.implicitWidth + control.spacing
+        contentWidth: control.layout === FlaCard.LayoutType.Horizontal
+                       ? contentRow.implicitWidth + 20
                        : flickable.width
-        contentHeight: control.layout === FlaCards.LayoutType.Vertical
-                        ? contentColumn.implicitHeight + control.spacing
+        contentHeight: control.layout === FlaCard.LayoutType.Vertical
+                        ? contentColumn.implicitHeight + 20
                         : flickable.height
-        boundsBehavior: Flickable.StopAtBounds
+        boundsBehavior: Flickable.DragAndOvershootBounds
 
-        Row {
-            id: contentRow
-            visible: control.layout === FlaCards.LayoutType.Horizontal
-            y: (flickable.height - contentRow.implicitHeight) / 2
-            spacing: control.spacing
-            Repeater { model: d.handleItems(); delegate: cardDelegate }
+        Item {
+            id: container
+            anchors.fill: parent
+            Row {
+                id: contentRow
+                visible: control.layout === FlaCard.LayoutType.Horizontal
+                y: (container.height - contentRow.implicitHeight) / 2
+                spacing: control.spacing
+
+                Item { width: 10; height: 1 }
+
+                Repeater { model: d.handleItems(); delegate: cardDelegate }
+
+                Item { width: 10; height: 1 }
+            }
+
+            Column {
+                id: contentColumn
+                visible: control.layout === FlaCard.LayoutType.Vertical
+                x: (container.width - contentColumn.implicitWidth) / 2
+                spacing: control.spacing
+
+                Item { width: 1; height: 10 }
+
+                Repeater { model: d.handleItems(); delegate: cardDelegate }
+
+                Item { width: 1; height: 10 }
+            }
         }
 
-        Column {
-            id: contentColumn
-            visible: control.layout === FlaCards.LayoutType.Vertical
-            x: (flickable.width - contentColumn.implicitWidth) / 2
-            spacing: control.spacing
-            Repeater { model: d.handleItems(); delegate: cardDelegate }
-        }
 
-        FlaScrollBar.horizontal: FlaScrollBar {
-            policy: control.layout === FlaCards.LayoutType.Horizontal ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
-        }
-
-        FlaScrollBar.vertical: FlaScrollBar {
-            policy: control.layout === FlaCards.LayoutType.Vertical ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
-        }
     }
 
     Component {
@@ -87,21 +96,26 @@ Item {
             color: modelData.cardColor
             transformOrigin: Item.Center
 
-            readonly property bool isSelfHovered: hoverHandler.hovered
-            readonly property bool shouldBlur: d.hoveredIndex !== -1 && d.hoveredIndex !== index && isSelfHovered === false
+            readonly property bool isSelfHovered: mouseArea.containsMouse
             property bool isPressed: d.pressedItem === this
 
             scale: {
-                if (isPressed) return 0.95
-                if (d.hoveredIndex !== -1 && d.hoveredIndex !== index) return 0.9
-                if (isSelfHovered) return 1.1
+                if (isPressed) return 0.98
+                if (d.hoveredIndex !== -1 && d.hoveredIndex !== index) return 0.96
+                if (isSelfHovered) return 1.05
                 return 1.0
             }
 
-            layer.enabled: shouldBlur
-            layer.effect: FastBlur {
-                radius: 64
-                transparentBorder: true
+            RectangularGlow {
+                anchors.fill: card
+                glowRadius: 6
+                spread: 0.2
+                color: modelData.cardColor
+                cornerRadius: cardRadius + glowRadius
+                opacity: !isPressed ? 0.6 : 0
+                visible: opacity > 0
+                z: -1
+                Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
             }
 
             Behavior on scale {
@@ -111,28 +125,30 @@ Item {
                 }
             }
 
-            HoverHandler {
-                id: hoverHandler
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onHoveredChanged: {
-                    if (hovered) {
-                        d.hoveredIndex = card.index
-                    } else if (d.hoveredIndex === card.index) {
+                preventStealing: false
+
+                onEntered: {
+                    d.hoveredIndex = card.index
+                }
+                onExited: {
+                    if (d.hoveredIndex === card.index) {
                         d.hoveredIndex = -1
                     }
                 }
-            }
-
-            TapHandler {
+                onClicked: {
+                    control.cardClicked(card.index, modelData)
+                }
                 onPressedChanged: {
                     if (pressed) {
                         d.pressedItem = card
                     } else if (d.pressedItem === card) {
                         d.pressedItem = null
                     }
-                }
-                onTapped: {
-                    control.cardClicked(card.index, modelData)
                 }
             }
 
