@@ -3,24 +3,25 @@ import Qt5Compat.GraphicalEffects
 import FlaCoreUI
 
 Item {
-    id: root
+    id: control
 
     property Objects items
     property real cardWidth: 200
     property real cardHeight: 300
     property real waveAmplitude: 120
     property real spacing: 20
+    property int animationDuration: 800
+    property int restoreDelay: 3000
+    property var wavePeaks: []
+
     property bool isHovered: false
     property real viewOffset: 0
-    property real maxOffset: 0
-    property int restoreDelay: 3000
-    property int animationDuration: 800
-    property var wavePeaks: []
 
     signal cardClicked(int index, var item)
 
     QtObject {
         id: d
+        property bool dragging: false
         function getItemCount() {
             return items ? items.children.length : 0
         }
@@ -31,7 +32,6 @@ Item {
         interval: restoreDelay
         repeat: false
         running: false
-
         onTriggered: {
             forceRestore()
         }
@@ -40,6 +40,7 @@ Item {
     function forceRestore() {
         isHovered = false
         viewOffset = 0
+        console.log("[FlaCardCurveView] forceRestore")
     }
 
     function generateRandomWave() {
@@ -58,6 +59,7 @@ Item {
             var waveValue = (sinWave + randomNoise + cosWave) * positionWeight
             wavePeaks.push(waveValue * waveAmplitude)
         }
+        console.log("[FlaCardCurveView] generateRandomWave:", wavePeaks.map(function(v) { return Math.round(v) }).join(", "))
     }
 
     function getTotalWidth() {
@@ -65,19 +67,30 @@ Item {
         return totalCards * cardWidth + (totalCards - 1) * spacing
     }
 
-    function updateMaxOffset() {
+    function getWaveSpacing() {
+        var n = d.getItemCount()
+        if (n <= 1) return 0
+        var available = Math.max(0, control.width * 0.85 - cardWidth)
+        var s = available / (n - 1) - cardWidth
+        return Math.max(-cardWidth * 0.5, Math.min(20, s))
+    }
+
+    function getExpandOffset() {
         var totalWidth = getTotalWidth()
-        maxOffset = Math.max(0, totalWidth - root.width + 40)
+        if (totalWidth <= control.width) return 0
+        var padding = 20
+        return (totalWidth - control.width) / 2 + padding
     }
 
     function enterCardZone() {
         restoreTimer.stop()
         isHovered = true
-        updateMaxOffset()
+        console.log("[FlaCardCurveView] enterCardZone, isHovered:", isHovered)
     }
 
     function leaveCardZone() {
         restoreTimer.restart()
+        console.log("[FlaCardCurveView] leaveCardZone, restoreTimer running:", restoreTimer.running)
     }
 
     function activityInZone() {
@@ -86,21 +99,29 @@ Item {
         }
     }
 
+    function clampOffset(offset) {
+        if (!isHovered) return 0
+        var limit = getExpandOffset()
+        if (limit <= 0) return 0
+        return Math.max(-limit, Math.min(limit, offset))
+    }
+
     function getCardPosition(index, totalCards) {
         if (isHovered) {
             var totalWidth = getTotalWidth()
-            var startX = (root.width - totalWidth) / 2 + viewOffset
+            var startX = (control.width - totalWidth) / 2 + viewOffset
             return {
                 x: startX + index * (cardWidth + spacing),
-                y: (root.height - cardHeight) / 2,
+                y: (control.height - cardHeight) / 2,
                 rotation: 0
             }
         } else {
-            var startX = root.width * 0.05
-            var availableWidth = root.width * 0.9
-            var stepX = (totalCards > 1) ? availableWidth / (totalCards - 1) : 0
+            var stepX = cardWidth + getWaveSpacing()
+            var totalSpan = stepX * (totalCards - 1)
+            var visualWidth = totalSpan + cardWidth
+            var startX = (control.width - visualWidth) / 2
             var x = startX + stepX * index
-            var baseY = root.height * 0.5 - cardHeight / 2
+            var baseY = control.height * 0.5 - cardHeight / 2
             var waveY = (index < wavePeaks.length) ? wavePeaks[index] : 0
             var y = baseY + waveY
 
@@ -129,7 +150,7 @@ Item {
 
     Component.onCompleted: {
         generateRandomWave()
-        updateMaxOffset()
+        console.log("[FlaCardCurveView] Component.onCompleted, itemCount:", d.getItemCount())
     }
 
     function refreshWave() {
@@ -138,106 +159,16 @@ Item {
         }
     }
 
-    Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 5
-        width: 240
-        height: 28
-        radius: 14
-        color: {
-            if (restoreTimer.running) return "#E67E22"
-            else if (isHovered) return "#27AE60"
-            else return "#3498DB"
-        }
-        opacity: isHovered || restoreTimer.running ? 0.9 : 0.6
+    MouseArea {
+        id: wheelArea
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        hoverEnabled: true
 
-        Behavior on opacity {
-            NumberAnimation { duration: 300 }
-        }
-
-        Text {
-            anchors.centerIn: parent
-            text: {
-                if (restoreTimer.running) {
-                    return "⏱ 将在 " + Math.ceil(restoreTimer.remainingTime / 1000) + " 秒后恢复波浪排列"
-                } else if (isHovered) {
-                    return "✓ 水平展开中（操作会重置计时）剩余卡片: " + d.getItemCount()
-                } else {
-                    return "🌊 波浪排列 (振幅: " + Math.round(waveAmplitude) + "px)"
-                }
-            }
-            font.pixelSize: 12
-            color: "white"
-            font.bold: true
-        }
-
-        Rectangle {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: restoreTimer.running ?
-                   parent.width * (1 - restoreTimer.remainingTime / restoreDelay) : 0
-            radius: parent.radius
-            color: "#2ECC71"
-            visible: restoreTimer.running
-
-            Behavior on width {
-                NumberAnimation { duration: 1000 }
-            }
-        }
-    }
-
-    Rectangle {
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.margins: 10
-        width: 110
-        height: 30
-        radius: 15
-        color: "#80000000"
-        visible: !isHovered && !restoreTimer.running
-
-        Text {
-            anchors.centerIn: parent
-            text: "🔄 随机波浪"
-            font.pixelSize: 12
-            color: "white"
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                generateRandomWave()
-            }
-        }
-    }
-
-    Rectangle {
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 10
-        width: 90
-        height: 30
-        radius: 15
-        color: "#E74C3C"
-        visible: isHovered || restoreTimer.running
-
-        Text {
-            anchors.centerIn: parent
-            text: "强制恢复"
-            font.pixelSize: 12
-            color: "white"
-            font.bold: true
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                restoreTimer.stop()
-                forceRestore()
+        onWheel: function(wheel) {
+            if (isHovered) {
+                activityInZone()
+                viewOffset = clampOffset(viewOffset + wheel.angleDelta.y / 2)
             }
         }
     }
@@ -252,121 +183,6 @@ Item {
             if (isHovered || restoreTimer.running) {
                 if (!restoreTimer.running) {
                     restoreTimer.restart()
-                }
-            }
-        }
-
-        onEntered: {
-        }
-    }
-
-    MouseArea {
-        id: dragArea
-        anchors.fill: parent
-        enabled: isHovered
-        hoverEnabled: true
-
-        property real lastX: 0
-
-        onPressed: function(mouse) {
-            lastX = mouse.x
-            activityInZone()
-        }
-
-        onPositionChanged: function(mouse) {
-            if (isHovered) {
-                var delta = mouse.x - lastX
-                var newOffset = viewOffset + delta
-
-                if (newOffset > 0) {
-                    viewOffset = 0
-                } else if (newOffset < -maxOffset) {
-                    viewOffset = -maxOffset
-                } else {
-                    viewOffset = newOffset
-                }
-
-                lastX = mouse.x
-            }
-        }
-
-        onWheel: function(wheel) {
-            if (isHovered) {
-                activityInZone()
-
-                var delta = wheel.angleDelta.y / 2
-                var newOffset = viewOffset + delta
-
-                if (newOffset > 0) {
-                    viewOffset = 0
-                } else if (newOffset < -maxOffset) {
-                    viewOffset = -maxOffset
-                } else {
-                    viewOffset = newOffset
-                }
-            }
-        }
-    }
-
-    Rectangle {
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        anchors.verticalCenter: parent.verticalCenter
-        width: 40
-        height: 40
-        radius: 20
-        color: "#40000000"
-        visible: isHovered && viewOffset < 0
-
-        Text {
-            anchors.centerIn: parent
-            text: "‹"
-            font.pixelSize: 24
-            color: "white"
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                activityInZone()
-                var newOffset = viewOffset + 300
-                if (newOffset > 0) {
-                    viewOffset = 0
-                } else {
-                    viewOffset = newOffset
-                }
-            }
-        }
-    }
-
-    Rectangle {
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        anchors.verticalCenter: parent.verticalCenter
-        width: 40
-        height: 40
-        radius: 20
-        color: "#40000000"
-        visible: isHovered && viewOffset > -maxOffset
-
-        Text {
-            anchors.centerIn: parent
-            text: "›"
-            font.pixelSize: 24
-            color: "white"
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                activityInZone()
-                var newOffset = viewOffset - 300
-                if (newOffset < -maxOffset) {
-                    viewOffset = -maxOffset
-                } else {
-                    viewOffset = newOffset
                 }
             }
         }
@@ -403,7 +219,7 @@ Item {
                     anchors.centerIn: parent
                     sourceComponent: cardData ? cardData.delegate : null
                     property var model: cardData
-                    property int index: cardItem.index
+                    property int index: index
                 }
 
                 DropShadow {
@@ -419,6 +235,7 @@ Item {
                 }
 
                 Behavior on x {
+                    enabled: !d.dragging
                     NumberAnimation {
                         duration: animationDuration
                         easing.type: Easing.InOutCubic
@@ -445,9 +262,36 @@ Item {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
 
+                    property real pressX: 0
+
+                    onPressed: function(mouse) {
+                        pressX = mouse.x
+                        d.dragging = false
+                        activityInZone()
+                    }
+
+                    onPositionChanged: function(mouse) {
+                        if (pressed && isHovered) {
+                            var dx = mouse.x - pressX
+                            if (Math.abs(dx) > 5 && !d.dragging) {
+                                d.dragging = true
+                            }
+                            if (d.dragging) {
+                                viewOffset = clampOffset(viewOffset + dx)
+                                pressX = mouse.x
+                            }
+                        }
+                    }
+
+                    onReleased: {
+                        d.dragging = false
+                    }
+
                     onEntered: {
                         enterCardZone()
-                        cardItem.scale = 1.08
+                        if (!d.dragging) {
+                            cardItem.scale = 1.05
+                        }
                     }
 
                     onExited: {
@@ -456,8 +300,7 @@ Item {
                     }
 
                     onClicked: {
-                        activityInZone()
-                        if (cardData) {
+                        if (!d.dragging && cardData) {
                             control.cardClicked(index, cardData)
                         }
                     }
