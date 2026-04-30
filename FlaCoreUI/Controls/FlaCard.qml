@@ -151,7 +151,6 @@ Item {
                     }
                 }
             }
-
             Loader {
                 anchors.centerIn: parent
                 sourceComponent: modelData.delegate
