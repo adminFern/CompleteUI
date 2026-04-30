@@ -3,206 +3,202 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import FlaCoreUI
 
-Window {
+FlaWindow {
     id: win
     width: 1128
     height: 700
     visible: true
-    title: qsTr("CompleteUI 示例")
-    color: "transparent"
+    title: qsTr("FlaCards 布局示例")
+    icon: "qrc:/favicon.ico"
+    fixSize: true
 
-    RowLayout {
+    ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 20
+        anchors.margins: 30
         spacing: 40
 
-        // 垂直滚动条示例
-        ColumnLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 10
-
-            Text {
-                text: "垂直滚动条"
-                font.pixelSize: 16
-                font.bold: true
-                color: Theme.isDark ? "white" : "black"
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: Theme.isDark ? "#1E1E1E" : "#FFFFFF"
-                    border.color: Theme.isDark ? "#333333" : "#E0E0E0"
-                    radius: 4
-                }
-
-                Flickable {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    contentWidth: parent.width
-                    contentHeight: contentColumn.implicitHeight
-
-                    Column {
-                        id: contentColumn
-                        width: parent.width
-                        spacing: 10
-
-                        Repeater {
-                            model: 30
-                            Rectangle {
-                                width: parent.width
-                                height: 40
-                                color: index % 2 === 0 ? (Theme.isDark ? "#2A2A2A" : "#F5F5F5") : (Theme.isDark ? "#252525" : "#FAFAFA")
-                                radius: 4
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "项目 " + (index + 1)
-                                    color: Theme.isDark ? "white" : "black"
-                                }
-                            }
-                        }
-                    }
-
-                    ScrollBar.vertical: FlaScrollBar {
-                        enabled: true
-                    }
-                }
-            }
+        Text {
+            text: "Horizontal Layout"
+            font.pixelSize: 20
+            font.weight: Font.Bold
         }
 
-        // 水平滚动条示例
-        ColumnLayout {
+        FlaCards {
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 10
+            Layout.preferredHeight: 140
+            layout: FlaCards.LayoutType.Horizontal
+            spacing: 20
 
-            Text {
-                text: "水平滚动条"
-                font.pixelSize: 16
-                font.bold: true
-                color: Theme.isDark ? "white" : "black"
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: Theme.isDark ? "#1E1E1E" : "#FFFFFF"
-                    border.color: Theme.isDark ? "#333333" : "#E0E0E0"
-                    radius: 4
-                }
-
-                Flickable {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    contentWidth: contentRow.implicitWidth
-                    contentHeight: parent.height
-
-                    Row {
-                        id: contentRow
-                        height: parent.height
-                        spacing: 10
-
-                        Repeater {
-                            model: 20
-                            Rectangle {
-                                width: 120
-                                height: parent.height
-                                color: index % 2 === 0 ? (Theme.isDark ? "#2A2A2A" : "#F5F5F5") : (Theme.isDark ? "#252525" : "#FAFAFA")
-                                radius: 4
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "卡片 " + (index + 1)
-                                    color: Theme.isDark ? "white" : "black"
-                                }
-                            }
-                        }
-                    }
-
-                    ScrollBar.horizontal: FlaScrollBar {
-                        enabled: true
-                    }
-                }
-            }
-        }
-
-        // 双向滚动条示例
-        ColumnLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 10
-
-            Text {
-                text: "双向滚动条"
-                font.pixelSize: 16
-                font.bold: true
-                color: Theme.isDark ? "white" : "black"
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: Theme.isDark ? "#1E1E1E" : "#FFFFFF"
-                    border.color: Theme.isDark ? "#333333" : "#E0E0E0"
-                    radius: 4
-                }
-
-                Flickable {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    contentWidth: grid.implicitWidth
-                    contentHeight: grid.implicitHeight
-
-                    Grid {
-                        id: grid
-                        columns: 10
+            items: Objects {
+                CardItemDelegate {
+                    cardColor: "#f43f5e"
+                    delegate: Column {
                         spacing: 5
-
-                        Repeater {
-                            model: 100
-                            Rectangle {
-                                width: 80
-                                height: 40
-                                color: {
-                                    if (Theme.isDark) {
-                                        return index % 3 === 0 ? "#2A2A2A" : (index % 3 === 1 ? "#252525" : "#303030")
-                                    } else {
-                                        return index % 3 === 0 ? "#F5F5F5" : (index % 3 === 1 ? "#FAFAFA" : "#EEEEEE")
-                                    }
-                                }
-                                radius: 4
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: (index + 1)
-                                    color: Theme.isDark ? "white" : "black"
-                                }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Hover Me"
+                            color: "white"
+                            font.pixelSize: 16
+                            font.weight: Font.Bold
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Lorem Ipsum"
+                            color: "white"
+                            font.pixelSize: 11
+                        }
+                    }
+                }
+                CardItemDelegate {
+                    cardColor: "#3b82f6"
+                    delegate: Column {
+                        spacing: 2
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Users"
+                            color: "white"
+                            font.pixelSize: 12
+                        }
+                        Row {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            spacing: 2
+                            Text {
+                                text: "1,234"
+                                color: "white"
+                                font.pixelSize: 28
+                                font.weight: Font.Bold
+                            }
+                            Text {
+                                text: "online"
+                                color: "white"
+                                font.pixelSize: 14
+                                anchors.baseline: parent.children[0].baseline
                             }
                         }
                     }
-
-                    ScrollBar.vertical: FlaScrollBar {
-                        enabled: true
-                    }
-
-                    ScrollBar.horizontal: FlaScrollBar {
-                        enabled: true
+                }
+                CardItemDelegate {
+                    cardColor: "#10b981"
+                    delegate: Column {
+                        spacing: 8
+                        FlaImage {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            iconsource: FluentIcon.ico_Checkmark
+                            iconsize: 32
+                            icocolor: "white"
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Custom Component"
+                            color: "white"
+                            font.pixelSize: 18
+                            font.weight: Font.Bold
+                        }
                     }
                 }
+            }
+            onCardClicked: function(index, item) {
+                console.log("Horizontal clicked:", index)
+            }
+        }
+
+        Text {
+            text: "Vertical Layout"
+            font.pixelSize: 20
+            font.weight: Font.Bold
+        }
+
+        FlaCards {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            layout: FlaCards.LayoutType.Vertical
+            spacing: 15
+
+            items: Objects {
+                CardItemDelegate {
+                    cardColor: "#8b5cf6"
+                    cardWidth: 220
+                    cardHeight: 60
+                    delegate: Row {
+                        spacing: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        FlaImage {
+                            iconsource: FluentIcon.ico_Mail
+                            iconsize: 20
+                            icocolor: "white"
+                        }
+                        Text {
+                            text: "Inbox"
+                            color: "white"
+                            font.pixelSize: 14
+                            font.weight: Font.Bold
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: "3 new"
+                            color: "#c4b5fd"
+                            font.pixelSize: 12
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
+                CardItemDelegate {
+                    cardColor: "#ec4899"
+                    cardWidth: 220
+                    cardHeight: 60
+                    delegate: Row {
+                        spacing: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        FlaImage {
+                            iconsource: FluentIcon.ico_Heart
+                            iconsize: 20
+                            icocolor: "white"
+                        }
+                        Text {
+                            text: "Favorites"
+                            color: "white"
+                            font.pixelSize: 14
+                            font.weight: Font.Bold
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: "12 items"
+                            color: "#f9a8d4"
+                            font.pixelSize: 12
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
+                CardItemDelegate {
+                    cardColor: "#f59e0b"
+                    cardWidth: 220
+                    cardHeight: 60
+                    delegate: Row {
+                        spacing: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        FlaImage {
+                            iconsource: FluentIcon.ico_Star
+                            iconsize: 20
+                            icocolor: "white"
+                        }
+                        Text {
+                            text: "Starred"
+                            color: "white"
+                            font.pixelSize: 14
+                            font.weight: Font.Bold
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: "5 items"
+                            color: "#fde68a"
+                            font.pixelSize: 12
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
+            }
+            onCardClicked: function(index, item) {
+                console.log("Vertical clicked:", index)
             }
         }
     }

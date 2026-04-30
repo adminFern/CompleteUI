@@ -254,7 +254,16 @@ bool Frameless::nativeEventFilter(const QByteArray &eventType, void *message, qi
         *result = HTCLIENT;
         return true;
 
-    }else if (uMsg == WM_NCPAINT){
+    } else if (uMsg == WM_SETCURSOR) {
+        if (_fixSize) {
+            SHORT hitTest = LOWORD(lParam);
+            if (hitTest != HTCLIENT && hitTest != HTCAPTION) {
+                ::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
+                *result = TRUE;
+                return true;
+            }
+        }
+    } else if (uMsg == WM_NCPAINT){
 
         if (Dwm->isCompositionEnabled() && !this->isFullScreen()) {
             return false;
