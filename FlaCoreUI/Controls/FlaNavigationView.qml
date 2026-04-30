@@ -113,6 +113,7 @@ Item {
             if (d.displayMode === FlaNavigationView.NavViewType.Compact)
                 isExpand(false)
             d.enableNavigationPanel = false
+            control_popup.close()
         }
     }
 
@@ -204,7 +205,15 @@ Item {
             selectedBgColor: control.selectedColor
             hoverBgColor: control.hoverColor
             onClicked: {
-                if (d.isCompactAndNotPanel && itemModel.children.length > 0) return
+                if (d.isCompactAndNotPanel && itemModel.children.length > 0) {
+                    nav_list.currentIndex = itemModel._idx
+                    var h = control.itemHeight * Math.min(Math.max(itemModel.children.length, 1), 8)
+                    var p = mapToItem(control, 0, 0)
+                    var y = p.y
+                    if (h + y > control.height) y = control.height - h
+                    control_popup.showPopup(Qt.point(control.navCompactWidth, y), h, itemModel.children)
+                    return
+                }
                 nav_list.currentIndex = itemModel._idx
                 layout_footer.currentIndex = -1
                 if (!d.isCompactAndNotPanel) {
@@ -217,6 +226,102 @@ Item {
         }
     }
 
+    // Compact 模式弹出菜单：显示 expander 子项列表
+    Popup {
+        id: control_popup
+        property var childModel
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        padding: 2
+
+        enter: Transition {
+            NumberAnimation {
+                property: "scale"; from: 0.8; to: 1.0
+                duration: 200; easing.type: Easing.OutBack
+            }
+        }
+        exit: Transition {
+            NumberAnimation {
+                property: "scale"; from: 1.0; to: 0.8
+                duration: 200; easing.type: Easing.InBack
+            }
+        }
+
+        background: Rectangle {
+            implicitWidth: 130
+            color: Theme.FillBackgroundColor
+            border.color: Theme.FillBorderColor
+            border.width: 1
+            radius: 5
+        }
+
+        contentItem: ListView {
+            model: control_popup.childModel
+            currentIndex: -1
+            reuseItems: true
+            clip: true
+            cacheBuffer: control.itemHeight * 2
+            delegate: Item {
+                id: popup_item
+                width: parent.width
+                height: 38
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    radius: 5
+                    color: {
+                        if (popup_mouse.containsMouse && nav_list.currentIndex !== model._idx)
+                            return Theme.setColorAlpha(Theme.isDark ? Qt.darker(control.primaryColor, 1.2)
+                                                                      : Qt.lighter(control.primaryColor, 1.2), 100)
+                        if (nav_list.currentIndex === model._idx)
+                            return Theme.setColorAlpha(control.primaryColor, 200)
+                        return "transparent"
+                    }
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Row {
+                        anchors.fill: parent
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        spacing: 10
+                        FlaImage {
+                            anchors.verticalCenter: parent.verticalCenter
+                            iconsource: model && model.icon ? model.icon : ""
+                            iconsize: d.iconsize
+                            iconbold: true
+                        }
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: model.title
+                            color: nav_list.currentIndex === model._idx ? "white" : control.textcolor
+                            elide: Text.ElideRight
+                            font: control.textfont
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
+                    MouseArea {
+                        id: popup_mouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            nav_list.currentIndex = model._idx
+                            layout_footer.currentIndex = -1
+                            if (model.page) d.go(model.page)
+                            control_popup.close()
+                        }
+                    }
+                }
+            }
+        }
+
+        function showPopup(pos, height, model) {
+            background.implicitHeight = height
+            control_popup.x = pos.x + 4
+            control_popup.y = pos.y
+            control_popup.childModel = model
+            control_popup.open()
+        }
+    }
+
     // 侧边栏区域
     Item {
         id: layout_list
@@ -225,12 +330,28 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.leftMargin: d.displayMode === FlaNavigationView.NavViewType.Minimal && !d.enableNavigationPanel ? -width : 0
-        width: d.displayMode === FlaNavigationView.NavViewType.Compact && !d.enableNavigationPanel
-               ? control.navCompactWidth
-               : (d.displayMode === FlaNavigationView.NavViewType.Minimal ? 0 : control.sidebarWidth)
+        width: d.enableNavigationPanel
+               ? control.sidebarWidth
+               : (d.displayMode === FlaNavigationView.NavViewType.Compact
+                  ? control.navCompactWidth
+                  : (d.displayMode === FlaNavigationView.NavViewType.Minimal ? 0 : control.sidebarWidth))
         visible: width > 0
         Behavior on width { NumberAnimation { duration: 250 } }
         Behavior on anchors.leftMargin { NumberAnimation { duration: 250 } }
+        onWidthChanged: {
+            if (width > 0 && nav_list.currentIndex >= 0 && !nav_list.currentItem) {
+                navIndicator.topPos = navIndicator.targetTop
+                navIndicator.bottomPos = navIndicator.targetBottom
+            }
+        }
+        onVisibleChanged: {
+            if (!visible) {
+                navIndicator.topPos = 0
+                navIndicator.bottomPos = navIndicator.highlightSize
+                navIndicator.lastIndex = -1
+                navIndicator.state = "normal"
+            }
+        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -290,14 +411,18 @@ Item {
                     }
 
                     property real targetTop: {
-                        if (!targetListView || targetListView.currentIndex < 0 || !targetListView.currentItem) return 0
-                        return targetListView.currentItem.y - targetListView.contentY
-                                + (targetListView.currentItem.height - highlightSize) / 2
+                        if (!targetListView || targetListView.currentIndex < 0) return 0
+                        if (targetListView.currentItem)
+                            return targetListView.currentItem.y - targetListView.contentY
+                                    + (targetListView.currentItem.height - highlightSize) / 2
+                        return targetListView.currentIndex * control.itemHeight + (control.itemHeight - highlightSize) / 2
                     }
                     property real targetBottom: {
-                        if (!targetListView || targetListView.currentIndex < 0 || !targetListView.currentItem) return highlightSize
-                        return targetListView.currentItem.y - targetListView.contentY
-                                + (targetListView.currentItem.height + highlightSize) / 2
+                        if (!targetListView || targetListView.currentIndex < 0) return highlightSize
+                        if (targetListView.currentItem)
+                            return targetListView.currentItem.y - targetListView.contentY
+                                    + (targetListView.currentItem.height + highlightSize) / 2
+                        return targetListView.currentIndex * control.itemHeight + (control.itemHeight + highlightSize) / 2
                     }
 
                     z: 1
@@ -307,7 +432,7 @@ Item {
                     x: indicatorX + (itemDepth * levelIndent)
                     y: topPos
                     height: bottomPos - topPos
-                    visible: targetListView && targetListView.currentIndex >= 0
+                    visible: layout_list.visible && targetListView && targetListView.currentIndex >= 0
 
                     state: "normal"
 
