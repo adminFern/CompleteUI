@@ -2,429 +2,220 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import FlaCoreUI
+
 // 导航视图组件：支持三种显示模式（Open/Compact/Minimal）
 // 使用 items 和 footerItems 属性配置导航项
 Item {
     id: control
 
-    // 导航视图类型枚举
     enum NavViewType {
-        Open = 0,      // 完整展开模式
-        Compact = 1,   // 紧凑模式（只显示图标）
-        Minimal = 2,   // 最小模式（隐藏侧边栏）
-        Auto = 4       // 自动模式（根据宽度切换）
+        Open = 0,
+        Compact = 1,
+        Minimal = 2,
+        Auto = 4
     }
 
-    property Objects items              // 主导航项容器
-    property Objects footerItems        // 页脚项容器
+    property Objects items
+    property Objects footerItems
     property color primaryColor: Theme.PrimaryColor
     property int displayMode: FlaNavigationView.NavViewType.Auto
-    property int navCompactWidth: 40    // 紧凑模式下侧边栏宽度
-    property int itemHeight: 38         // 导航项高度
-    property int sidebarWidth: 200      // 侧边栏宽度
+    property int navCompactWidth: 40
+    property int itemHeight: 38
+    property int sidebarWidth: 200
     property color textcolor: Theme.Textcolor
     property font textfont: Qt.font({ family: Theme.defaultFontFamily, pixelSize: 13, weight: Font.Normal })
-    property color hoverColor:Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05)
-    property color selectedColor: Theme.setColorAlpha( Theme.PrimaryColor,100)
+    property color hoverColor: Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05)
+    property color selectedColor: Theme.setColorAlpha(Theme.PrimaryColor, 100)
 
     signal itemclicked(string title)
 
-    QtObject{
-        id:d
-        property int iconsize: control.itemHeight*0.45
+    QtObject {
+        id: d
+
+        property int iconsize: control.itemHeight * 0.45
         property int displayMode: control.displayMode
         property bool enableNavigationPanel: false
         property string isPage: ""
-        // 判断当前是否为 Compact 模式（且未展开）
         property bool isCompactAndNotPanel: d.displayMode
                                             === FlaNavigationView.NavViewType.Compact && !d.enableNavigationPanel
-        //文本禁止颜色
-        property color disabledtextcolor: Theme.isDark?"#9CA3AF":"#6B7280"
-        property color disabledcolor: Theme.isDark?"#2A2E37":" #F4F5F7"
-        //加载头部，返回一个数组
-        function handleItems(){
-            var _idx = 0
-            var data = []
-            //items为链表数组
-            if (items){
-                for (var i = 0; i < items.children.length; i++){
-                    var item = items.children[i]//获取子对象
-                    if (item.visible !== true) continue//如果子对象visible假返回这个对象
-                    //设置这个对象id序号并且添加数组中
-                    item._idx = _idx
-                    data.push(item)
-                    _idx++
-                    // 如果是可展开分组，遍历其子项
-                    if (item instanceof PaneItemExpander){
-                        for (var j = 0; j < item.children.length; j++){
-                            var itemChild = item.children[j]
-                            if (itemChild.visible !== true) continue
-                            itemChild._parent = item//等于上层的对象为父
-                            itemChild._idx = _idx
-                            data.push(itemChild)
-                            _idx++
-                        }
-                    }
-                }
+
+        property var _itemsCache: []
+        property var _footerCache: []
+
+        // 通用遍历函数：收集可见子项
+        function collectVisible(container, processChildren) {
+            var data = [], idx = 0
+            if (!container) return data
+            for (var i = 0; i < container.children.length; i++) {
+                var item = container.children[i]
+                if (item.visible !== true) continue
+                item._idx = idx++
+                data.push(item)
+                if (processChildren) idx = processChildren(item, data, idx)
             }
             return data
         }
-        // 仅处理页脚项（用于底部 ListView）
-        function handleFooterItems() {
-            var data = []
-            if (footerItems) {
-                for (var i = 0; i < footerItems.children.length; i++) {
-                    var item = footerItems.children[i]
-                    if (item.visible !== true) continue
-                    item._idx = i
-                    data.push(item)
+
+        // 刷新主导航列表缓存
+        function refreshItems() {
+            _itemsCache = collectVisible(items, function(expander, data, idx) {
+                if (!(expander instanceof PaneItemExpander)) return idx
+                for (var j = 0; j < expander.children.length; j++) {
+                    var child = expander.children[j]
+                    if (child.visible !== true) continue
+                    child._parent = expander
+                    child._idx = idx++
+                    data.push(child)
                 }
-            }
-            return data
+                return idx
+            })
         }
-        function go(page){
-            if ( d.isPage !== page){
-                d.isPage=page
-               // console.log("切换",page)
+
+        // 刷新页脚列表缓存
+        function refreshFooterItems() {
+            _footerCache = collectVisible(footerItems, null)
+        }
+
+        function go(page) {
+            if (d.isPage !== page) {
+                d.isPage = page
                 stack.replace(page)
             }
         }
-        // 当 expander 折叠时，如果当前选中项是其子项，则回退选中到 expander 自身
-        function collapseCheck(expanderItem){
-            if(nav_list.currentIndex < 0) return
+
+        // 折叠时：如果当前选中项属于此 expander，回退选中到 expander 自身
+        function collapseCheck(expanderItem) {
+            if (nav_list.currentIndex < 0) return
             var curData = nav_list.model
-            if(nav_list.currentIndex < curData.length){
+            if (nav_list.currentIndex < curData.length) {
                 var curItem = curData[nav_list.currentIndex]
-                if(curItem && curItem._parent === expanderItem){
+                if (curItem && curItem._parent === expanderItem)
                     nav_list.currentIndex = expanderItem._idx
-                }
             }
         }
-
     }
+
     Component.onCompleted: {
         d.displayMode = Qt.binding(function () {
-            if (control.displayMode !== FlaNavigationView.NavViewType.Auto) {
+            if (control.displayMode !== FlaNavigationView.NavViewType.Auto)
                 return control.displayMode
-            }
-            if (control.width <= 700) {
-                return FlaNavigationView.NavViewType.Minimal
-            } else if (control.width <= 900) {
-                return FlaNavigationView.NavViewType.Compact
-            } else {
-                return FlaNavigationView.NavViewType.Open
-            }
-
+            if (control.width <= 700) return FlaNavigationView.NavViewType.Minimal
+            if (control.width <= 900) return FlaNavigationView.NavViewType.Compact
+            return FlaNavigationView.NavViewType.Open
         })
+        d.refreshItems()
+        d.refreshFooterItems()
     }
-    Connections{
+
+    Connections {
         target: d
-        function onDisplayModeChanged(){
-            if(d.displayMode === FlaNavigationView.NavViewType.Compact){
+        function onDisplayModeChanged() {
+            if (d.displayMode === FlaNavigationView.NavViewType.Compact)
                 isExpand(false)
-            }
             d.enableNavigationPanel = false
         }
     }
+
     // === 分隔线组件 ===
     Component {
         id: com_panel_item_separator
         Rectangle {
-            x:model.xoffset
+            x: model.xoffset
             anchors.leftMargin: 10
-            width: layout_list.width-(model.xoffset*2)
+            width: layout_list.width - (model.xoffset * 2)
             height: 1
-            color:model.dividercolor
+            color: model.dividercolor
         }
     }
-    // 页脚项委托组件
+
+    // 页脚项委托
     Component {
         id: com_panel_item_header
-        Item {
-            height:  control.itemHeight
+        FlaNavItemBase {
+            itemModel: model
             width: layout_list.width
-            Rectangle{
-                anchors.leftMargin: layout_list.indicatorRightX
-                anchors.rightMargin: 1
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                radius: 4
-                Row{
-                    anchors.fill: parent
-                    anchors.leftMargin: 8
-                    spacing: 20
-                    anchors.verticalCenter: !d.isCompactAndNotPanel ?parent.verticalCenter:undefined
-                    anchors.centerIn:d.isCompactAndNotPanel ? parent:undefined
-                    Loader{
-                        id: header_com_icon
-                        active: model && model.icon
-                        visible: active
-                        sourceComponent: FlaImage{
-                            iconsource:model && model.icon ? model.icon : ""
-                            iconsize:  d.iconsize
-                            iconbold: true
-                        }
-                    }
-                    Loader{
-                        id: header_com_text
-                        active:!d.isCompactAndNotPanel && model && model.title!==""
-                        visible: active
-                        sourceComponent:Text{
-                            text:model.title
-                            color:{
-                                if(model.disabled){
-                                    return Theme.DisabledTextColor
-                                }
-                                return layout_footer.currentIndex === model._idx?  Theme.PrimaryColor: control.textcolor
-                            }
-                            elide: Text.ElideRight
-                            font: control.textfont
-                            verticalAlignment: Text.AlignVCenter  // 垂直居中
-                            horizontalAlignment: Text.AlignHCenter // 水平居中（可选）
-                        }
-                    }
-                }
-                //选中颜色
-                color: {
-                    if (headerMouse.pressed){
-                        return Theme.setColorAlpha(Theme.isDark? Qt.darker(control.primaryColor,1.5):
-                                                                 Qt.lighter(control.primaryColor,1.5)  ,150)
-                    }
-                    if (headerMouse.containsMouse) return control.hoverColor
-                    if (layout_footer.currentIndex === model._idx) return control.selectedColor
-                    return "transparent"
-                }
-                Behavior on color { ColorAnimation { duration: 200 }}
-                MouseArea{
-                    id:headerMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onPressedChanged: {
-                        headerMouse.forceActiveFocus()
-                    }
-                    onClicked: {
-                        layout_footer.currentIndex = model._idx    //  nav_list.currentIndex
-                        nav_list.currentIndex = -1
-                        control.itemclicked(model.title)
-                    }
-                }
+            isSelected: layout_footer.currentIndex === itemModel._idx
+            isCompactMode: d.isCompactAndNotPanel
+            itemHeight: control.itemHeight
+            iconSize: d.iconsize
+            leftMargin: navIndicator.indicatorX + navIndicator.width
+            textFont: control.textfont
+            primaryColor: control.primaryColor
+            textColor: control.textcolor
+            selectedBgColor: control.selectedColor
+            hoverBgColor: control.hoverColor
+            enablePressedState: true
+            onClicked: {
+                layout_footer.currentIndex = itemModel._idx
+                nav_list.currentIndex = -1
+                control.itemclicked(itemModel.title)
             }
         }
     }
-    // 普通导航项委托组件
+
+    // 普通导航项委托
     Component {
         id: com_panel_item
-        Item {
-            height:{
-                if (model && model._parent) return model._parent.isExpand ? control.itemHeight : 0
-                return control.itemHeight
-            }
-            visible: height === control.itemHeight  //如果高度不等于0
-            opacity: visible
+        FlaNavItemBase {
+            itemModel: model
             width: layout_list.width
-            Behavior on height {
-                NumberAnimation {
-                    duration: 250
-                    easing.type: Easing.OutCubic
-                }
+            isSelected: nav_list.currentIndex === itemModel._idx
+            isChildItem: itemModel._parent !== undefined
+            isCompactMode: d.isCompactAndNotPanel
+            itemHeight: (itemModel && itemModel._parent && !itemModel._parent.isExpand) ? 0 : control.itemHeight
+            visible: itemHeight > 0
+            opacity: Math.min(1, itemHeight / control.itemHeight * 2)
+            iconSize: d.iconsize
+            leftMargin: itemModel._parent !== undefined
+                ? navIndicator.indicatorX + navIndicator.width + navIndicator.levelIndent
+                : navIndicator.indicatorX + navIndicator.width
+            textFont: control.textfont
+            primaryColor: control.primaryColor
+            textColor: control.textcolor
+            selectedBgColor: control.selectedColor
+            hoverBgColor: control.hoverColor
+            Behavior on itemHeight {
+                NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
             }
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 200
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-
-            //绘制背景
-            Rectangle{
-                id: item_panel
-                enabled: !model.disabled
-                anchors.fill: parent
-                anchors.leftMargin: model._parent !== undefined ? 15 : layout_list.indicatorRightX
-                anchors.rightMargin: 1
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                radius: 4
-                color: {
-                    if (!item_panel.enabled) return Theme.DisabledColor
-                    if (nav_list.currentIndex === model._idx) return control.selectedColor
-                    if (item_mouse.containsMouse) return control.hoverColor
-                    return "transparent"
-                }
-                Behavior on color { ColorAnimation { duration: 200 } }
-
-                Loader{
-                    id: com_icon
-                    anchors.left: parent.left
-                    anchors.leftMargin: {
-                        if(model._parent!==undefined) return 16
-                        if(!d.isCompactAndNotPanel) return 8
-                        return undefined
-                    }
-                    anchors.verticalCenter: !d.isCompactAndNotPanel ?parent.verticalCenter:undefined
-                    anchors.centerIn:d.isCompactAndNotPanel ? parent:undefined
-                    active: model && model.icon
-                    visible: active
-                    sourceComponent: FlaImage{
-                        iconsource:model && model.icon ? model.icon : ""
-                        iconsize: d.iconsize
-                        iconbold: true
-                        icocolor: {
-                            if (!item_panel.enabled) return Theme.DisabledTextColor //禁止颜色
-                            return  nav_list.currentIndex === model._idx?  Theme.PrimaryColor: control.textcolor
-                        }
-                    }
-                }
-                Loader{
-                    id: com_text
-                    anchors.left: com_icon.right
-                    anchors.leftMargin:10
-                    anchors.verticalCenter: parent.verticalCenter
-                    active:  !d.isCompactAndNotPanel && model && model.title!==""
-                    sourceComponent:Text{
-                        text:model.title
-                        color:{
-                            if (!item_panel.enabled) return Theme.DisabledTextColor //禁止颜色
-                            return  nav_list.currentIndex === model._idx?  Theme.PrimaryColor: control.textcolor
-                        }
-                        elide: Text.ElideRight
-                        font: control.textfont
-                        verticalAlignment: Text.AlignVCenter  // 垂直居中
-                        horizontalAlignment: Text.AlignHCenter // 水平居中（可选）
-                    }
-                }
-                //事件
-                MouseArea{
-                    id:item_mouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        nav_list.currentIndex = model._idx
-                        layout_footer.currentIndex = -1
-                        control.itemclicked(model.title)
-                        if(model.page){
-                           // console.log(model.page,model.title)
-                          d.go(model.page)
-                            //stack.push(model.page)
-                        }
-                    }
-                }
+            onClicked: {
+                nav_list.currentIndex = itemModel._idx
+                layout_footer.currentIndex = -1
+                control.itemclicked(itemModel.title)
+                if (itemModel.page) d.go(itemModel.page)
             }
         }
     }
-    // 可展开分组项委托组件
+
+    // 可展开分组项委托
     Component {
         id: com_panel_item_expander
-        Item {
-            height: control.itemHeight
+        FlaNavItemBase {
+            itemModel: model
             width: layout_list.width
-            Rectangle{
-                id: item_expander
-                enabled: !model.disabled
-                anchors.fill: parent
-                anchors.leftMargin: layout_list.indicatorRightX
-                anchors.rightMargin: 1
-                anchors.topMargin: 1
-                anchors.bottomMargin: 1
-                radius: 4
-                color: {
-                    if (!item_expander.enabled) return  Theme.DisabledColor
-                    if (nav_list.currentIndex === model._idx) return control.selectedColor
-                    if (item_expander_mouse.containsMouse) return control.hoverColor
-                    return "transparent"
+            isSelected: nav_list.currentIndex === itemModel._idx
+            isCompactMode: d.isCompactAndNotPanel
+            showExpandArrow: true
+            itemHeight: control.itemHeight
+            iconSize: d.iconsize
+            leftMargin: navIndicator.indicatorX + navIndicator.width
+            textFont: control.textfont
+            primaryColor: control.primaryColor
+            textColor: control.textcolor
+            selectedBgColor: control.selectedColor
+            hoverBgColor: control.hoverColor
+            onClicked: {
+                if (d.isCompactAndNotPanel && itemModel.children.length > 0) return
+                nav_list.currentIndex = itemModel._idx
+                layout_footer.currentIndex = -1
+                if (!d.isCompactAndNotPanel) {
+                    var wasExpand = itemModel.isExpand
+                    itemModel.isExpand = !itemModel.isExpand
+                    if (wasExpand) d.collapseCheck(itemModel)
                 }
-                Behavior on color { ColorAnimation { duration: 200 } }
-                Loader{
-                    id: expander_com_icon
-                    anchors.left: parent.left
-                    anchors.leftMargin: !d.isCompactAndNotPanel ? 8: undefined
-                    anchors.verticalCenter: !d.isCompactAndNotPanel ?parent.verticalCenter:undefined
-                    anchors.centerIn:d.isCompactAndNotPanel ? parent:undefined
-                    active: model && model.icon
-                    visible: active
-                    sourceComponent: FlaImage{
-                        iconsource:model && model.icon ? model.icon : ""
-                        iconsize: d.iconsize
-                        iconbold: true
-                    }
-                }
-                Loader{
-                    id: expander_com_text
-                    anchors.left: expander_com_icon.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    active:  !d.isCompactAndNotPanel && model && model.title!==""
-                    sourceComponent:Text{
-                        text:model.title
-                        color:{
-                            if (!item_expander.enabled) return Theme.DisabledTextColor//Theme.disabledText //禁止颜色
-                            return  nav_list.currentIndex === model._idx?  "white":control.textcolor //Theme.TextColor
-                        }
-                        elide: Text.ElideRight
-                        font: control.textfont
-                        verticalAlignment: Text.AlignVCenter  // 垂直居中
-                        horizontalAlignment: Text.AlignHCenter // 水平居中（可选）
-
-                    }
-                }
-                FlaImage{
-                    id: item_icon_expand
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: parent.right
-                    anchors.rightMargin: 10
-                    rotation: model && model.isExpand ? 0 : 180
-                    iconsource:FluentIcon.ico_ChevronDown
-                    iconsize: 15
-                    visible: !d.isCompactAndNotPanel
-                    icocolor:{
-                        if (!item_expander.enabled) return d.disabledtextcolor//.DisabledText //禁止颜色
-                        return control.textcolor
-                    }
-                    Behavior on rotation {
-                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-                    }
-
-                }
-
-                MouseArea{
-                    id:item_expander_mouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked:{
-                        if(d.isCompactAndNotPanel && model.children.length > 0){
-                            let h = 38*Math.min(Math.max(model.children.length,1),8)
-                            let y = mapToItem(control,0,0).y
-                            if(h+y>control.height){
-                                y = control.height - h
-                            }
-                            //control_popup.showPopup(Qt.point(control.navCompactWidth,y),h,model.children)
-                            return
-                        }
-
-                        nav_list.currentIndex = model._idx
-                        layout_footer.currentIndex = -1
-                        if(!d.isCompactAndNotPanel){
-                            var wasExpand = model.isExpand
-                            model.isExpand = !model.isExpand
-                            // 折叠时：如果当前选中子项属于此 expander，回退选中到 expander
-                            if(wasExpand){
-                                d.collapseCheck(model)
-                            }
-                        }
-                        control.itemclicked(model.title)
-                    }
-                }
+                control.itemclicked(itemModel.title)
             }
         }
     }
-
-
-
 
     // 侧边栏区域
     Item {
@@ -434,36 +225,35 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.leftMargin: d.displayMode === FlaNavigationView.NavViewType.Minimal && !d.enableNavigationPanel ? -width : 0
-        // 宽度动画：Compact/Open 模式切换
         width: d.displayMode === FlaNavigationView.NavViewType.Compact && !d.enableNavigationPanel
                ? control.navCompactWidth
                : (d.displayMode === FlaNavigationView.NavViewType.Minimal ? 0 : control.sidebarWidth)
         visible: width > 0
-        // 宽度变化动画
         Behavior on width { NumberAnimation { duration: 250 } }
-        // Minimal 模式滑入滑出动画
         Behavior on anchors.leftMargin { NumberAnimation { duration: 250 } }
-        ColumnLayout{
+
+        ColumnLayout {
             anchors.fill: parent
             anchors.margins: 0
             spacing: 0
-            // 主导航列表 - 填充剩余空间
-            Item{
+
+            // 主导航列表
+            Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
-                //anchors.margins: 1
-                ListView{
+
+                ListView {
                     id: nav_list
                     anchors.fill: parent
                     boundsBehavior: Flickable.StopAtBounds
                     clip: true
-                    model: d.handleItems()//添加列表数据
+                    model: d._itemsCache
                     reuseItems: true
                     interactive: false
                     cacheBuffer: control.itemHeight * 2
                     currentIndex: -1
-                    spacing:0
+                    spacing: 0
                     delegate: Loader {
                         property var model: modelData
                         property var _idx: index
@@ -494,9 +284,9 @@ Item {
 
                     property int itemDepth: {
                         if (!targetListView || targetListView.currentIndex < 0) return 0
-                        var model = targetListView.model
-                        if (!model || targetListView.currentIndex >= model.length) return 0
-                        return navIndD.getItemDepth(model[targetListView.currentIndex])
+                        var m = targetListView.model
+                        if (!m || targetListView.currentIndex >= m.length) return 0
+                        return getItemDepth(m[targetListView.currentIndex])
                     }
 
                     property real targetTop: {
@@ -517,52 +307,59 @@ Item {
                     x: indicatorX + (itemDepth * levelIndent)
                     y: topPos
                     height: bottomPos - topPos
-
                     visible: targetListView && targetListView.currentIndex >= 0
 
                     state: "normal"
 
-                    QtObject {
-                        id: navIndD
-                        function getItemDepth(item) {
-                            if (!item || item._parent === undefined) return 0
-                            return 1 + getItemDepth(item._parent)
-                        }
+                    function getItemDepth(item) {
+                        if (!item || item._parent === undefined) return 0
+                        return 1 + getItemDepth(item._parent)
                     }
 
                     Connections {
                         target: nav_list
                         function onCurrentIndexChanged() {
-                            if (nav_list.currentIndex >= 0) {
-                                var dir = nav_list.currentIndex - navIndicator.lastIndex
-                                if (dir > 0 && navIndicator.lastIndex >= 0 && !trans_enter.running) {
-                                    navIndicator.oldTopPos = navIndicator.topPos
-                                    navIndicator.state = "startEnter"
-                                    navIndicator.state = "normal"
-                                } else if (dir < 0 && navIndicator.lastIndex >= 0 && !trans_enter.running) {
-                                    navIndicator.oldTopPos = navIndicator.topPos
-                                    navIndicator.state = "endEnter"
-                                    navIndicator.state = "normal"
-                                } else {
-                                    navIndicator.state = "normal"
-                                }
-                                navIndicator.lastIndex = nav_list.currentIndex
+                            if (nav_list.currentIndex < 0) return
+                            var dir = nav_list.currentIndex - navIndicator.lastIndex
+                            if (dir > 0 && navIndicator.lastIndex >= 0 && !trans_enter.running) {
+                                navIndicator.oldTopPos = navIndicator.topPos
+                                navIndicator.state = "startEnter"
+                                navIndicator.state = "normal"
+                            } else if (dir < 0 && navIndicator.lastIndex >= 0 && !trans_enter.running) {
+                                navIndicator.oldTopPos = navIndicator.topPos
+                                navIndicator.state = "endEnter"
+                                navIndicator.state = "normal"
+                            } else {
+                                navIndicator.state = "normal"
                             }
+                            navIndicator.lastIndex = nav_list.currentIndex
                         }
                     }
 
                     states: [
                         State {
                             name: "endEnter"
-                            PropertyChanges { target: navIndicator; topPos: targetTop; bottomPos: oldTopPos + highlightSize }
+                            PropertyChanges {
+                                target: navIndicator
+                                topPos: navIndicator.targetTop
+                                bottomPos: navIndicator.oldTopPos + navIndicator.highlightSize
+                            }
                         },
                         State {
                             name: "startEnter"
-                            PropertyChanges { target: navIndicator; topPos: oldTopPos; bottomPos: targetBottom }
+                            PropertyChanges {
+                                target: navIndicator
+                                topPos: navIndicator.oldTopPos
+                                bottomPos: navIndicator.targetBottom
+                            }
                         },
                         State {
                             name: "normal"
-                            PropertyChanges { target: navIndicator; topPos: targetTop; bottomPos: targetBottom }
+                            PropertyChanges {
+                                target: navIndicator
+                                topPos: navIndicator.targetTop
+                                bottomPos: navIndicator.targetBottom
+                            }
                         }
                     ]
 
@@ -592,16 +389,17 @@ Item {
                     }
                 }
             }
-            // 页脚列表区域 - 高度自适应内容
+
+            // 页脚列表区域
             ListView {
                 id: layout_footer
                 Layout.fillWidth: true
                 Layout.preferredHeight: childrenRect.height
-                model: d.handleFooterItems()
+                model: d._footerCache
                 currentIndex: -1
                 reuseItems: true
                 interactive: false
-                spacing:0
+                spacing: 0
                 delegate: Loader {
                     property var model: modelData
                     property var _idx: index
@@ -614,9 +412,9 @@ Item {
                 }
             }
         }
-    }//Item {
+    }
 
-    // 内容区域：StackView 页面容器
+    // 内容区域
     StackView {
         id: stack
         anchors.left: layout_list.right
@@ -629,14 +427,11 @@ Item {
 
     // 展开/折叠所有分组
     function isExpand(isexpand) {
-        for(var i=0;i<nav_list.model.length;i++){
-            var item = nav_list.model[i]
-            if(item instanceof PaneItemExpander){
+        var model = nav_list.model
+        for (var i = 0; i < model.length; i++) {
+            var item = model[i]
+            if (item instanceof PaneItemExpander)
                 item.isExpand = isexpand
-            }
         }
     }
-
 }
-
-

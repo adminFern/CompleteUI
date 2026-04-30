@@ -7,4 +7,5 @@ QtObject {
     property bool visible: true     // 是否可见
     property string title           // 显示标题
     property string icon            // 图标
+    property bool disabled: false   // 是否禁用
 }
