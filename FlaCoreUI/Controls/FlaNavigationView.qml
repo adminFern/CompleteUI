@@ -1,9 +1,7 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Controls.Basic
+import QtQuick.Controls
 import FlaCoreUI
-
 // 导航视图组件：支持三种显示模式（Open/Compact/Minimal）
 // 使用 items 和 footerItems 属性配置导航项
 Item {
@@ -20,12 +18,15 @@ Item {
     property Objects items              // 主导航项容器
     property Objects footerItems        // 页脚项容器
     property color primaryColor: Theme.PrimaryColor
-    property int displayMode: ComNavigationView.NavViewType.Auto
+    property int displayMode: FlaNavigationView.NavViewType.Auto
     property int navCompactWidth: 40    // 紧凑模式下侧边栏宽度
     property int itemHeight: 38         // 导航项高度
     property int sidebarWidth: 200      // 侧边栏宽度
     property color textcolor: Theme.Textcolor
     property font textfont: Qt.font({ family: Theme.defaultFontFamily, pixelSize: 13, weight: Font.Normal })
+    property color hoverColor:Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05)
+    property color selectedColor: Theme.setColorAlpha( Theme.PrimaryColor,100)
+    property int indicatorX: 0
     signal itemclicked(string title)
 
     QtObject{
@@ -36,7 +37,7 @@ Item {
         property string isPage: ""
         // 判断当前是否为 Compact 模式（且未展开）
         property bool isCompactAndNotPanel: d.displayMode
-                                            === ComNavigationView.NavViewType.Compact && !d.enableNavigationPanel
+                                            === FlaNavigationView.NavViewType.Compact && !d.enableNavigationPanel
         //文本禁止颜色
         property color disabledtextcolor: Theme.isDark?"#9CA3AF":"#6B7280"
         property color disabledcolor: Theme.isDark?"#2A2E37":" #F4F5F7"
@@ -103,15 +104,15 @@ Item {
     }
     Component.onCompleted: {
         d.displayMode = Qt.binding(function () {
-            if (control.displayMode !== ComNavigationView.NavViewType.Auto) {
+            if (control.displayMode !== FlaNavigationView.NavViewType.Auto) {
                 return control.displayMode
             }
             if (control.width <= 700) {
-                return ComNavigationView.NavViewType.Minimal
+                return FlaNavigationView.NavViewType.Minimal
             } else if (control.width <= 900) {
-                return ComNavigationView.NavViewType.Compact
+                return FlaNavigationView.NavViewType.Compact
             } else {
-                return ComNavigationView.NavViewType.Open
+                return FlaNavigationView.NavViewType.Open
             }
 
         })
@@ -119,7 +120,7 @@ Item {
     Connections{
         target: d
         function onDisplayModeChanged(){
-            if(d.displayMode === ComNavigationView.NavViewType.Compact){
+            if(d.displayMode === FlaNavigationView.NavViewType.Compact){
                 isExpand(false)
             }
             d.enableNavigationPanel = false
@@ -143,8 +144,10 @@ Item {
             height:  control.itemHeight
             width: layout_list.width
             Rectangle{
-                anchors.fill: parent
-                anchors.margins: 1
+                anchors.leftMargin: layout_list.indicatorRightX
+                anchors.rightMargin: 1
+                anchors.topMargin: 1
+                anchors.bottomMargin: 1
                 radius: 4
                 Row{
                     anchors.fill: parent
@@ -172,7 +175,7 @@ Item {
                                 if(model.disabled){
                                     return Theme.DisabledTextColor
                                 }
-                                return layout_footer.currentIndex === model._idx?  "white": control.textcolor
+                                return layout_footer.currentIndex === model._idx?  Theme.PrimaryColor: control.textcolor
                             }
                             elide: Text.ElideRight
                             font: control.textfont
@@ -187,11 +190,8 @@ Item {
                         return Theme.setColorAlpha(Theme.isDark? Qt.darker(control.primaryColor,1.5):
                                                                  Qt.lighter(control.primaryColor,1.5)  ,150)
                     }
-                    if (headerMouse.containsMouse){
-                        return Theme.setColorAlpha(Theme.isDark? Qt.darker(control.primaryColor,1.2):
-                                                                 Qt.lighter(control.primaryColor,1.2)  ,100)
-                    }
-                    if (layout_footer.currentIndex === model._idx) return Theme.setColorAlpha(control.primaryColor,200)
+                    if (headerMouse.containsMouse) return control.hoverColor
+                    if (layout_footer.currentIndex === model._idx) return control.selectedColor
                     return "transparent"
                 }
                 Behavior on color { ColorAnimation { duration: 200 }}
@@ -243,19 +243,15 @@ Item {
                 id: item_panel
                 enabled: !model.disabled
                 anchors.fill: parent
-                anchors.leftMargin: model._parent !== undefined ? 15 : 1
+                anchors.leftMargin: model._parent !== undefined ? 15 : layout_list.indicatorRightX
                 anchors.rightMargin: 1
                 anchors.topMargin: 1
                 anchors.bottomMargin: 1
                 radius: 4
                 color: {
-                    if (!item_panel.enabled) return Theme.DisabledColor //禁止颜色
-                    if (nav_list.currentIndex === model._idx) return Theme.setColorAlpha(control.primaryColor,200) //选中颜色
-
-                    if (item_mouse.containsMouse){
-                        return Theme.setColorAlpha(Theme.isDark? Qt.darker(control.primaryColor,1.2):
-                                                                 Qt.lighter(control.primaryColor,1.2)  ,100)
-                    }
+                    if (!item_panel.enabled) return Theme.DisabledColor
+                    if (nav_list.currentIndex === model._idx) return control.selectedColor
+                    if (item_mouse.containsMouse) return control.hoverColor
                     return "transparent"
                 }
                 Behavior on color { ColorAnimation { duration: 200 } }
@@ -278,7 +274,7 @@ Item {
                         iconbold: true
                         icocolor: {
                             if (!item_panel.enabled) return Theme.DisabledTextColor //禁止颜色
-                            return  nav_list.currentIndex === model._idx?  "white": control.textcolor
+                            return  nav_list.currentIndex === model._idx?  Theme.PrimaryColor: control.textcolor
                         }
                     }
                 }
@@ -292,7 +288,7 @@ Item {
                         text:model.title
                         color:{
                             if (!item_panel.enabled) return Theme.DisabledTextColor //禁止颜色
-                            return  nav_list.currentIndex === model._idx?  "white": control.textcolor
+                            return  nav_list.currentIndex === model._idx?  Theme.PrimaryColor: control.textcolor
                         }
                         elide: Text.ElideRight
                         font: control.textfont
@@ -330,15 +326,15 @@ Item {
                 id: item_expander
                 enabled: !model.disabled
                 anchors.fill: parent
-                anchors.margins:1
+                anchors.leftMargin: layout_list.indicatorRightX
+                anchors.rightMargin: 1
+                anchors.topMargin: 1
+                anchors.bottomMargin: 1
                 radius: 4
                 color: {
                     if (!item_expander.enabled) return  Theme.DisabledColor
-                    if (nav_list.currentIndex === model._idx) return Theme.setColorAlpha(control.primaryColor,200)
-                    if (item_expander_mouse.containsMouse){
-                        return Theme.setColorAlpha(Theme.isDark? Qt.darker(control.primaryColor,1.2):
-                                                             Qt.lighter(control.primaryColor,1.2)  ,100)
-                    }
+                    if (nav_list.currentIndex === model._idx) return control.selectedColor
+                    if (item_expander_mouse.containsMouse) return control.hoverColor
                     return "transparent"
                 }
                 Behavior on color { ColorAnimation { duration: 200 } }
@@ -433,14 +429,15 @@ Item {
     // 侧边栏区域
     Item {
         id: layout_list
+        property real indicatorRightX: navIndicator.x + navIndicator.width
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        anchors.leftMargin: d.displayMode === ComNavigationView.NavViewType.Minimal && !d.enableNavigationPanel ? -width : 0
+        anchors.leftMargin: d.displayMode === FlaNavigationView.NavViewType.Minimal && !d.enableNavigationPanel ? -width : 0
         // 宽度动画：Compact/Open 模式切换
-        width: d.displayMode === ComNavigationView.NavViewType.Compact && !d.enableNavigationPanel
+        width: d.displayMode === FlaNavigationView.NavViewType.Compact && !d.enableNavigationPanel
                ? control.navCompactWidth
-               : (d.displayMode === ComNavigationView.NavViewType.Minimal ? 0 : control.sidebarWidth)
+               : (d.displayMode === FlaNavigationView.NavViewType.Minimal ? 0 : control.sidebarWidth)
         visible: width > 0
         // 宽度变化动画
         Behavior on width { NumberAnimation { duration: 250 } }
@@ -455,7 +452,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
-
+                //anchors.margins: 1
                 ListView{
                     id: nav_list
                     anchors.fill: parent
@@ -481,12 +478,118 @@ Item {
                     }
                 }
 
-                // 导航指示器（使用封装的 ComNavIndicator 组件）
-                NavIndicator {
-                    targetListView: nav_list
-                    indicatorColor: control.primaryColor
-                    highlightSize: 20
-                    indicatorX: 4
+                // 导航指示器
+                Rectangle {
+                    id: navIndicator
+                    property var targetListView: nav_list
+                    property color indicatorColor: control.primaryColor
+                    property int highlightSize: 20
+                    property int indicatorX: control.indicatorX
+                    property int levelIndent: 14
+
+                    property real topPos: 0
+                    property real bottomPos: highlightSize
+                    property real oldTopPos: 0
+                    property int lastIndex: -1
+
+                    property int itemDepth: {
+                        if (!targetListView || targetListView.currentIndex < 0) return 0
+                        var model = targetListView.model
+                        if (!model || targetListView.currentIndex >= model.length) return 0
+                        return navIndD.getItemDepth(model[targetListView.currentIndex])
+                    }
+
+                    property real targetTop: {
+                        if (!targetListView || targetListView.currentIndex < 0 || !targetListView.currentItem) return 0
+                        return targetListView.currentItem.y - targetListView.contentY
+                                + (targetListView.currentItem.height - highlightSize) / 2
+                    }
+                    property real targetBottom: {
+                        if (!targetListView || targetListView.currentIndex < 0 || !targetListView.currentItem) return highlightSize
+                        return targetListView.currentItem.y - targetListView.contentY
+                                + (targetListView.currentItem.height + highlightSize) / 2
+                    }
+
+                    z: 1
+                    width: 3
+                    radius: 1.5
+                    color: indicatorColor
+                    x: indicatorX + (itemDepth * levelIndent)
+                    y: topPos
+                    height: bottomPos - topPos
+
+                    visible: targetListView && targetListView.currentIndex >= 0
+
+                    state: "normal"
+
+                    QtObject {
+                        id: navIndD
+                        function getItemDepth(item) {
+                            if (!item || item._parent === undefined) return 0
+                            return 1 + getItemDepth(item._parent)
+                        }
+                    }
+
+                    Connections {
+                        target: nav_list
+                        function onCurrentIndexChanged() {
+                            if (nav_list.currentIndex >= 0) {
+                                var dir = nav_list.currentIndex - navIndicator.lastIndex
+                                if (dir > 0 && navIndicator.lastIndex >= 0 && !trans_enter.running) {
+                                    navIndicator.oldTopPos = navIndicator.topPos
+                                    navIndicator.state = "startEnter"
+                                    navIndicator.state = "normal"
+                                } else if (dir < 0 && navIndicator.lastIndex >= 0 && !trans_enter.running) {
+                                    navIndicator.oldTopPos = navIndicator.topPos
+                                    navIndicator.state = "endEnter"
+                                    navIndicator.state = "normal"
+                                } else {
+                                    navIndicator.state = "normal"
+                                }
+                                navIndicator.lastIndex = nav_list.currentIndex
+                            }
+                        }
+                    }
+
+                    states: [
+                        State {
+                            name: "endEnter"
+                            PropertyChanges { target: navIndicator; topPos: targetTop; bottomPos: oldTopPos + highlightSize }
+                        },
+                        State {
+                            name: "startEnter"
+                            PropertyChanges { target: navIndicator; topPos: oldTopPos; bottomPos: targetBottom }
+                        },
+                        State {
+                            name: "normal"
+                            PropertyChanges { target: navIndicator; topPos: targetTop; bottomPos: targetBottom }
+                        }
+                    ]
+
+                    transitions: [
+                        Transition {
+                            id: trans_enter
+                            to: "normal"
+                            SequentialAnimation {
+                                PauseAnimation { duration: 80 }
+                                PropertyAnimation {
+                                    target: navIndicator
+                                    properties: "topPos,bottomPos"
+                                    duration: 200
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+                        }
+                    ]
+
+                    Behavior on topPos {
+                        enabled: !trans_enter.running
+                        NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
+                    }
+                    Behavior on bottomPos {
+                        enabled: !trans_enter.running
+                        NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
+                    }
                 }
             }
             // 页脚列表区域 - 高度自适应内容

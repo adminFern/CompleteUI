@@ -40,7 +40,7 @@ Item {
     function forceRestore() {
         isHovered = false
         viewOffset = 0
-        console.log("[FlaCardCurveView] forceRestore")
+        console.log("[FlaCardCurveView] 强制恢复波浪排列")
     }
 
     function generateRandomWave() {
@@ -59,7 +59,7 @@ Item {
             var waveValue = (sinWave + randomNoise + cosWave) * positionWeight
             wavePeaks.push(waveValue * waveAmplitude)
         }
-        console.log("[FlaCardCurveView] generateRandomWave:", wavePeaks.map(function(v) { return Math.round(v) }).join(", "))
+        console.log("[FlaCardCurveView] 生成波浪数据:", wavePeaks.map(function(v) { return Math.round(v) }).join(", "))
     }
 
     function getTotalWidth() {
@@ -72,7 +72,7 @@ Item {
         if (n <= 1) return 0
         var available = Math.max(0, control.width * 0.85 - cardWidth)
         var s = available / (n - 1) - cardWidth
-        return Math.max(-cardWidth * 0.5, Math.min(20, s))
+        return Math.min(20, s)
     }
 
     function getExpandOffset() {
@@ -85,12 +85,12 @@ Item {
     function enterCardZone() {
         restoreTimer.stop()
         isHovered = true
-        console.log("[FlaCardCurveView] enterCardZone, isHovered:", isHovered)
+        console.log("[FlaCardCurveView] 进入卡片区域, isHovered:", isHovered)
     }
 
     function leaveCardZone() {
         restoreTimer.restart()
-        console.log("[FlaCardCurveView] leaveCardZone, restoreTimer running:", restoreTimer.running)
+        console.log("[FlaCardCurveView] 离开卡片区域, 定时器运行中:", restoreTimer.running)
     }
 
     function activityInZone() {
@@ -119,8 +119,8 @@ Item {
             var stepX = cardWidth + getWaveSpacing()
             var totalSpan = stepX * (totalCards - 1)
             var visualWidth = totalSpan + cardWidth
-            var startX = (control.width - visualWidth) / 2
-            var x = startX + stepX * index
+            var waveStartX = (control.width - visualWidth) / 2
+            var x = waveStartX + stepX * index
             var baseY = control.height * 0.5 - cardHeight / 2
             var waveY = (index < wavePeaks.length) ? wavePeaks[index] : 0
             var y = baseY + waveY
@@ -148,9 +148,9 @@ Item {
         }
     }
 
-    Component.onCompleted: {
+        Component.onCompleted: {
         generateRandomWave()
-        console.log("[FlaCardCurveView] Component.onCompleted, itemCount:", d.getItemCount())
+        console.log("[FlaCardCurveView] 组件加载完成, 卡片数量:", d.getItemCount())
     }
 
     function refreshWave() {
@@ -213,6 +213,7 @@ Item {
                     anchors.fill: parent
                     radius: 12
                     color: cardData ? cardData.cardColor : "#CCCCCC"
+                    opacity: 0.9
                 }
 
                 Loader {
