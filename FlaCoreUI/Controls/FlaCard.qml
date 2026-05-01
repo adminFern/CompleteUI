@@ -49,13 +49,41 @@ Item {
 
         delegate: Item {
             id: cardRect
-            width:  modelData.cardWidth + 10
-            height: modelData.cardHeight + 10
-
+            width:  modelData.cardWidth + 5
+            height: modelData.cardHeight + 5
             property bool isHovered: false
             property bool isPressed: false
 
-            transform: Scale {
+            Rectangle{
+              id: cardBackground
+              anchors.centerIn: parent
+              width: modelData.cardWidth
+              height: modelData.cardHeight
+              color: modelData.cardColor
+              radius: modelData.radius
+              Loader {
+                 anchors.fill: parent
+               //  anchors.margins: 4
+                  sourceComponent: modelData.delegate
+              }
+            }
+            //Loader
+            //加载标题
+            Loader{
+                 anchors.top: cardBackground.bottom
+                 anchors.horizontalCenter: parent.horizontalCenter
+                 anchors.topMargin: 2
+                 active: modelData.title!==""
+                 visible: active
+                 sourceComponent:  Text {
+                    text: modelData.title
+                    font.pixelSize: 11
+            }
+           }
+
+
+
+                transform: Scale {
                 id: cardScale
                 origin.x: cardRect.width / 2
                 origin.y: cardRect.height / 2
@@ -74,21 +102,6 @@ Item {
                     }
                 }
             }
-
-            Rectangle{
-              id: cardBackground
-              anchors.centerIn: parent
-              width: modelData.cardWidth
-              height: modelData.cardHeight
-              color: modelData.cardColor
-              radius: modelData.radius
-              Loader {
-                 anchors.fill: parent
-               //  anchors.margins: 4
-                  sourceComponent: modelData.delegate
-              }
-            }
-
             DropShadow {
                 anchors.fill: cardBackground
                 horizontalOffset: 3
@@ -104,6 +117,7 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
                 onEntered: cardRect.isHovered = true
                 onExited: {
                     cardRect.isHovered = false

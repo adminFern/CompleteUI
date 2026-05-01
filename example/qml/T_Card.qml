@@ -28,8 +28,6 @@ Item {
             items: Objects {
                 CardItemDelegate{
                    title: "IT资深员"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#38D7FF"
                    delegate: Item {
                        anchors.fill: parent
@@ -51,8 +49,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "UI设计师"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#FF6B6B"
                    delegate: Item {
                        anchors.fill: parent
@@ -74,8 +70,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "后端开发"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#4ECDC4"
                    delegate: Item {
                        anchors.fill: parent
@@ -97,8 +91,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "产品经理"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#45B7D1"
                    delegate: Item {
                        anchors.fill: parent
@@ -120,8 +112,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "测试工程师"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#96CEB4"
                    delegate: Item {
                        anchors.fill: parent
@@ -143,8 +133,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "运维专家"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#FFEAA7"
                    delegate: Item {
                        anchors.fill: parent
@@ -166,8 +154,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "数据分析师"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#DDA0DD"
                    delegate: Item {
                        anchors.fill: parent
@@ -189,8 +175,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "移动端开发"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#F7DC6F"
                    delegate: Item {
                        anchors.fill: parent
@@ -212,8 +196,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "算法工程师"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#98D8C8"
                    delegate: Item {
                        anchors.fill: parent
@@ -235,8 +217,6 @@ Item {
                   }
                 CardItemDelegate{
                    title: "安全专家"
-                   cardWidth:100
-                   cardHeight:100
                    cardColor: "#FF8C94"
                    delegate: Item {
                        anchors.fill: parent
