@@ -22,8 +22,6 @@ Item {
                 for (var i = 0; i < items.children.length; i++) {
                     var item = items.children[i]
                     item._idx = i
-
-                    console.log(item.title)
                     data.push(item)
                 }
             }
@@ -31,7 +29,6 @@ Item {
         }
     }
     ListView {
-
         id: ist
         anchors.leftMargin: 5
         anchors.rightMargin: 5
