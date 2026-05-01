@@ -303,8 +303,6 @@ Item {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            nav_list.currentIndex = model._idx
-                            layout_footer.currentIndex = -1
                             if (model.page) d.go(model.page)
                             control_popup.close()
                         }
@@ -336,12 +334,22 @@ Item {
                   ? control.navCompactWidth
                   : (d.displayMode === FlaNavigationView.NavViewType.Minimal ? 0 : control.sidebarWidth))
         visible: width > 0
-        Behavior on width { NumberAnimation { duration: 250 } }
+        Behavior on width {
+            NumberAnimation {
+                id: widthAnim
+                duration: 250
+                onFinished: {
+                    if (width > 0 && nav_list.currentIndex >= 0) {
+                        navIndicator.topPos = navIndicator.targetTop
+                        navIndicator.bottomPos = navIndicator.targetBottom
+                    }
+                }
+            }
+        }
         Behavior on anchors.leftMargin { NumberAnimation { duration: 250 } }
         onWidthChanged: {
-            if (width > 0 && nav_list.currentIndex >= 0 && !nav_list.currentItem) {
-                navIndicator.topPos = navIndicator.targetTop
-                navIndicator.bottomPos = navIndicator.targetBottom
+            if (width > 0) {
+                navIndicator.lastIndex = -1
             }
         }
         onVisibleChanged: {
@@ -432,7 +440,7 @@ Item {
                     x: indicatorX + (itemDepth * levelIndent)
                     y: topPos
                     height: bottomPos - topPos
-                    visible: layout_list.visible && targetListView && targetListView.currentIndex >= 0
+                    visible: layout_list.visible && targetListView && targetListView.currentIndex >= 0 && d.displayMode === FlaNavigationView.NavViewType.Open
 
                     state: "normal"
 
