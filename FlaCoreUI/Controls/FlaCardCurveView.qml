@@ -25,6 +25,17 @@ Item {
         function getItemCount() {
             return items ? items.children.length : 0
         }
+        function handleItems() {
+            var data = []
+            if (items) {
+                for (var i = 0; i < items.children.length; i++) {
+                    var item = items.children[i]
+                    item._idx = i
+                    data.push(item)
+                }
+            }
+            return data
+        }
     }
 
     Timer {
@@ -188,134 +199,134 @@ Item {
         }
     }
 
-    Item {
-        id: cardsContainer
+    ListView {
+        id: cardList
         anchors.fill: parent
+        model: d.handleItems()
+        currentIndex: -1
+        reuseItems: true
+        interactive: false
+        spacing: 0
 
-        Repeater {
-            id: cardRepeater
-            model: d.getItemCount()
+        delegate: Item {
+            id: cardItem
+            width: cardWidth
+            height: cardHeight
 
-            delegate: Item {
-                id: cardItem
-                width: cardWidth
-                height: cardHeight
+            property var cardData: modelData
+            property var cardPos: getCardPosition(index, d.getItemCount())
 
-                property var cardData: items ? items.children[index] : null
-                property var cardPos: getCardPosition(index, d.getItemCount())
+            x: cardPos.x
+            y: cardPos.y
+            rotation: cardPos.rotation
 
-                x: cardPos.x
-                y: cardPos.y
-                rotation: cardPos.rotation
-
-                Rectangle {
-                    id: cardBackground
-                    anchors.fill: parent
-                    radius: 12
-                    color: cardData ? cardData.cardColor : "#CCCCCC"
-                    opacity: 0.9
-                }
-
-                Loader {
-                    anchors.centerIn: parent
-                    sourceComponent: cardData ? cardData.delegate : null
-                    property var model: cardData
-                    property int index: index
-                }
-
-                DropShadow {
-                    anchors.fill: cardBackground
-                    horizontalOffset: 3
-                    verticalOffset: 5
-                    radius: 10
-                    samples: 21
-                    color: "#50000000"
-                    spread: 0.1
-                    source: cardBackground
-                    cached: true
-                }
-
-                Behavior on x {
-                    enabled: !d.dragging
-                    NumberAnimation {
-                        duration: animationDuration
-                        easing.type: Easing.InOutCubic
-                    }
-                }
-
-                Behavior on y {
-                    NumberAnimation {
-                        duration: animationDuration
-                        easing.type: Easing.InOutCubic
-                    }
-                }
-
-                Behavior on rotation {
-                    NumberAnimation {
-                        duration: animationDuration
-                        easing.type: Easing.InOutCubic
-                    }
-                }
-
-                MouseArea {
-                    id: cardHoverArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-
-                    property real pressX: 0
-
-                    onPressed: function(mouse) {
-                        pressX = mouse.x
-                        d.dragging = false
-                        activityInZone()
-                    }
-
-                    onPositionChanged: function(mouse) {
-                        if (pressed && isHovered) {
-                            var dx = mouse.x - pressX
-                            if (Math.abs(dx) > 5 && !d.dragging) {
-                                d.dragging = true
-                            }
-                            if (d.dragging) {
-                                viewOffset = clampOffset(viewOffset + dx)
-                                pressX = mouse.x
-                            }
-                        }
-                    }
-
-                    onReleased: {
-                        d.dragging = false
-                    }
-
-                    onEntered: {
-                        enterCardZone()
-                        if (!d.dragging) {
-                            cardItem.scale = 1.05
-                        }
-                    }
-
-                    onExited: {
-                        cardItem.scale = 1.0
-                        leaveCardZone()
-                    }
-
-                    onClicked: {
-                        if (!d.dragging && cardData) {
-                            control.cardClicked(index, cardData)
-                        }
-                    }
-                }
-
-                Behavior on scale {
-                    NumberAnimation {
-                        duration: 250
-                        easing.type: Easing.OutBack
-                    }
-                }
-
-                z: cardHoverArea.containsMouse ? 1 : 0
+            Rectangle {
+                id: cardBackground
+                anchors.fill: parent
+                radius: 12
+                color: cardData ? cardData.cardColor : "#CCCCCC"
+                opacity: 0.9
             }
+
+            Loader {
+                anchors.centerIn: parent
+                sourceComponent: cardData ? cardData.delegate : null
+                property var model: cardData
+                property int index: index
+            }
+
+            DropShadow {
+                anchors.fill: cardBackground
+                horizontalOffset: 3
+                verticalOffset: 5
+                radius: 10
+                samples: 21
+                color: "#50000000"
+                spread: 0.1
+                source: cardBackground
+                cached: true
+            }
+
+            Behavior on x {
+                enabled: !d.dragging
+                NumberAnimation {
+                    duration: animationDuration
+                    easing.type: Easing.InOutCubic
+                }
+            }
+
+            Behavior on y {
+                NumberAnimation {
+                    duration: animationDuration
+                    easing.type: Easing.InOutCubic
+                }
+            }
+
+            Behavior on rotation {
+                NumberAnimation {
+                    duration: animationDuration
+                    easing.type: Easing.InOutCubic
+                }
+            }
+
+            MouseArea {
+                id: cardHoverArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+
+                property real pressX: 0
+
+                onPressed: function(mouse) {
+                    pressX = mouse.x
+                    d.dragging = false
+                    activityInZone()
+                }
+
+                onPositionChanged: function(mouse) {
+                    if (pressed && isHovered) {
+                        var dx = mouse.x - pressX
+                        if (Math.abs(dx) > 5 && !d.dragging) {
+                            d.dragging = true
+                        }
+                        if (d.dragging) {
+                            viewOffset = clampOffset(viewOffset + dx)
+                            pressX = mouse.x
+                        }
+                    }
+                }
+
+                onReleased: {
+                    d.dragging = false
+                }
+
+                onEntered: {
+                    enterCardZone()
+                    if (!d.dragging) {
+                        cardItem.scale = 1.05
+                    }
+                }
+
+                onExited: {
+                    cardItem.scale = 1.0
+                    leaveCardZone()
+                }
+
+                onClicked: {
+                    if (!d.dragging && cardData) {
+                        control.cardClicked(index, cardData)
+                    }
+                }
+            }
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.OutBack
+                }
+            }
+
+            z: cardHoverArea.containsMouse ? 1 : 0
         }
     }
 }

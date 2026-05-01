@@ -259,9 +259,110 @@ Item {
             }
         }
 
-        Item {
+        Text {
+            text: qsTr("🌊 曲线卡片视图")
+            font.pixelSize: 16
+            font.bold: true
+            color: Theme.Textcolor
+        }
+
+        FlaCardCurveView {
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: 350
+            cardWidth: 120
+            cardHeight: 160
+            waveAmplitude: 80
+            spacing: 15
+            animationDuration: 600
+            onCardClicked: function(index, item) {
+                console.log("点击卡片:", index, item.title)
+            }
+            items: Objects {
+                CardItemDelegate {
+                    title: "项目A"
+                    cardColor: "#38D7FF"
+                    delegate: Item {
+                        anchors.fill: parent
+                        ColumnLayout {
+                            anchors.fill: parent
+                            spacing: 4
+                            Text { text: qsTr("项目A"); font.bold: true; color: "#fff" }
+                            Text { text: qsTr("进行中"); font.pixelSize: 11; color: "#eee" }
+                            Text { text: qsTr("进度 75%"); font.pixelSize: 10; color: "#ddd" }
+                        }
+                    }
+                }
+                CardItemDelegate {
+                    title: "项目B"
+                    cardColor: "#FF6B6B"
+                    delegate: Item {
+                        anchors.fill: parent
+                        ColumnLayout {
+                            anchors.fill: parent
+                            spacing: 4
+                            Text { text: qsTr("项目B"); font.bold: true; color: "#fff" }
+                            Text { text: qsTr("已完成"); font.pixelSize: 11; color: "#eee" }
+                            Text { text: qsTr("进度 100%"); font.pixelSize: 10; color: "#ddd" }
+                        }
+                    }
+                }
+                CardItemDelegate {
+                    title: "项目C"
+                    cardColor: "#4ECDC4"
+                    delegate: Item {
+                        anchors.fill: parent
+                        ColumnLayout {
+                            anchors.fill: parent
+                            spacing: 4
+                            Text { text: qsTr("项目C"); font.bold: true; color: "#fff" }
+                            Text { text: qsTr("待启动"); font.pixelSize: 11; color: "#eee" }
+                            Text { text: qsTr("进度 0%"); font.pixelSize: 10; color: "#ddd" }
+                        }
+                    }
+                }
+                CardItemDelegate {
+                    title: "项目D"
+                    cardColor: "#45B7D1"
+                    delegate: Item {
+                        anchors.fill: parent
+                        ColumnLayout {
+                            anchors.fill: parent
+                            spacing: 4
+                            Text { text: qsTr("项目D"); font.bold: true; color: "#fff" }
+                            Text { text: qsTr("进行中"); font.pixelSize: 11; color: "#eee" }
+                            Text { text: qsTr("进度 50%"); font.pixelSize: 10; color: "#ddd" }
+                        }
+                    }
+                }
+                CardItemDelegate {
+                    title: "项目E"
+                    cardColor: "#96CEB4"
+                    delegate: Item {
+                        anchors.fill: parent
+                        ColumnLayout {
+                            anchors.fill: parent
+                            spacing: 4
+                            Text { text: qsTr("项目E"); font.bold: true; color: "#fff" }
+                            Text { text: qsTr("评审中"); font.pixelSize: 11; color: "#eee" }
+                            Text { text: qsTr("进度 30%"); font.pixelSize: 10; color: "#ddd" }
+                        }
+                    }
+                }
+                CardItemDelegate {
+                    title: "项目F"
+                    cardColor: "#DDA0DD"
+                    delegate: Item {
+                        anchors.fill: parent
+                        ColumnLayout {
+                            anchors.fill: parent
+                            spacing: 4
+                            Text { text: qsTr("项目F"); font.bold: true; color: "#fff" }
+                            Text { text: qsTr("进行中"); font.pixelSize: 11; color: "#eee" }
+                            Text { text: qsTr("进度 60%"); font.pixelSize: 10; color: "#ddd" }
+                        }
+                    }
+                }
+            }
         }
     }
 }
