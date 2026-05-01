@@ -22,7 +22,7 @@ Item {
     property int navCompactWidth: 40
     property int itemHeight: 38
     property int sidebarWidth: 200
-    property color textcolor: Theme.Textcolor
+    property color textColor: Theme.Textcolor
     property font textfont: Qt.font({ family: Theme.defaultFontFamily, pixelSize: 13, weight: Font.Normal })
     property color hoverColor: Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05)
     property color selectedColor: Theme.setColorAlpha(Theme.PrimaryColor, 100)
@@ -39,6 +39,7 @@ Item {
         property bool isCompactAndNotPanel: d.displayMode
                                             === FlaNavigationView.NavViewType.Compact && !d.enableNavigationPanel
 
+        // 缓存导航项数据，避免频繁遍历
         property var _itemsCache: []
         property var _footerCache: []
 
@@ -87,15 +88,15 @@ Item {
         function collapseCheck(expanderItem) {
             if (nav_list.currentIndex < 0) return
             var curData = nav_list.model
-            if (nav_list.currentIndex < curData.length) {
-                var curItem = curData[nav_list.currentIndex]
-                if (curItem && curItem._parent === expanderItem)
-                    nav_list.currentIndex = expanderItem._idx
-            }
+            if (!curData || nav_list.currentIndex >= curData.length) return
+            var curItem = curData[nav_list.currentIndex]
+            if (curItem && curItem._parent === expanderItem)
+                nav_list.currentIndex = expanderItem._idx
         }
     }
 
     Component.onCompleted: {
+        // Auto 模式：根据组件宽度自动切换显示模式
         d.displayMode = Qt.binding(function () {
             if (control.displayMode !== FlaNavigationView.NavViewType.Auto)
                 return control.displayMode
@@ -107,11 +108,14 @@ Item {
         d.refreshFooterItems()
     }
 
+    onItemsChanged: d.refreshItems()
+    onFooterItemsChanged: d.refreshFooterItems()
+
     Connections {
         target: d
         function onDisplayModeChanged() {
             if (d.displayMode === FlaNavigationView.NavViewType.Compact)
-                isExpand(false)
+                setExpandAll(false)
             d.enableNavigationPanel = false
             control_popup.close()
         }
@@ -132,7 +136,7 @@ Item {
     // 页脚项委托
     Component {
         id: com_panel_item_header
-        FlaNavItemBase {
+        NavItemBase {
             itemModel: model
             width: layout_list.width
             isSelected: layout_footer.currentIndex === itemModel._idx
@@ -142,7 +146,7 @@ Item {
             leftMargin: navIndicator.indicatorX + navIndicator.width
             textFont: control.textfont
             primaryColor: control.primaryColor
-            textColor: control.textcolor
+            textColor: control.textColor
             selectedBgColor: control.selectedColor
             hoverBgColor: control.hoverColor
             enablePressedState: true
@@ -157,7 +161,7 @@ Item {
     // 普通导航项委托
     Component {
         id: com_panel_item
-        FlaNavItemBase {
+        NavItemBase {
             itemModel: model
             width: layout_list.width
             isSelected: nav_list.currentIndex === itemModel._idx
@@ -172,7 +176,7 @@ Item {
                 : navIndicator.indicatorX + navIndicator.width
             textFont: control.textfont
             primaryColor: control.primaryColor
-            textColor: control.textcolor
+            textColor: control.textColor
             selectedBgColor: control.selectedColor
             hoverBgColor: control.hoverColor
             Behavior on itemHeight {
@@ -190,7 +194,7 @@ Item {
     // 可展开分组项委托
     Component {
         id: com_panel_item_expander
-        FlaNavItemBase {
+        NavItemBase {
             itemModel: model
             width: layout_list.width
             isSelected: nav_list.currentIndex === itemModel._idx
@@ -201,10 +205,11 @@ Item {
             leftMargin: navIndicator.indicatorX + navIndicator.width
             textFont: control.textfont
             primaryColor: control.primaryColor
-            textColor: control.textcolor
+            textColor: control.textColor
             selectedBgColor: control.selectedColor
             hoverBgColor: control.hoverColor
             onClicked: {
+                // Compact 模式：点击 expander 显示子项弹出菜单
                 if (d.isCompactAndNotPanel && itemModel.children.length > 0) {
                     nav_list.currentIndex = itemModel._idx
                     var h = control.itemHeight * Math.min(Math.max(itemModel.children.length, 1), 8)
@@ -220,6 +225,7 @@ Item {
                     var wasExpand = itemModel.isExpand
                     itemModel.isExpand = !itemModel.isExpand
                     if (wasExpand) d.collapseCheck(itemModel)
+                    Qt.callLater(d.refreshItems)
                 }
                 control.itemclicked(itemModel.title)
             }
@@ -232,7 +238,6 @@ Item {
         property var childModel
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
         padding: 2
-
         enter: Transition {
             NumberAnimation {
                 property: "scale"; from: 0.8; to: 1.0
@@ -263,7 +268,7 @@ Item {
             delegate: Item {
                 id: popup_item
                 width: parent.width
-                height: 38
+                height: control.itemHeight
                 Rectangle {
                     anchors.fill: parent
                     anchors.margins: 2
@@ -291,7 +296,7 @@ Item {
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: model.title
-                            color: nav_list.currentIndex === model._idx ? "white" : control.textcolor
+                            color: nav_list.currentIndex === model._idx ? "white" : control.textColor
                             elide: Text.ElideRight
                             font: control.textfont
                             verticalAlignment: Text.AlignVCenter
@@ -324,10 +329,10 @@ Item {
     Item {
         id: layout_list
         property real indicatorRightX: navIndicator.x + navIndicator.width
-        anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        anchors.leftMargin: d.displayMode === FlaNavigationView.NavViewType.Minimal && !d.enableNavigationPanel ? -width : 0
+        x: d.displayMode === FlaNavigationView.NavViewType.Minimal && !d.enableNavigationPanel ? -width : 0
+        // 根据显示模式计算侧边栏宽度
         width: d.enableNavigationPanel
                ? control.sidebarWidth
                : (d.displayMode === FlaNavigationView.NavViewType.Compact
@@ -346,7 +351,7 @@ Item {
                 }
             }
         }
-        Behavior on anchors.leftMargin { NumberAnimation { duration: 250 } }
+        Behavior on x { NumberAnimation { duration: 250 } }
         onWidthChanged: {
             if (width > 0) {
                 navIndicator.lastIndex = -1
@@ -444,11 +449,13 @@ Item {
 
                     state: "normal"
 
+                    // 计算当前选中项的嵌套深度
                     function getItemDepth(item) {
                         if (!item || item._parent === undefined) return 0
                         return 1 + getItemDepth(item._parent)
                     }
 
+                    // 监听列表选中变化，触发动画
                     Connections {
                         target: nav_list
                         function onCurrentIndexChanged() {
@@ -469,6 +476,7 @@ Item {
                         }
                     }
 
+                    // 指示器位置状态：向下/向上滚动动画
                     states: [
                         State {
                             name: "endEnter"
@@ -527,7 +535,7 @@ Item {
             ListView {
                 id: layout_footer
                 Layout.fillWidth: true
-                Layout.preferredHeight: childrenRect.height
+                Layout.preferredHeight: contentHeight
                 model: d._footerCache
                 currentIndex: -1
                 reuseItems: true
@@ -559,7 +567,7 @@ Item {
     }
 
     // 展开/折叠所有分组
-    function isExpand(isexpand) {
+    function setExpandAll(isexpand) {
         var model = nav_list.model
         for (var i = 0; i < model.length; i++) {
             var item = model[i]
