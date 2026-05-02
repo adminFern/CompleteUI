@@ -5,26 +5,34 @@ import FlaCoreUI
 Item {
     id: control
 
+    enum LayoutType {
+        Horizontal = 0,
+        Vertical = 1
+    }
+
+    // 公开属性：继承 FlaCard 功能
     property Objects items
-    property real cardWidth: 200
-    property real cardHeight: 300
-    property real waveAmplitude: 120
-    property real spacing: 20
-    property int animationDuration: 800
-    property int restoreDelay: 3000
-    property var wavePeaks: []
+    property int layout: FlaCardCurveView.LayoutType.Horizontal
+    property int spacing: 18
+    property real curveAmplitude: 30       // 波浪线振幅
+    property real curveFrequency: 0.8      // 波浪线频率系数
+    property real curveOverlap: 70         // 波浪模式下最大重叠量(px)
+    property int curveDuration: 600        // 波浪↔排列切换动画时长(ms)
+    property int restoreDelay: 3000        // 鼠标离开后恢复波浪延迟(ms)
 
-    property bool isHovered: false
-    property real viewOffset: 0
+    // 边框属性
+    property color borderColor: Theme.FillBorderColor
+    property real borderWidth: 1
+    property bool borderVisible: true
 
-    signal cardClicked(int index, var item)
+    signal clicked(int index, var item)
 
     QtObject {
         id: d
-        property bool dragging: false
-        function getItemCount() {
-            return items ? items.children.length : 0
-        }
+        property int hoveredIndex: -1
+        property var pressedItem: null
+        property bool isExpanded: false
+
         function handleItems() {
             var data = []
             if (items) {
@@ -36,291 +44,237 @@ Item {
             }
             return data
         }
+
+        // 重叠因子：首尾小，中间大，形成首尾可见、中间深重叠
+        function overlapFactor(i, total) {
+            if (total <= 2) return 0.4
+            return 0.12 + 0.88 * Math.sin(Math.PI * i / (total - 2))
+        }
+
+        // 计算卡片在排列方向上的位置（x 水平 / y 垂直）
+        function cardPosition(idx) {
+            var itemList = handleItems()
+            var pos = 0
+            for (var i = 0; i < idx; i++) {
+                var cardSize = control.layout === FlaCardCurveView.LayoutType.Horizontal
+                               ? itemList[i].cardWidth : itemList[i].cardHeight
+                if (d.isExpanded) {
+                    pos += cardSize + control.spacing
+                } else {
+                    pos += cardSize - control.curveOverlap * overlapFactor(i, itemList.length)
+                }
+            }
+            return pos
+        }
+
+        // 计算布局总尺寸
+        function totalLayoutSize() {
+            var itemList = handleItems()
+            var n = itemList.length
+            if (n === 0) return 0
+            var lastIdx = n - 1
+            var pos = cardPosition(lastIdx)
+            var lastSize = control.layout === FlaCardCurveView.LayoutType.Horizontal
+                           ? itemList[lastIdx].cardWidth : itemList[lastIdx].cardHeight
+            return pos + lastSize
+        }
+
+        // 容器偏移：波浪模式居中，展开模式靠左/上留 padding
+        function containerOffset() {
+            if (d.isExpanded) return flickable._glowPadding
+            var size = totalLayoutSize()
+            if (control.layout === FlaCardCurveView.LayoutType.Horizontal) {
+                return Math.max(flickable._glowPadding, (flickable.width - size) / 2)
+            } else {
+                return Math.max(flickable._glowPadding, (flickable.height - size) / 2)
+            }
+        }
     }
 
+    // 外框容器
+    Rectangle {
+        id: outerFrame
+        anchors.fill: parent
+        radius: 12
+        color: "transparent"
+        border.color: borderVisible ? borderColor : "transparent"
+        border.width: borderVisible ? borderWidth : 0
+
+        Flickable {
+            id: flickable
+            anchors.fill: parent
+            anchors.margins: 2
+            clip: true
+
+            property real _glowPadding: 24
+            contentWidth: control.layout === FlaCardCurveView.LayoutType.Horizontal
+                           ? Math.max(flickable.width, d.containerOffset() + d.totalLayoutSize() + _glowPadding)
+                           : flickable.width
+            contentHeight: control.layout === FlaCardCurveView.LayoutType.Vertical
+                            ? Math.max(flickable.height, d.containerOffset() + d.totalLayoutSize() + _glowPadding)
+                            : flickable.height
+
+            flickableDirection: control.layout === FlaCardCurveView.LayoutType.Horizontal
+                                ? Flickable.HorizontalFlick : Flickable.VerticalFlick
+
+            // 卡片容器
+            Item {
+                id: cardsContainer
+                // 尺寸
+                width: control.layout === FlaCardCurveView.LayoutType.Horizontal
+                       ? d.totalLayoutSize() : flickable.width
+                height: control.layout === FlaCardCurveView.LayoutType.Vertical
+                        ? d.totalLayoutSize() : flickable.height
+
+                // 定位：水平模式控制 x，垂直模式控制 y
+                x: control.layout === FlaCardCurveView.LayoutType.Horizontal
+                   ? d.containerOffset() : 0
+                y: control.layout === FlaCardCurveView.LayoutType.Vertical
+                   ? d.containerOffset() : 0
+                Behavior on x {
+                    NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
+                }
+                Behavior on y {
+                    NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
+                }
+
+                Repeater {
+                    model: d.handleItems()
+                    delegate: cardDelegate
+                }
+            }
+        }
+    }
+
+    // 恢复波浪线的定时器
     Timer {
         id: restoreTimer
-        interval: restoreDelay
+        interval: control.restoreDelay
         repeat: false
-        running: false
-        onTriggered: {
-            forceRestore()
-        }
+        onTriggered: d.isExpanded = false
     }
 
-    function forceRestore() {
-        isHovered = false
-        viewOffset = 0
-        console.log("[FlaCardCurveView] 强制恢复波浪排列")
-    }
+    Component {
+        id: cardDelegate
+        Item {
+            id: cardRect
+            width: modelData.cardWidth
+            height: modelData.cardHeight
+            property bool isHovered: false
+            property bool isPressed: false
 
-    function generateRandomWave() {
-        wavePeaks = []
-        var totalCards = d.getItemCount()
-        if (totalCards === 0) return
-
-        for (var i = 0; i < totalCards; i++) {
-            var t = i / (totalCards - 1)
-            var sinValue = Math.sin(t * Math.PI * 2)
-            wavePeaks.push(sinValue * waveAmplitude)
-        }
-        console.log("[FlaCardCurveView] 生成正弦波数据:", wavePeaks.map(function(v) { return Math.round(v) }).join(", "))
-    }
-
-    function getTotalWidth() {
-        var totalCards = d.getItemCount()
-        return totalCards * cardWidth + (totalCards - 1) * spacing
-    }
-
-    function getWaveSpacing() {
-        var n = d.getItemCount()
-        if (n <= 1) return 0
-        var available = Math.max(0, control.width * 0.85 - cardWidth)
-        var s = available / (n - 1) - cardWidth
-        return Math.min(20, s)
-    }
-
-    function getExpandOffset() {
-        var totalWidth = getTotalWidth()
-        if (totalWidth <= control.width) return 0
-        var padding = 20
-        return (totalWidth - control.width) / 2 + padding
-    }
-
-    function enterCardZone() {
-        restoreTimer.stop()
-        isHovered = true
-        console.log("[FlaCardCurveView] 进入卡片区域, isHovered:", isHovered)
-    }
-
-    function leaveCardZone() {
-        restoreTimer.restart()
-        console.log("[FlaCardCurveView] 离开卡片区域, 定时器运行中:", restoreTimer.running)
-    }
-
-    function activityInZone() {
-        if (isHovered) {
-            restoreTimer.restart()
-        }
-    }
-
-    function clampOffset(offset) {
-        if (!isHovered) return 0
-        var limit = getExpandOffset()
-        if (limit <= 0) return 0
-        return Math.max(-limit, Math.min(limit, offset))
-    }
-
-    function getCardPosition(index, totalCards) {
-        if (isHovered) {
-            var totalWidth = getTotalWidth()
-            var startX = (control.width - totalWidth) / 2 + viewOffset
-            return {
-                x: startX + index * (cardWidth + spacing),
-                y: (control.height - cardHeight) / 2,
-                rotation: 0
-            }
-        } else {
-            var stepX = cardWidth + getWaveSpacing()
-            var totalSpan = stepX * (totalCards - 1)
-            var visualWidth = totalSpan + cardWidth
-            var waveStartX = (control.width - visualWidth) / 2
-            var x = waveStartX + stepX * index
-            var baseY = control.height * 0.5 - cardHeight / 2
-            var waveY = (index < wavePeaks.length) ? wavePeaks[index] : 0
-            var y = baseY + waveY
-
-            var rotation = 0
-            if (totalCards > 1 && wavePeaks.length > 0) {
-                if (index === 0) {
-                    var nextY = (1 < wavePeaks.length) ? wavePeaks[1] : 0
-                    rotation = Math.atan2(nextY - waveY, stepX) * 180 / Math.PI * 0.5
-                } else if (index === totalCards - 1) {
-                    var prevY = (index - 1 < wavePeaks.length) ? wavePeaks[index - 1] : 0
-                    rotation = Math.atan2(waveY - prevY, stepX) * 180 / Math.PI * 0.5
-                } else {
-                    var prevY2 = wavePeaks[index - 1] || 0
-                    var nextY2 = wavePeaks[index + 1] || 0
-                    rotation = Math.atan2(nextY2 - prevY2, stepX * 2) * 180 / Math.PI * 0.5
-                }
-            }
-
-            return {
-                x: x,
-                y: y,
-                rotation: rotation
-            }
-        }
-    }
-
-        Component.onCompleted: {
-        generateRandomWave()
-        console.log("[FlaCardCurveView] 组件加载完成, 卡片数量:", d.getItemCount())
-    }
-
-    function refreshWave() {
-        if (!isHovered) {
-            generateRandomWave()
-        }
-    }
-
-    MouseArea {
-        id: wheelArea
-        anchors.fill: parent
-        acceptedButtons: Qt.NoButton
-        hoverEnabled: true
-
-        onWheel: function(wheel) {
-            if (isHovered) {
-                activityInZone()
-                viewOffset = clampOffset(viewOffset + wheel.angleDelta.y / 2)
-            }
-        }
-    }
-
-    MouseArea {
-        id: rootArea
-        anchors.fill: parent
-        hoverEnabled: true
-        z: -1
-
-        onExited: {
-            if (isHovered || restoreTimer.running) {
-                if (!restoreTimer.running) {
-                    restoreTimer.restart()
-                }
-            }
-        }
-    }
-
-    ListView {
-        id: cardList
-        anchors.fill: parent
-        model: d.handleItems()
-        currentIndex: -1
-        reuseItems: true
-        interactive: false
-        spacing: 0
-
-        delegate: Item {
-            id: cardItem
-            width: cardWidth
-            height: cardHeight
-
-            property var cardData: modelData
-            property var cardPos: getCardPosition(index, d.getItemCount())
-
-            x: cardPos.x
-            y: cardPos.y
-            rotation: cardPos.rotation
-
-            Rectangle {
-                id: cardBackground
-                anchors.fill: parent
-                radius: 12
-                color: cardData ? cardData.cardColor : "#CCCCCC"
-                opacity: 0.9
-            }
-
-            Loader {
-                anchors.centerIn: parent
-                sourceComponent: cardData ? cardData.delegate : null
-                property var model: cardData
-                property int index: index
-            }
-
-            DropShadow {
-                anchors.fill: cardBackground
-                horizontalOffset: 3
-                verticalOffset: 5
-                radius: 10
-                samples: 21
-                color: "#50000000"
-                spread: 0.1
-                source: cardBackground
-                cached: true
-            }
-
+            // 排列方向位置（x 水平 / y 垂直）
+            x: control.layout === FlaCardCurveView.LayoutType.Horizontal
+               ? d.cardPosition(index) : (cardsContainer.width - width) / 2
+            y: control.layout === FlaCardCurveView.LayoutType.Vertical
+               ? d.cardPosition(index) : (cardsContainer.height - height) / 2
             Behavior on x {
-                enabled: !d.dragging
-                NumberAnimation {
-                    duration: animationDuration
-                    easing.type: Easing.InOutCubic
-                }
+                NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
             }
-
             Behavior on y {
-                NumberAnimation {
-                    duration: animationDuration
-                    easing.type: Easing.InOutCubic
-                }
+                NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
             }
 
-            Behavior on rotation {
-                NumberAnimation {
-                    duration: animationDuration
-                    easing.type: Easing.InOutCubic
-                }
-            }
+            // 波浪偏移量：展开时为 0，波浪时按正弦偏移
+            property real curveOffset: d.isExpanded ? 0 :
+                control.curveAmplitude * Math.sin(index * control.curveFrequency)
 
-            MouseArea {
-                id: cardHoverArea
+            // 堆叠旋转：波浪模式下轻微旋转制造堆叠感
+            property real stackRotation: d.isExpanded ? 0 : (index % 2 === 0 ? 2.5 : -2.5)
+
+            Item {
+                id: cardContainer
                 anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
+                anchors.leftMargin: 8
+                transform: [
+                    Scale {
+                        id: cardScale
+                        origin.x: cardRect.width / 2
+                        origin.y: cardRect.height / 2
+                        xScale: cardRect.isPressed ? 0.95 : (cardRect.isHovered ? 1.05 : 1.0)
+                        yScale: cardRect.isPressed ? 0.95 : (cardRect.isHovered ? 1.05 : 1.0)
+                        Behavior on xScale {
+                            NumberAnimation { duration: control.curveDuration / 3; easing.type: Easing.OutCubic }
+                        }
+                        Behavior on yScale {
+                            NumberAnimation { duration: control.curveDuration / 3; easing.type: Easing.OutCubic }
+                        }
+                    },
+                    Translate {
+                        id: curveTranslate
+                        y: control.layout === FlaCardCurveView.LayoutType.Horizontal ? cardRect.curveOffset : 0
+                        x: control.layout === FlaCardCurveView.LayoutType.Vertical ? cardRect.curveOffset : 0
+                        Behavior on y {
+                            NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
+                        }
+                        Behavior on x {
+                            NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
+                        }
+                    }
+                ]
 
-                property real pressX: 0
-
-                onPressed: function(mouse) {
-                    pressX = mouse.x
-                    d.dragging = false
-                    activityInZone()
+                // 堆叠旋转动画
+                rotation: cardRect.stackRotation
+                Behavior on rotation {
+                    NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
                 }
 
-                onPositionChanged: function(mouse) {
-                    if (pressed && isHovered) {
-                        var dx = mouse.x - pressX
-                        if (Math.abs(dx) > 5 && !d.dragging) {
-                            d.dragging = true
+                // z-order：悬停卡片提升到最前
+                z: cardRect.isHovered ? 100 : index
+
+                Rectangle {
+                    id: cardBackground
+                    anchors.rightMargin: 8
+                    z: 3
+                    width: modelData.cardWidth
+                    height: modelData.cardHeight
+                    color: modelData.cardColor
+                    radius: modelData.radius
+                    border.color: borderVisible ? borderColor : "transparent"
+                    border.width: borderVisible ? borderWidth : 0
+
+                    Loader {
+                        z: 4
+                        anchors.fill: parent
+                        sourceComponent: modelData.delegate
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered: {
+                            cardRect.isHovered = true
+                            d.hoveredIndex = index
+                            d.isExpanded = true
+                            restoreTimer.stop()
                         }
-                        if (d.dragging) {
-                            viewOffset = clampOffset(viewOffset + dx)
-                            pressX = mouse.x
+                        onExited: {
+                            cardRect.isHovered = false
+                            cardRect.isPressed = false
+                            d.hoveredIndex = -1
+                            restoreTimer.restart()
                         }
+                        onPressed: cardRect.isPressed = true
+                        onReleased: cardRect.isPressed = false
+                        onClicked: control.clicked(index, modelData)
                     }
                 }
 
-                onReleased: {
-                    d.dragging = false
-                }
-
-                onEntered: {
-                    enterCardZone()
-                    if (!d.dragging) {
-                        cardItem.scale = 1.05
-                    }
-                }
-
-                onExited: {
-                    cardItem.scale = 1.0
-                    leaveCardZone()
-                }
-
-                onClicked: {
-                    if (!d.dragging && cardData) {
-                        control.cardClicked(index, cardData)
+                RectangularGlow {
+                    id: glow
+                    z: 0
+                    anchors.fill: cardBackground
+                    glowRadius: 7
+                    spread: 0.3
+                    color: modelData.shadowColor
+                    cornerRadius: cardBackground.radius
+                    opacity: (cardRect.isHovered || cardRect.isPressed) ? 1 : 0.6
+                    Behavior on opacity {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
                     }
                 }
             }
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: 250
-                    easing.type: Easing.OutBack
-                }
-            }
-
-            z: cardHoverArea.containsMouse ? 1 : 0
         }
     }
 }
