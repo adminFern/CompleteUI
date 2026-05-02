@@ -14,13 +14,12 @@ Item {
     property int layout: FlaCardCurveView.LayoutType.Horizontal
     property int spacing: 18
     property real curveAmplitude: 30
-    property real curveFrequency: 0.8
+    property real curveFrequency: 0
+    property real curveDensity: 0.85 // 波浪密集度 0.0~1.0，越大越密集重叠
+     property real cardDensity: 0.35
     property int curveDuration: 600
     property int restoreDelay: 3000
 
-    property color borderColor: Theme.FillBorderColor
-    property real borderWidth: 1
-    property bool borderVisible: true
 
     signal clicked(int index, var item)
 
@@ -55,16 +54,20 @@ Item {
                    : control.height - 4
         }
 
-        // 波浪模式步长：根据组件宽度自动计算，保证首尾不超出
+        // 波浪模式步长：根据组件宽度和密集度自动计算
+        // curveDensity: 0.0=最稀疏(无重叠), 1.0=最密集(深度重叠)
         function waveStep() {
             var itemList = handleItems()
             var n = itemList.length
             if (n <= 1) return 0
-            var avail = availableSize()
-            var lastSize = cardAxisSize(itemList[n - 1])
-            var step = (avail - lastSize) / (n - 1)
-            var maxStep = cardAxisSize(itemList[0]) + control.spacing
-            return Math.min(step, maxStep)
+            var cardSize = cardAxisSize(itemList[0])
+            // 稀疏步长：卡片之间无重叠
+            var sparseStep = cardSize + control.spacing
+            // 密集步长：卡片高度重叠，步长仅为卡片宽度
+            var denseStep = cardSize * control.cardDensity
+            // 按 curveDensity 在两个极端之间插值
+            var density = Math.max(0.0, Math.min(1.0, control.curveDensity))
+            return sparseStep + (denseStep - sparseStep) * density
         }
 
         // 计算卡片在排列方向的位置
@@ -119,53 +122,43 @@ Item {
         }
     }
 
-    Rectangle {
-        id: outerFrame
+    Flickable {
+        id: flickable
         anchors.fill: parent
-        radius: 12
-        color: "transparent"
-        border.color: borderVisible ? borderColor : "transparent"
-        border.width: borderVisible ? borderWidth : 0
+        clip: true
 
-        Flickable {
-            id: flickable
-            anchors.fill: parent
-            anchors.margins: 2
-            clip: true
+        property real _glowPadding: 24
+        contentWidth: control.layout === FlaCardCurveView.LayoutType.Horizontal
+                       ? Math.max(flickable.width, d.totalLayoutSize() + _glowPadding * 2)
+                       : flickable.width
+        contentHeight: control.layout === FlaCardCurveView.LayoutType.Vertical
+                        ? Math.max(flickable.height, d.totalLayoutSize() + _glowPadding * 2)
+                        : flickable.height
 
-            property real _glowPadding: 24
-            contentWidth: control.layout === FlaCardCurveView.LayoutType.Horizontal
-                           ? Math.max(flickable.width, d.totalLayoutSize() + _glowPadding * 2)
-                           : flickable.width
-            contentHeight: control.layout === FlaCardCurveView.LayoutType.Vertical
-                            ? Math.max(flickable.height, d.totalLayoutSize() + _glowPadding * 2)
-                            : flickable.height
+        flickableDirection: control.layout === FlaCardCurveView.LayoutType.Horizontal
+                            ? Flickable.HorizontalFlick : Flickable.VerticalFlick
 
-            flickableDirection: control.layout === FlaCardCurveView.LayoutType.Horizontal
-                                ? Flickable.HorizontalFlick : Flickable.VerticalFlick
+        Item {
+            id: cardsContainer
+            width: control.layout === FlaCardCurveView.LayoutType.Horizontal
+                   ? d.totalLayoutSize() : flickable.width
+            height: control.layout === FlaCardCurveView.LayoutType.Vertical
+                    ? d.totalLayoutSize() : flickable.height
 
-            Item {
-                id: cardsContainer
-                width: control.layout === FlaCardCurveView.LayoutType.Horizontal
-                       ? d.totalLayoutSize() : flickable.width
-                height: control.layout === FlaCardCurveView.LayoutType.Vertical
-                        ? d.totalLayoutSize() : flickable.height
+            x: control.layout === FlaCardCurveView.LayoutType.Horizontal
+               ? d.containerOffset() : 0
+            y: control.layout === FlaCardCurveView.LayoutType.Vertical
+               ? d.containerOffset() : 0
+            Behavior on x {
+                NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
+            }
+            Behavior on y {
+                NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
+            }
 
-                x: control.layout === FlaCardCurveView.LayoutType.Horizontal
-                   ? d.containerOffset() : 0
-                y: control.layout === FlaCardCurveView.LayoutType.Vertical
-                   ? d.containerOffset() : 0
-                Behavior on x {
-                    NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
-                }
-                Behavior on y {
-                    NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
-                }
-
-                Repeater {
-                    model: d.handleItems()
-                    delegate: cardDelegate
-                }
+            Repeater {
+                model: d.handleItems()
+                delegate: cardDelegate
             }
         }
     }
@@ -262,8 +255,8 @@ Item {
                     height: modelData.cardHeight
                     color: modelData.cardColor
                     radius: modelData.radius
-                    border.color: borderVisible ? borderColor : "transparent"
-                    border.width: borderVisible ? borderWidth : 0
+                    border.color: modelData.borderVisible ? modelData.borderColor: "transparent"
+                    border.width:  modelData.borderVisible ? 1 : 0
 
                     Loader {
                         z: 4

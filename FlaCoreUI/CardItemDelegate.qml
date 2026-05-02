@@ -8,5 +8,8 @@ QtObject {
     property int cardWidth: 130
     property int cardHeight: 130
     property int radius: 10
+    property color borderColor: Theme.FillBorderColor
+    property bool borderVisible: true
     property Component delegate
+
 }

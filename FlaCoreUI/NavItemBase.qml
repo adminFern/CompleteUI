@@ -24,11 +24,8 @@ Item {
     property color textColor: Theme.Textcolor
     property color selectedBgColor: Theme.setColorAlpha(Theme.PrimaryColor, 100)
     property color hoverBgColor: Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05)
-
     readonly property bool isDisabled: itemModel ? (itemModel.disabled === true) : false
-
     signal clicked
-
     height: itemHeight
     width: parent ? parent.width : 0
 

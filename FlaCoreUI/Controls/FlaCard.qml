@@ -111,6 +111,9 @@ Item {
                         height: modelData.cardHeight
                         color: modelData.cardColor
                         radius: modelData.radius
+                        border.color: modelData.borderVisible ? modelData.borderColor: "transparent"
+                        border.width:  modelData.borderVisible ? 1 : 0
+
                         Loader {
                             z: 4
                             anchors.fill: parent
@@ -130,7 +133,6 @@ Item {
                             onClicked: control.clicked(index, modelData)
                         }
                     }
-
                     RectangularGlow {
                         id: glow
                         z: 0

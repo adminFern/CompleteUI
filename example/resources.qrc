@@ -5,6 +5,7 @@
         <file>qml/T_Content.qml</file>
         <file>qml/T_Home.qml</file>
         <file>qml/T_Card.qml</file>
+        <file>qml/T_SpeedButton.qml</file>
         <file>svg/avatar_1.svg</file>
         <file>svg/avatar_2.svg</file>
         <file>svg/avatar_3.svg</file>

@@ -218,9 +218,6 @@ Item {
             layout: FlaCardCurveView.LayoutType.Horizontal
             curveAmplitude: 35
             curveFrequency: 0.7
-            borderColor: Theme.DividerColor
-            borderWidth: 1
-            borderVisible: true
             items: Objects {
                 CardItemDelegate {
                     cardColor: Theme.FillCardColor
@@ -282,6 +279,16 @@ Item {
                         emailText: "liuyang@flacore.com"
                     }
                 }
+                // CardItemDelegate {
+                //     cardColor: Theme.FillCardColor
+                //     cardWidth: 250; cardHeight: 130; radius: 12
+                //     delegate: CardContent {
+                //         avatarSrc: "qrc:/svg/avatar_6.svg"
+                //         nameText: "刘洋"; positionText: "运营总监"
+                //         companyText: "云启网络"; phoneText: "134-0006-0006"
+                //         emailText: "liuyang@flacore.com"
+                //     }
+                // }
             }
         }
 

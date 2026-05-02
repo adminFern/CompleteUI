@@ -21,6 +21,11 @@ Item {
                 icon: "📉"
                 page: "qrc:/qml/T_Card.qml"
             }
+            PaneItem {
+                title: "悬浮按钮"
+                icon: FluentIcon.ico_Add
+                page: "qrc:/qml/T_SpeedButton.qml"
+            }
             PaneItemExpander {
                 title: "基本组件"
                 isExpand: true
