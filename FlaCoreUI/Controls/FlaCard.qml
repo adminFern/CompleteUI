@@ -11,7 +11,7 @@ Item {
     }
     property Objects items
     property int layout: FlaCard.LayoutType.Horizontal
-    property int spacing: 2
+    property int spacing: 10
     QtObject {
         id: d
         property int hoveredIndex: -1
@@ -40,6 +40,8 @@ Item {
         reuseItems: true
         interactive: true
         clip: false
+        cacheBuffer: control.layout === FlaCard.LayoutType.Horizontal
+                     ? ist.width * 2 : ist.height * 2
         spacing: control.spacing
         orientation: control.layout === FlaCard.LayoutType.Horizontal
                      ? ListView.Horizontal : ListView.Vertical
@@ -50,37 +52,34 @@ Item {
             height: modelData.cardHeight + 5
             property bool isHovered: false
             property bool isPressed: false
-
             Rectangle{
-              id: cardBackground
-              anchors.centerIn: parent
-              width: modelData.cardWidth
-              height: modelData.cardHeight
-              color: modelData.cardColor
-              radius: modelData.radius
-              Loader {
-                 anchors.fill: parent
-               //  anchors.margins: 4
-                  sourceComponent: modelData.delegate
-              }
+                z:1
+                id: cardBackground
+                width: modelData.cardWidth
+                height: modelData.cardHeight
+                color: modelData.cardColor
+                radius: modelData.radius
+                Loader {
+                    z:3
+                    anchors.fill: parent
+                    sourceComponent: modelData.delegate
+                }
+
             }
-            //Loader
-            //加载标题
-            Loader{
-                 anchors.top: cardBackground.bottom
-                 anchors.horizontalCenter: parent.horizontalCenter
-                 anchors.topMargin: 2
-                 active: modelData.title!==""
-                 visible: active
-                 sourceComponent:  Text {
-                    text: modelData.title
-                    font.pixelSize: 11
+            RectangularGlow {
+                id: glow
+                z: 0  // 放在矩形后面
+                anchors.fill: cardBackground
+                glowRadius: 8          // 发光半径
+                spread: 0.3            // 发光的扩散程度 (0.0 - 1.0)
+                color:Theme.isDark?"#4D000000" : "#1A000000" //Theme.PrimaryColor      // 发光颜色   "#4D000000" : "#1A000000"
+                cornerRadius: cardBackground.radius  // 圆角要与矩形一致
+                opacity: (cardRect.isHovered || cardRect.isPressed) ? 1 : 0.6  // 根据悬停/按压状态变化透明度
+                Behavior on opacity {
+                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                }
             }
-           }
-
-
-
-                transform: Scale {
+            transform: Scale {
                 id: cardScale
                 origin.x: cardRect.width / 2
                 origin.y: cardRect.height / 2
@@ -99,17 +98,8 @@ Item {
                     }
                 }
             }
-            DropShadow {
-                anchors.fill: cardBackground
-                horizontalOffset: 3
-                verticalOffset: 5
-                radius: 10
-                samples: 21
-                color: "#50000000"
-                spread: 0.1
-                source: cardBackground
-                cached: true
-            }
+
+
 
             MouseArea {
                 anchors.fill: parent

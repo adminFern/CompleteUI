@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
 import FlaCoreUI
 
 Item {
@@ -27,16 +28,31 @@ Item {
             color: Theme.Textcolor
             anchors.horizontalCenter: parent.horizontalCenter
         }
-        Text {
-            id: name
-            text: qsTr("text")
+        Image {
+              id: sourceImage
+            width: 100
+            height: 100
+            source:"qrc:/svg/avatar_4.svg"
+            fillMode: Image.PreserveAspectCrop
+            //visible: false  // 隐藏原图，只作为遮罩的源
+             layer.enabled: true
+             layer.effect: OpacityMask {
+                 maskSource: Rectangle {
+                     width: sourceImage.width
+                     height: sourceImage.height
+                     radius: 20   // 圆角半径
+                 }
+             }
         }
+
         Text {
             text: "这是一个基于 Qt6 + QML 的 Fluent Design UI 库"
             font.pixelSize: 14
             color: Theme.Textcolor
             anchors.horizontalCenter: parent.horizontalCenter
         }
+        //RoundImage{}
+
 
 
     }

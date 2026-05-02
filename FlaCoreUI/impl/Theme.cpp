@@ -45,6 +45,7 @@ void Theme::refreshColors()
         DisabledTextColor(dark ? QColor(107, 114, 128) : QColor(171, 171, 171));
         DisabledBorderColor(dark ? QColor(100, 100, 100,200) : QColor(200, 200, 200,200));
         FillBackgroundColor(dark ? QColor(60, 60, 60, 80) : QColor(255, 255, 255, 130));
+         FillCardColor(dark ? QColor(45, 45, 45) : QColor(255, 255, 255));
         break;
     case Theme::Effect::Acrylic:
         if(Dwm->isWindow11())  backgroundColor(Qt::transparent);
@@ -58,6 +59,7 @@ void Theme::refreshColors()
         DisabledTextColor(dark ? QColor(107, 114, 128) : QColor(171, 171, 171));
         DisabledBorderColor(dark ? QColor(100, 100, 100) : QColor(200, 200, 200));
         FillBackgroundColor(dark ? QColor(80, 80, 80, 30) : QColor(255, 255, 255, 100));
+         FillCardColor(dark ? QColor(45, 45, 45) : QColor(255, 255, 255));
         break;
     default:
         backgroundColor(dark ? QColor(32, 32, 32, 255) : QColor(240, 240, 240, 255));
@@ -72,6 +74,7 @@ void Theme::refreshColors()
         Textcolor(dark ? Qt::white:Qt::black);
         FillBackgroundColor(dark ? QColor(40, 40, 40, 180) : QColor(255, 255, 255, 180));
         FillBorderColor(dark ? QColor(40, 40, 40, 180) : QColor(210, 210, 210, 255));
+        FillCardColor(dark ? QColor(45, 45, 45) : QColor(255, 255, 255));
         break;
 
           
