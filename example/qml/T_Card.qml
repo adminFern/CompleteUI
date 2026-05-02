@@ -93,7 +93,7 @@ Item {
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 20
-        spacing: 20
+        spacing: 10
         // ========== 名片卡片区域 ==========
         Row {
             spacing: 10
@@ -111,10 +111,9 @@ Item {
         }
         FlaCard {
             Layout.fillWidth: true
-            Layout.preferredHeight: 130
+            Layout.preferredHeight: 160
             layout: FlaCard.LayoutType.Horizontal
-            spacing: 20
-            items: Objects {
+          items: Objects {
                 CardItemDelegate {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
