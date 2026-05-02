@@ -10,17 +10,14 @@ Item {
         Vertical = 1
     }
 
-    // 公开属性：继承 FlaCard 功能
     property Objects items
     property int layout: FlaCardCurveView.LayoutType.Horizontal
     property int spacing: 18
-    property real curveAmplitude: 30       // 波浪线振幅
-    property real curveFrequency: 0.8      // 波浪线频率系数
-    property real curveOverlap: 70         // 波浪模式下最大重叠量(px)
-    property int curveDuration: 600        // 波浪↔排列切换动画时长(ms)
-    property int restoreDelay: 3000        // 鼠标离开后恢复波浪延迟(ms)
+    property real curveAmplitude: 30
+    property real curveFrequency: 0.8
+    property int curveDuration: 600
+    property int restoreDelay: 3000
 
-    // 边框属性
     property color borderColor: Theme.FillBorderColor
     property real borderWidth: 1
     property bool borderVisible: true
@@ -45,53 +42,83 @@ Item {
             return data
         }
 
-        // 重叠因子：首尾小，中间大，形成首尾可见、中间深重叠
-        function overlapFactor(i, total) {
-            if (total <= 2) return 0.4
-            return 0.12 + 0.88 * Math.sin(Math.PI * i / (total - 2))
+        // 获取卡片在排列方向的尺寸
+        function cardAxisSize(item) {
+            return control.layout === FlaCardCurveView.LayoutType.Horizontal
+                   ? item.cardWidth : item.cardHeight
         }
 
-        // 计算卡片在排列方向上的位置（x 水平 / y 垂直）
+        // 组件可用宽度（排列方向）
+        function availableSize() {
+            return control.layout === FlaCardCurveView.LayoutType.Horizontal
+                   ? control.width - 4
+                   : control.height - 4
+        }
+
+        // 波浪模式步长：根据组件宽度自动计算，保证首尾不超出
+        function waveStep() {
+            var itemList = handleItems()
+            var n = itemList.length
+            if (n <= 1) return 0
+            var avail = availableSize()
+            var lastSize = cardAxisSize(itemList[n - 1])
+            var step = (avail - lastSize) / (n - 1)
+            var maxStep = cardAxisSize(itemList[0]) + control.spacing
+            return Math.min(step, maxStep)
+        }
+
+        // 计算卡片在排列方向的位置
         function cardPosition(idx) {
             var itemList = handleItems()
-            var pos = 0
-            for (var i = 0; i < idx; i++) {
-                var cardSize = control.layout === FlaCardCurveView.LayoutType.Horizontal
-                               ? itemList[i].cardWidth : itemList[i].cardHeight
-                if (d.isExpanded) {
-                    pos += cardSize + control.spacing
-                } else {
-                    pos += cardSize - control.curveOverlap * overlapFactor(i, itemList.length)
+            if (idx < 0 || idx >= itemList.length) return 0
+            if (d.isExpanded) {
+                var pos = 0
+                for (var i = 0; i < idx; i++) {
+                    pos += cardAxisSize(itemList[i]) + control.spacing
                 }
+                return pos
+            } else {
+                return idx * waveStep()
             }
-            return pos
         }
 
-        // 计算布局总尺寸
-        function totalLayoutSize() {
+        // 波浪模式总布局尺寸
+        function waveTotalSize() {
             var itemList = handleItems()
             var n = itemList.length
             if (n === 0) return 0
-            var lastIdx = n - 1
-            var pos = cardPosition(lastIdx)
-            var lastSize = control.layout === FlaCardCurveView.LayoutType.Horizontal
-                           ? itemList[lastIdx].cardWidth : itemList[lastIdx].cardHeight
-            return pos + lastSize
+            if (n === 1) return cardAxisSize(itemList[0])
+            var step = waveStep()
+            return (n - 1) * step + cardAxisSize(itemList[n - 1])
         }
 
-        // 容器偏移：波浪模式居中，展开模式靠左/上留 padding
-        function containerOffset() {
-            if (d.isExpanded) return flickable._glowPadding
-            var size = totalLayoutSize()
-            if (control.layout === FlaCardCurveView.LayoutType.Horizontal) {
-                return Math.max(flickable._glowPadding, (flickable.width - size) / 2)
-            } else {
-                return Math.max(flickable._glowPadding, (flickable.height - size) / 2)
+        // 展开模式总布局尺寸
+        function expandedTotalSize() {
+            var itemList = handleItems()
+            var n = itemList.length
+            if (n === 0) return 0
+            var total = 0
+            for (var i = 0; i < n; i++) {
+                total += cardAxisSize(itemList[i])
+                if (i < n - 1) total += control.spacing
             }
+            return total
+        }
+
+        // 当前总布局尺寸
+        function totalLayoutSize() {
+            return d.isExpanded ? expandedTotalSize() : waveTotalSize()
+        }
+
+        // 容器偏移：居中显示
+        function containerOffset() {
+            var size = totalLayoutSize()
+            var avail = availableSize()
+            if (size >= avail) return 2
+            return (avail - size) / 2
         }
     }
 
-    // 外框容器
     Rectangle {
         id: outerFrame
         anchors.fill: parent
@@ -108,25 +135,22 @@ Item {
 
             property real _glowPadding: 24
             contentWidth: control.layout === FlaCardCurveView.LayoutType.Horizontal
-                           ? Math.max(flickable.width, d.containerOffset() + d.totalLayoutSize() + _glowPadding)
+                           ? Math.max(flickable.width, d.totalLayoutSize() + _glowPadding * 2)
                            : flickable.width
             contentHeight: control.layout === FlaCardCurveView.LayoutType.Vertical
-                            ? Math.max(flickable.height, d.containerOffset() + d.totalLayoutSize() + _glowPadding)
+                            ? Math.max(flickable.height, d.totalLayoutSize() + _glowPadding * 2)
                             : flickable.height
 
             flickableDirection: control.layout === FlaCardCurveView.LayoutType.Horizontal
                                 ? Flickable.HorizontalFlick : Flickable.VerticalFlick
 
-            // 卡片容器
             Item {
                 id: cardsContainer
-                // 尺寸
                 width: control.layout === FlaCardCurveView.LayoutType.Horizontal
                        ? d.totalLayoutSize() : flickable.width
                 height: control.layout === FlaCardCurveView.LayoutType.Vertical
                         ? d.totalLayoutSize() : flickable.height
 
-                // 定位：水平模式控制 x，垂直模式控制 y
                 x: control.layout === FlaCardCurveView.LayoutType.Horizontal
                    ? d.containerOffset() : 0
                 y: control.layout === FlaCardCurveView.LayoutType.Vertical
@@ -146,7 +170,6 @@ Item {
         }
     }
 
-    // 恢复波浪线的定时器
     Timer {
         id: restoreTimer
         interval: control.restoreDelay
@@ -163,7 +186,9 @@ Item {
             property bool isHovered: false
             property bool isPressed: false
 
-            // 排列方向位置（x 水平 / y 垂直）
+            property int totalCards: d.handleItems().length
+
+            // 排列方向位置
             x: control.layout === FlaCardCurveView.LayoutType.Horizontal
                ? d.cardPosition(index) : (cardsContainer.width - width) / 2
             y: control.layout === FlaCardCurveView.LayoutType.Vertical
@@ -175,12 +200,21 @@ Item {
                 NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
             }
 
-            // 波浪偏移量：展开时为 0，波浪时按正弦偏移
+            // 波浪偏移
             property real curveOffset: d.isExpanded ? 0 :
                 control.curveAmplitude * Math.sin(index * control.curveFrequency)
 
-            // 堆叠旋转：波浪模式下轻微旋转制造堆叠感
+            // 堆叠旋转
             property real stackRotation: d.isExpanded ? 0 : (index % 2 === 0 ? 2.5 : -2.5)
+
+            // z-order：波浪模式首尾在最顶层，中间递减；悬停卡片始终最前
+            property int baseZ: {
+                if (d.isExpanded) return index
+                if (totalCards <= 2) return index
+                // 首尾卡片 z 最高，中间最低
+                var edgeDist = Math.min(index, totalCards - 1 - index)
+                return totalCards - edgeDist
+            }
 
             Item {
                 id: cardContainer
@@ -213,14 +247,12 @@ Item {
                     }
                 ]
 
-                // 堆叠旋转动画
                 rotation: cardRect.stackRotation
                 Behavior on rotation {
                     NumberAnimation { duration: control.curveDuration; easing.type: Easing.OutCubic }
                 }
 
-                // z-order：悬停卡片提升到最前
-                z: cardRect.isHovered ? 100 : index
+                z: cardRect.isHovered ? 200 : cardRect.baseZ
 
                 Rectangle {
                     id: cardBackground
