@@ -13,7 +13,7 @@ Rectangle {
     property alias buttonMaximized: btn_maximized
     property alias buttonMinimized: btn_minimized
     property string title                    // 窗口标题
-    property string winIcon                  // 窗口图标路径
+    property string icon                  // 窗口图标路径
 
     implicitHeight: 28
     implicitWidth: parent ? parent.width : 0
@@ -25,7 +25,7 @@ Rectangle {
         Image {
             width: 20
             height: 20
-            source: control.winIcon
+            source: control.icon
             smooth: true
             mipmap: true
             fillMode: Image.PreserveAspectFit

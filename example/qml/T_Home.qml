@@ -27,7 +27,10 @@ Item {
             color: Theme.Textcolor
             anchors.horizontalCenter: parent.horizontalCenter
         }
-
+        Text {
+            id: name
+            text: qsTr("text")
+        }
         Text {
             text: "这是一个基于 Qt6 + QML 的 Fluent Design UI 库"
             font.pixelSize: 14

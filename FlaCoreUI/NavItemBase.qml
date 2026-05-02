@@ -15,7 +15,11 @@ Item {
     property int itemHeight: 38
     property int iconSize: 17
     property int leftMargin: 0
-    property font textFont: Qt.font({ family: Theme.defaultFontFamily, pixelSize: 13, weight: Font.Normal })
+    property font textFont: Qt.font({
+        family: Theme.defaultFontFamily,
+        pixelSize: 13,
+        weight: Font.Normal
+    })
     property color primaryColor: Theme.PrimaryColor
     property color textColor: Theme.Textcolor
     property color selectedBgColor: Theme.setColorAlpha(Theme.PrimaryColor, 100)
@@ -23,26 +27,30 @@ Item {
 
     readonly property bool isDisabled: itemModel ? (itemModel.disabled === true) : false
 
-    signal clicked()
+    signal clicked
 
     height: itemHeight
     width: parent ? parent.width : 0
 
     // 统一背景颜色计算
     readonly property color bgColor: {
-        if (isDisabled) return Theme.DisabledColor
+        if (isDisabled)
+            return Theme.DisabledColor;
         if (enablePressedState && mouseArea.pressed)
-            return Theme.setColorAlpha(Theme.isDark ? Qt.darker(primaryColor, 1.5)
-                                                     : Qt.lighter(primaryColor, 1.5), 150)
-        if (isSelected) return selectedBgColor
-        if (mouseArea.containsMouse) return hoverBgColor
-        return "transparent"
+            return Theme.setColorAlpha(Theme.isDark ? Qt.darker(primaryColor, 1.5) : Qt.lighter(primaryColor, 1.5), 150);
+        if (isSelected)
+            return selectedBgColor;
+        if (mouseArea.containsMouse)
+            return hoverBgColor;
+        return "transparent";
     }
     // 统一文本/图标颜色计算
     readonly property color itemTextColor: {
-        if (isDisabled) return Theme.DisabledTextColor
-        if (isSelected) return primaryColor
-        return textColor
+        if (isDisabled)
+            return Theme.DisabledTextColor;
+        if (isSelected)
+            return primaryColor;
+        return textColor;
     }
 
     Rectangle {
@@ -55,7 +63,11 @@ Item {
         anchors.bottomMargin: 1
         radius: 4
         color: root.bgColor
-          Behavior on color { ColorAnimation { duration: 200 } }
+        Behavior on color {
+            ColorAnimation {
+                duration: 200
+            }
+        }
 
         Loader {
             id: iconLoader
@@ -100,7 +112,10 @@ Item {
                 iconsize: 15
                 icocolor: root.isDisabled ? "#9CA3AF" : root.textColor
                 Behavior on rotation {
-                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                    }
                 }
             }
         }

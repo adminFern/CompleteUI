@@ -59,18 +59,12 @@ Item {
         var totalCards = d.getItemCount()
         if (totalCards === 0) return
 
-        var randomSeed = Math.random() * 100
-
         for (var i = 0; i < totalCards; i++) {
             var t = i / (totalCards - 1)
-            var sinWave = Math.sin(t * Math.PI * 2 + randomSeed) * 0.5
-            var randomNoise = (Math.random() - 0.5) * 0.8
-            var cosWave = Math.cos(t * Math.PI * 3 + randomSeed * 2) * 0.3
-            var positionWeight = Math.sin(t * Math.PI)
-            var waveValue = (sinWave + randomNoise + cosWave) * positionWeight
-            wavePeaks.push(waveValue * waveAmplitude)
+            var sinValue = Math.sin(t * Math.PI * 2)
+            wavePeaks.push(sinValue * waveAmplitude)
         }
-        console.log("[FlaCardCurveView] 生成波浪数据:", wavePeaks.map(function(v) { return Math.round(v) }).join(", "))
+        console.log("[FlaCardCurveView] 生成正弦波数据:", wavePeaks.map(function(v) { return Math.round(v) }).join(", "))
     }
 
     function getTotalWidth() {

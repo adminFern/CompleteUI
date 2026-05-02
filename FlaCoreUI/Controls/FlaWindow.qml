@@ -1,6 +1,6 @@
 import QtQuick
 import FlaCoreUI
-// 窗口组件：集成标题栏、无边框窗口特效、StackView 页面容器
+// 窗口组件：集成标题栏、无边框窗口特效
 Window {
     id: control
     property string initialItem          // 初始加载页面
@@ -15,7 +15,7 @@ Window {
     property AppBar appBar: AppBar {
         showMaximize: !control.fixSize
         title: control.title
-        winIcon: control.icon
+        icon: control.icon
     }
 
     Component.onCompleted: {

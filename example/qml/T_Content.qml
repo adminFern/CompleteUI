@@ -28,12 +28,12 @@ Item {
                 PaneItem {
                     title: "按钮组件"
                     icon: "📉"
-                  // page: "qrc:/qml/T_Button.qml"
+                    // page: "qrc:/qml/T_Button.qml"
                 }
                 PaneItem {
                     title: "数字输入"
                     icon: "⏳"
-                  //  page: "qrc:/qml/T_ProgressBar.qml"
+                    //  page: "qrc:/qml/T_ProgressBar.qml"
                 }
             }
         }
