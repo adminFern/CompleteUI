@@ -12,27 +12,27 @@ Item {
     // ========== 对外公开属性 ==========
     property var slidesModel: [
         {
-            imageSource: "https://picsum.photos/id/104/800/500",
-            title: "山麓晨雾",
-            tag: "宁静 · 高原"
+            imageSource: "https://picsum.photos/seed/ghibli-meadow/800/500.jpg",
+            title: '草原上的旅人',
+            tag: '奇幻 · 自然'
         },
         {
-            imageSource: "https://picsum.photos/id/15/800/500",
-            title: "林间旧径",
-            tag: "森林 · 时光"
+            imageSource: "https://picsum.photos/seed/ghibli-sky/800/500.jpg",
+            title: '天空之城的黎明',
+            tag: '飞行 · 城市'
         },
         {
-            imageSource: "https://picsum.photos/id/39/800/500",
-            title: "浅唱黄昏",
-            tag: "音乐 · 暮色"
+            imageSource: "https://picsum.photos/seed/ghibli-cat/800/500.jpg",
+            title: '橘猫与石径',
+            tag: '动物 · 田园'
         },
         {
-            imageSource: "https://picsum.photos/id/96/800/500",
-            title: "银涟秘境",
-            tag: "流水 · 清凉"
+            imageSource: "https://picsum.photos/seed/ghibli-forest/800/500.jpg",
+            title: '幽深的古木林',
+            tag: '森林 · 秘境'
         },
         {
-            imageSource: "https://picsum.photos/id/28/800/500",
+            imageSource: "https://picsum.photos/seed/ghibli-ocean/800/500.jpg",
             title: "远航灯塔",
             tag: "海洋 · 守望"
         }
@@ -88,6 +88,11 @@ Item {
                     var offset = internal.getOffset(i, internal.currentIndex)
                     var posType = internal.getPositionType(offset)
                     item.setPosition(posType)
+                    // 非中心卡片时重置悬停状态
+                    if (posType !== "center") {
+                        item.isHovered = false
+                        item.hoverScaleFactor = 1.0
+                    }
                     if (posType === "center") {
                         item.opacity = 1
                         item.visible = true
@@ -151,6 +156,39 @@ Item {
                 autoPlayTimer.restart()
             }
         }
+
+        function tryResumeAutoPlay() {
+            if (carousel.isPlaying && !internal.isHovering) {
+                autoPlayTimer.restart()
+            }
+        }
+
+        // 根据视口内的鼠标位置检测是否悬停在中心卡片上
+        function handleHoverPosition(mx, my) {
+            if (internal.isTransitioning) return
+            var centerItem = repeater.itemAt(internal.currentIndex)
+            if (centerItem === null) return
+
+            var cardX = centerItem.x
+            var cardY = (viewport.height - internal.carouselH) / 2
+            var cardW = internal.carouselW
+            var cardH = internal.carouselH
+
+            var inside = mx >= cardX && mx <= cardX + cardW
+                    && my >= cardY && my <= cardY + cardH
+
+            if (inside) {
+                if (!centerItem.isHovered) {
+                    centerItem.isHovered = true
+                    centerItem.hoverScaleFactor = carousel.hoverScale
+                }
+            } else {
+                if (centerItem.isHovered) {
+                    centerItem.isHovered = false
+                    centerItem.hoverScaleFactor = 1.0
+                }
+            }
+        }
     }
 
     // ========== 对外公开方法 ==========
@@ -181,7 +219,14 @@ Item {
     Timer {
         id: transitionTimer
         interval: 500
-        onTriggered: internal.isTransitioning = false
+        onTriggered: {
+            internal.isTransitioning = false
+            internal.tryResumeAutoPlay()
+            // 过渡完成后，如果鼠标仍在视口内，立即刷新悬停视觉
+            if (internal.isHovering) {
+                internal.handleHoverPosition(viewportMA.mouseX, viewportMA.mouseY)
+            }
+        }
     }
 
     // ========== UI 元素 ==========
@@ -193,15 +238,17 @@ Item {
         width: internal.carouselW + internal.sideOffset * 2 + internal.gap * 2
         height: internal.carouselH
         z: 5
-
-        // 整个视口的鼠标检测区域
+        // 整个视口的鼠标检测区域（统一管理悬停和自动播放）
         MouseArea {
+            id: viewportMA
             anchors.fill: parent
             hoverEnabled: true
             onEntered: internal.handleMouseEnter()
             onExited: internal.handleMouseExit()
+            onPositionChanged: function(mouse) {
+                internal.handleHoverPosition(mouse.x, mouse.y)
+            }
         }
-
         // 幻灯片列表
         Repeater {
             id: repeater
@@ -217,16 +264,13 @@ Item {
                 property real targetScale: 1
                 property bool isHovered: false       // 当前卡片是否被悬停
                 property bool isClicked: false       // 当前卡片是否被点击
-
                 // 悬停放大效果 - 通过额外的缩放因子
                 property real hoverScaleFactor: 1.0
                 property real clickScaleFactor: 1.0
-
                 x: targetX
                 y: (viewport.height - height) / 2
                 // 实际显示的缩放 = 位置缩放 * 悬停缩放 * 点击缩放
                 scale: targetScale * hoverScaleFactor * clickScaleFactor
-
                 // 基础位置动画
                 Behavior on x {
                     NumberAnimation { duration: 500; easing.type: Easing.InOutCubic }
@@ -257,16 +301,33 @@ Item {
                     }
                 }
 
-                // ===== 视觉内容容器 =====
+                // 阴影层（先渲染，叠在 visualContent 下方）
+                RectangularGlow {
+                    id: glow
+                    anchors.fill: parent
+                    glowRadius: 8
+                    spread: 0.2
+                    color: Theme.isDark?"#4D000000" : "#1A000000"
+                    cornerRadius: carousel.imageRadius
+                    visible: slideItem.opacity > 0
+                    opacity: slideItem.isHovered ? 0.9 : 0.5
+                    Behavior on opacity {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+
+                // ===== 视觉内容容器（使用 layer 统一裁剪圆角） =====
                 Item {
                     id: visualContent
                     anchors.fill: parent
-                    visible: false
-
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "#f5f5f5"
-                        radius: carousel.imageRadius
+                    visible: true
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: Rectangle {
+                            width: visualContent.width
+                            height: visualContent.height
+                            radius: carousel.imageRadius
+                        }
                     }
 
                     Image {
@@ -288,7 +349,6 @@ Item {
                             GradientStop { position: 0; color: "transparent" }
                             GradientStop { position: 1; color: Qt.rgba(0, 0, 0, 0.5) }
                         }
-                        visible: slideItem.opacity === 1
                     }
 
                     Column {
@@ -297,7 +357,6 @@ Item {
                         anchors.right: parent.right
                         anchors.margins: 24
                         spacing: 4
-                        visible: slideItem.opacity === 1
 
                         Text {
                             text: modelData.title
@@ -317,56 +376,10 @@ Item {
                     }
                 }
 
-                // 阴影层
-                Rectangle {
-                    id: shadowRect
-                    anchors.fill: parent
-                    radius: carousel.imageRadius
-                    color: "black"
-                    visible: slideItem.opacity > 0
-                    opacity: 0.25
-                    layer.enabled: true
-                    layer.effect: DropShadow {
-                        horizontalOffset: 0
-                        verticalOffset: 8
-                        radius: 16
-                        samples: 32
-                        color: "#80000000"
-                        source: shadowRect
-                    }
-                }
-
-                // 最终显示层
-                OpacityMask {
-                    anchors.fill: parent
-                    source: visualContent
-                    maskSource: Rectangle {
-                        width: visualContent.width
-                        height: visualContent.height
-                        radius: carousel.imageRadius
-                    }
-                    opacity: slideItem.opacity
-                }
-
-                // 卡片级别的鼠标区域
+                // 卡片级别的鼠标区域（仅处理点击，悬停由 viewportMA 统一管理）
                 MouseArea {
                     anchors.fill: parent
-                    hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-
-                    // 悬停处理
-                    onEntered: {
-                        if (index === internal.currentIndex && !internal.isTransitioning) {
-                            slideItem.isHovered = true
-                            slideItem.hoverScaleFactor = carousel.hoverScale
-                        }
-                    }
-
-                    onExited: {
-                        slideItem.isHovered = false
-                        slideItem.hoverScaleFactor = 1.0
-                    }
-
                     // 点击处理
                     onPressed: {
                         if (index === internal.currentIndex && !internal.isTransitioning) {
@@ -374,7 +387,6 @@ Item {
                             slideItem.clickScaleFactor = carousel.clickScale
                         }
                     }
-
                     onReleased: {
                         slideItem.clickScaleFactor = 1.0
                         slideItem.isClicked = false
@@ -431,55 +443,45 @@ Item {
                 }
             }
         }
-    }
 
-    // 圆点指示器 - 添加悬停检测
-    Item {
-        id: dotsContainer
-        anchors.horizontalCenter: viewport.horizontalCenter
-        anchors.top: viewport.bottom
-        anchors.topMargin: 0
-        height: 20
-        z: 20
+        // 圆点指示器 - 叠在视图底部
+        Item {
+            id: dotsContainer
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            height: 20
+            z: 200
+            Row {
+                id: dotsRow
+                anchors.centerIn: parent
+                spacing: 12
+                Repeater {
+                    id: dotRepeater
+                    model: internal.totalCount
+                    Rectangle {
+                        width: active ? 28 : 8
+                        height: 8
+                        radius: active ? 12 : 4
+                        color: active ? "#2c2c2c" : "#c7c7c7"
+                        property bool active: index === internal.currentIndex
 
-        // 指示器区域的鼠标检测
-        MouseArea {
-            anchors.fill: parent
-            anchors.margins: -10  // 扩大检测范围
-            hoverEnabled: true
-            onEntered: internal.handleMouseEnter()
-            onExited: internal.handleMouseExit()
-        }
-
-        Row {
-            id: dotsRow
-            anchors.centerIn: parent
-            spacing: 12
-            Repeater {
-                id: dotRepeater
-                model: internal.totalCount
-                Rectangle {
-                    width: active ? 28 : 8
-                    height: 8
-                    radius: active ? 12 : 4
-                    color: active ? "#2c2c2c" : "#c7c7c7"
-                    property bool active: index === internal.currentIndex
-
-                    Behavior on width {
-                        NumberAnimation { duration: 350; easing.type: Easing.InOutCubic }
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: internal.goTo(index)
+                        Behavior on width {
+                            NumberAnimation { duration: 350; easing.type: Easing.InOutCubic }
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: internal.goTo(index)
+                        }
                     }
                 }
             }
         }
     }
-    implicitWidth: internal.carouselW + internal.sideOffset * 2 + internal.gap * 2
-    implicitHeight: internal.carouselH + dotsContainer.height + 20
 
+    implicitWidth: internal.carouselW + internal.sideOffset * 2 + internal.gap * 2
+    implicitHeight: internal.carouselH + 20
     // ========== 初始化 ==========
     Component.onCompleted: {
         internal.updatePositions()
