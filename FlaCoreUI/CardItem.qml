@@ -4,7 +4,7 @@ import FlaCoreUI
 QtObject {
     property int _idx
     property color cardColor: Theme.FillCardColor
-    property color shadowColor: Theme.isDark?"#4D000000" : "#1A000000"
+    property color shadowColor: Theme.isDark ? "#80000000" : "#40000000"
     property int cardWidth: 130
     property int cardHeight: 130
     property int radius: 10

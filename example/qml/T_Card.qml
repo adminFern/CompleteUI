@@ -114,7 +114,7 @@ Item {
             Layout.preferredHeight: 160
             layout: FlaCard.LayoutType.Horizontal
           items: Objects {
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -124,7 +124,7 @@ Item {
                         emailText: "zhoujie@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -134,7 +134,7 @@ Item {
                         emailText: "liming@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -144,7 +144,7 @@ Item {
                         emailText: "wangfang@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -154,7 +154,7 @@ Item {
                         emailText: "zhangwei@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -164,7 +164,7 @@ Item {
                         emailText: "chenjing@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -174,7 +174,7 @@ Item {
                         emailText: "liuyang@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -184,7 +184,7 @@ Item {
                         emailText: "zhaolei@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -219,7 +219,7 @@ Item {
             curveAmplitude:30
             curveFrequency:0.8
             items: Objects {
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -229,7 +229,7 @@ Item {
                         emailText: "zhoujie@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -239,7 +239,7 @@ Item {
                         emailText: "liming@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -249,7 +249,7 @@ Item {
                         emailText: "wangfang@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -259,7 +259,7 @@ Item {
                         emailText: "zhangwei@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
@@ -269,7 +269,7 @@ Item {
                         emailText: "chenjing@flacore.com"
                     }
                 }
-                CardItemDelegate {
+                CardItem {
                     cardColor: Theme.FillCardColor
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {

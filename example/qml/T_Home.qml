@@ -69,7 +69,7 @@ Item {
                 layout: FlaCardCurveView.LayoutType.Horizontal
                 items: Objects{
 
-                    CardItemDelegate {
+                    CardItem {
                         cardWidth: 250
                         cardHeight: 130
                         cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
@@ -81,7 +81,7 @@ Item {
                             emailText: "zhoujie@flacore.com"
                         }
                     }
-                    CardItemDelegate {
+                    CardItem {
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -93,7 +93,7 @@ Item {
                             emailText: "zhoujie@flacore.com"
                         }
                     }
-                    CardItemDelegate {
+                    CardItem {
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -105,7 +105,7 @@ Item {
                             emailText: "zhoujie@flacore.com"
                         }
                     }
-                    CardItemDelegate {
+                    CardItem {
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -117,7 +117,7 @@ Item {
                             emailText: "zhoujie@flacore.com"
                         }
                     }
-                    CardItemDelegate {
+                    CardItem {
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -140,7 +140,7 @@ Item {
                 width: parent.width
                 height: 170
                 items: Objects{
-                    CardItemDelegate {
+                    CardItem {
                           cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
@@ -153,7 +153,7 @@ Item {
                         //     emailText: "liming@flacore.com"
                         // }
                     }
-                    CardItemDelegate {
+                    CardItem {
                           cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
@@ -166,7 +166,7 @@ Item {
                         //     emailText: "liming@flacore.com"
                         // }
                     }
-                    CardItemDelegate {
+                    CardItem {
                           cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
@@ -179,7 +179,7 @@ Item {
                         //     emailText: "liming@flacore.com"
                         // }
                     }
-                    CardItemDelegate {
+                    CardItem {
                           cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
@@ -192,7 +192,7 @@ Item {
                         //     emailText: "liming@flacore.com"
                         // }
                     }
-                    CardItemDelegate {
+                    CardItem {
                           cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
@@ -205,7 +205,7 @@ Item {
                         //     emailText: "liming@flacore.com"
                         // }
                     }
-                    CardItemDelegate {
+                    CardItem {
                           cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
@@ -222,7 +222,14 @@ Item {
 
             }
             FlaCarousel{
-             anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                items: Objects {
+                    CarouselItem { imagesource: "https://picsum.photos/seed/ghibli-meadow/800/500.jpg" }
+                    CarouselItem { imagesource: "https://picsum.photos/seed/ghibli-sky/800/500.jpg" }
+                    CarouselItem { imagesource: "https://picsum.photos/seed/ghibli-cat/800/500.jpg" }
+                    CarouselItem { imagesource: "https://picsum.photos/seed/ghibli-forest/800/500.jpg" }
+                    CarouselItem { imagesource: "https://picsum.photos/seed/ghibli-ocean/800/500.jpg" }
+                }
             }
         }
     }

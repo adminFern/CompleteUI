@@ -2,66 +2,53 @@ import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import FlaCoreUI
+
 Item {
     id: carousel
 
     // ========== 对外公开属性 ==========
-    property var slidesModel: [
-        {
-            imageSource: "https://picsum.photos/seed/ghibli-meadow/800/500.jpg",
-            title: '草原上的旅人',
-            tag: '奇幻 · 自然'
-        },
-        {
-            imageSource: "https://picsum.photos/seed/ghibli-sky/800/500.jpg",
-            title: '天空之城的黎明',
-            tag: '飞行 · 城市'
-        },
-        {
-            imageSource: "https://picsum.photos/seed/ghibli-cat/800/500.jpg",
-            title: '橘猫与石径',
-            tag: '动物 · 田园'
-        },
-        {
-            imageSource: "https://picsum.photos/seed/ghibli-forest/800/500.jpg",
-            title: '幽深的古木林',
-            tag: '森林 · 秘境'
-        },
-        {
-            imageSource: "https://picsum.photos/seed/ghibli-ocean/800/500.jpg",
-            title: "远航灯塔",
-            tag: "海洋 · 守望"
-        }
-    ]
-
-    property int intervalTime: 3000
-    property bool isPlaying: true
-    property int centerImageWidth: 450
-    property int centerImageHeight: 250
-    property int imageRadius: 10
+    property Objects items                    // 轮播项容器
+    property int intervalTime: 3000           // 自动切换间隔(ms)
+    property bool isPlaying: true             // 是否自动播放
+    property int centerImageWidth: 450        // 中心卡片宽度
+    property int centerImageHeight: 250       // 中心卡片高度
+    property int imageRadius: 10              // 卡片圆角半径
 
     // ========== 内部私有成员 ==========
     QtObject {
         id: internal
-        property real hoverScale: 1.05          // 悬停放大比例
-        property real clickScale: 0.95          // 点击缩小比例
-        property int clickAnimationDuration: 150 // 点击动画持续时间(ms)
-        property real shadowOpacity: 0.7         // 阴影不透明度
-        property real shadowHoverOpacity: 1.0    // 悬停时阴影不透明度
-        property int currentIndex: 0
-        property int totalCount: carousel.slidesModel.length
-        property bool isTransitioning: false
+        property real hoverScale: 1.05               // 悬停放大系数
+        property real clickScale: 0.95               // 点击缩小系数
+        property int clickAnimationDuration: 150     // 点击动画时长(ms)
+        property real shadowOpacity: 0.7             // 阴影透明度
+        property real shadowHoverOpacity: 1.0        // 悬停时阴影透明度
+        property int currentIndex: 0                 // 当前激活索引
+        property int totalCount: items ? items.children.length : 0  // 总数量
+        property bool isTransitioning: false         // 过渡动画进行中标志
         property real carouselW: Math.min(carousel.centerImageWidth, carousel.parent ? carousel.parent.width * 0.7 : carousel.centerImageWidth)
         property real carouselH: Math.min(carousel.centerImageHeight, carousel.parent ? carousel.parent.height * 0.7 : carousel.centerImageHeight)
-        property real sideOffset: carouselW * 0.30
-        property real gap: carouselW * 0.074
-        property real sideScale: 0.75
-        property real farScale: 0.6
+        property real sideOffset: carouselW * 0.30   // 侧边偏移量
+        property real gap: carouselW * 0.074         // 卡片间距
+        property real sideScale: 0.75                // 侧边卡片缩放
+        property real farScale: 0.6                  // 远端卡片缩放
         property real centerImageX: (viewport.width - carouselW) / 2
         property real centerImageTop: (viewport.height - carouselH) / 2
-        property bool isHovering: false      // 鼠标悬停状态
+        property bool isHovering: false              // 鼠标悬停标志
 
-        // ========== 内部方法 ==========
+        // 获取所有轮播项
+        function getItem() {
+            var data = []
+            if (items) {
+                for (var i = 0; i < items.children.length; i++) {
+                    var item = items.children[i]
+                    item._idx = i
+                    data.push(item)
+                }
+            }
+            return data
+        }
+
+        // 计算环形偏移量（处理首尾衔接）
         function getOffset(slideIdx, activeIdx) {
             var diff = slideIdx - activeIdx
             var half = Math.floor(totalCount / 2)
@@ -70,6 +57,7 @@ Item {
             return diff
         }
 
+        // 根据偏移量获取位置类型
         function getPositionType(offset) {
             if (offset === 0) return "center"
             if (offset === 1) return "right"
@@ -79,6 +67,7 @@ Item {
             return "hidden"
         }
 
+        // 更新所有卡片位置和状态
         function updatePositions() {
             for (var i = 0; i < repeater.count; i++) {
                 var item = repeater.itemAt(i)
@@ -86,11 +75,12 @@ Item {
                     var offset = internal.getOffset(i, internal.currentIndex)
                     var posType = internal.getPositionType(offset)
                     item.setPosition(posType)
-                    // 非中心卡片时重置悬停状态
+
                     if (posType !== "center") {
                         item.isHovered = false
                         item.hoverScaleFactor = 1.0
                     }
+
                     if (posType === "center") {
                         item.opacity = 1
                         item.visible = true
@@ -106,6 +96,7 @@ Item {
             internal.updateDots()
         }
 
+        // 更新指示点状态
         function updateDots() {
             for (var i = 0; i < dotRepeater.count; i++) {
                 var dot = dotRepeater.itemAt(i)
@@ -115,13 +106,14 @@ Item {
             }
         }
 
+        // 重启自动播放定时器
         function resetAutoPlay() {
-            // 只有在非悬停状态且播放开关打开时才重启定时器
             if (carousel.isPlaying && !internal.isHovering) {
                 autoPlayTimer.restart()
             }
         }
 
+        // 切换到指定索引
         function goTo(index) {
             if (internal.isTransitioning || index === internal.currentIndex) return
             internal.isTransitioning = true
@@ -131,23 +123,25 @@ Item {
             transitionTimer.start()
         }
 
+        // 下一张
         function next() {
             var newIndex = (internal.currentIndex + 1) % internal.totalCount
             internal.goTo(newIndex)
         }
 
+        // 上一张
         function prev() {
             var newIndex = (internal.currentIndex - 1 + internal.totalCount) % internal.totalCount
             internal.goTo(newIndex)
         }
 
-        // 处理鼠标进入
+        // 鼠标进入视口处理
         function handleMouseEnter() {
             internal.isHovering = true
             autoPlayTimer.stop()
         }
 
-        // 处理鼠标离开
+        // 鼠标离开视口处理
         function handleMouseExit() {
             internal.isHovering = false
             if (carousel.isPlaying && !internal.isTransitioning) {
@@ -155,13 +149,14 @@ Item {
             }
         }
 
+        // 尝试恢复自动播放
         function tryResumeAutoPlay() {
             if (carousel.isPlaying && !internal.isHovering) {
                 autoPlayTimer.restart()
             }
         }
 
-        // 根据视口内的鼠标位置检测是否悬停在中心卡片上
+        // 检测中心卡片的鼠标悬停
         function handleHoverPosition(mx, my) {
             if (internal.isTransitioning) return
             var centerItem = repeater.itemAt(internal.currentIndex)
@@ -220,7 +215,6 @@ Item {
         onTriggered: {
             internal.isTransitioning = false
             internal.tryResumeAutoPlay()
-            // 过渡完成后，如果鼠标仍在视口内，立即刷新悬停视觉
             if (internal.isHovering) {
                 internal.handleHoverPosition(viewportMA.mouseX, viewportMA.mouseY)
             }
@@ -228,15 +222,14 @@ Item {
     }
 
     // ========== UI 元素 ==========
-
-    // 轮播视口 - 添加鼠标区域检测悬停
     Item {
         id: viewport
         anchors.centerIn: parent
         width: internal.carouselW + internal.sideOffset * 2 + internal.gap * 2
         height: internal.carouselH
         z: 5
-        // 整个视口的鼠标检测区域（统一管理悬停和自动播放）
+
+        // 视口鼠标区域
         MouseArea {
             id: viewportMA
             anchors.fill: parent
@@ -247,10 +240,12 @@ Item {
                 internal.handleHoverPosition(mouse.x, mouse.y)
             }
         }
-        // 幻灯片列表
+
+        // 轮播卡片列表
         Repeater {
             id: repeater
-            model: carousel.slidesModel
+            model: internal.getItem()
+
             Item {
                 id: slideItem
                 width: internal.carouselW
@@ -258,31 +253,27 @@ Item {
                 opacity: 0
                 visible: false
                 z: 100 - Math.abs(internal.getOffset(index, internal.currentIndex))
+
                 property real targetX: 0
                 property real targetScale: 1
-                property bool isHovered: false       // 当前卡片是否被悬停
-                property bool isClicked: false       // 当前卡片是否被点击
-                // 悬停放大效果 - 通过额外的缩放因子
+                property bool isHovered: false
+                property bool isClicked: false
                 property real hoverScaleFactor: 1.0
                 property real clickScaleFactor: 1.0
+
                 x: targetX
                 y: (viewport.height - height) / 2
-                // 实际显示的缩放 = 位置缩放 * 悬停缩放 * 点击缩放
                 scale: targetScale * hoverScaleFactor * clickScaleFactor
-                // 基础位置动画
+
                 Behavior on x {
                     NumberAnimation { duration: 500; easing.type: Easing.InOutCubic }
                 }
-
                 Behavior on targetScale {
                     NumberAnimation { duration: 500; easing.type: Easing.InOutCubic }
                 }
-
                 Behavior on opacity {
                     NumberAnimation { duration: 400; easing.type: Easing.InOutCubic }
                 }
-
-                // 悬停缩放动画 - 使用弹簧效果
                 Behavior on hoverScaleFactor {
                     SpringAnimation {
                         spring: 2
@@ -290,8 +281,6 @@ Item {
                         epsilon: 0.05
                     }
                 }
-
-                // 点击缩放动画
                 Behavior on clickScaleFactor {
                     NumberAnimation {
                         duration: internal.clickAnimationDuration
@@ -299,22 +288,28 @@ Item {
                     }
                 }
 
-                // 阴影层（先渲染，叠在 visualContent 下方）
-                RectangularGlow {
-                    id: glow
-                    anchors.fill: parent
-                    glowRadius: 8
-                    spread: 0.2
-                    color: Theme.isDark ? "#80000000" : "#40000000"
-                    cornerRadius: carousel.imageRadius
-                    visible: slideItem.opacity > 0
-                    opacity: slideItem.isHovered ? internal.shadowHoverOpacity : internal.shadowOpacity
-                    Behavior on opacity {
-                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                // 图片内容组件
+                Component {
+                    id: _imageSlide
+                    Image {
+                        anchors.fill: parent
+                        source: modelData.imagesource
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                        smooth: true
                     }
                 }
 
-                // ===== 视觉内容容器（使用 layer 统一裁剪圆角） =====
+                // 占位组件
+                Component {
+                    id: _placeholderSlide
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#2a2a2a"
+                    }
+                }
+
+                // 卡片视觉内容（带圆角裁剪）
                 Item {
                     id: visualContent
                     anchors.fill: parent
@@ -328,57 +323,47 @@ Item {
                         }
                     }
 
-                    Image {
-                        id: img
+                    Loader {
                         anchors.fill: parent
-                        source: modelData.imageSource
-                        fillMode: Image.PreserveAspectCrop
-                        asynchronous: true
-                        smooth: true
+                        active: modelData.delegate !== null && modelData.delegate !== undefined
+                        sourceComponent: modelData.delegate
                     }
 
-                    Rectangle {
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        height: parent.height * 0.45
-                        radius: carousel.imageRadius
-                        gradient: Gradient {
-                            GradientStop { position: 0; color: "transparent" }
-                            GradientStop { position: 1; color: Qt.rgba(0, 0, 0, 0.5) }
-                        }
+                    Loader {
+                        anchors.fill: parent
+                        active: (modelData.delegate === null || modelData.delegate === undefined)
+                                && modelData.imagesource && modelData.imagesource.toString().length > 0
+                        sourceComponent: _imageSlide
                     }
 
-                    Column {
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.margins: 24
-                        spacing: 4
-
-                        Text {
-                            text: modelData.title
-                            font.family: "Microsoft YaHei"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#ffffff"
-                            style: Text.Outline
-                            styleColor: Qt.rgba(0, 0, 0, 0.3)
-                        }
-                        Text {
-                            text: modelData.tag
-                            font.family: "Microsoft YaHei"
-                            font.pixelSize: 12
-                            color: Qt.rgba(255, 255, 255, 0.85)
-                        }
+                    Loader {
+                        anchors.fill: parent
+                        active: (modelData.delegate === null || modelData.delegate === undefined)
+                                && (!modelData.imagesource || modelData.imagesource.toString().length === 0)
+                        sourceComponent: _placeholderSlide
                     }
                 }
 
-                // 卡片级别的鼠标区域（仅处理点击，悬停由 viewportMA 统一管理）
+                RectangularGlow {
+                    id: glow
+                    z: 0
+                    anchors.fill: visualContent
+                    glowRadius: 8
+                    spread: 0.25
+                    color: Theme.isDark ? "#80000000" : "#40000000"
+                    cornerRadius: carousel.imageRadius
+                    visible: slideItem.opacity > 0
+                    opacity: slideItem.isHovered ? internal.shadowHoverOpacity : internal.shadowOpacity
+                    Behavior on opacity {
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                }
+
+                // 卡片鼠标区域（点击交互）
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    // 点击处理
+
                     onPressed: {
                         if (index === internal.currentIndex && !internal.isTransitioning) {
                             slideItem.isClicked = true
@@ -389,19 +374,14 @@ Item {
                         slideItem.clickScaleFactor = 1.0
                         slideItem.isClicked = false
                     }
-
                     onClicked: {
                         if (index !== internal.currentIndex && !internal.isTransitioning) {
-                            // 点击非中心卡片时切换到该卡片
                             internal.goTo(index)
                         } else if (index === internal.currentIndex) {
-                            // 点击中心卡片可以添加自定义逻辑
-                            console.log("Center slide clicked:", modelData.title)
+                            console.log("Center slide clicked:", modelData.imagesource)
                         }
                     }
-
                     onCanceled: {
-                        // 当鼠标被其他元素捕获时，恢复缩放
                         slideItem.clickScaleFactor = 1.0
                         slideItem.isClicked = false
                         slideItem.isHovered = false
@@ -409,7 +389,7 @@ Item {
                     }
                 }
 
-                // 设置卡片位置的函数
+                // 设置卡片位置
                 function setPosition(posType) {
                     var centerX = (viewport.width - internal.carouselW) / 2
 
@@ -442,22 +422,25 @@ Item {
             }
         }
 
-        // 圆点指示器 - 叠在视图底部
+        // 指示点容器
         Item {
             id: dotsContainer
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             height: 20
             z: 200
+
             Row {
                 id: dotsRow
                 anchors.centerIn: parent
                 spacing: 12
+
                 Repeater {
                     id: dotRepeater
                     model: internal.totalCount
+
                     Rectangle {
-                        width: active ? 20 :6
+                        width: active ? 20 : 6
                         height: 6
                         radius: active ? 12 : 6
                         color: active ? Qt.rgba(1,1,1,0.6) : Qt.rgba(1,1,1,0.1)
@@ -472,6 +455,7 @@ Item {
                         Behavior on color {
                             ColorAnimation { duration: 300 }
                         }
+
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
@@ -484,7 +468,8 @@ Item {
     }
 
     implicitWidth: internal.carouselW + internal.sideOffset * 1.8 + internal.gap
-    implicitHeight: internal.carouselH +dotsContainer.height+4
+    implicitHeight: internal.carouselH + dotsContainer.height + 4
+
     // ========== 初始化 ==========
     Component.onCompleted: {
         internal.updatePositions()
