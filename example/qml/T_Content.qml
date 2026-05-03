@@ -26,6 +26,11 @@ Item {
                 icon: FluentIcon.ico_Add
                 page: "qrc:/qml/T_SpeedButton.qml"
             }
+            PaneItem {
+                title: "轮番播放"
+                icon: FluentIcon.ico_Switch
+                page: "qrc:/qml/T_Carousel.qml"
+            }
             PaneItemExpander {
                 title: "基本组件"
                 isExpand: true

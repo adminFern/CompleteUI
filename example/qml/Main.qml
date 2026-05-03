@@ -5,13 +5,10 @@ import FlaCoreUI
 
 FlaWindow {
     id: win
-    width: 1128
-    height: 700
+    width: 1200
+    height: 780
     visible: true
-
-
     initialItem: "qrc:/qml/T_Content.qml"
-
     appBar: AppBar{
         icon: "qrc:/favicon.ico"
         title: qsTr("FlaCardCurveView 波浪卡片示例")

@@ -92,8 +92,8 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 20
-        spacing: 10
+        anchors.margins: 10
+        spacing: 5
         // ========== 名片卡片区域 ==========
         Row {
             spacing: 10
@@ -214,10 +214,10 @@ Item {
         }
         FlaCardCurveView {
             Layout.fillWidth: true
-            Layout.preferredHeight: 220
+            Layout.preferredHeight: 200
             layout: FlaCardCurveView.LayoutType.Horizontal
-            curveAmplitude: 35
-            curveFrequency: 0.7
+            curveAmplitude:30
+            curveFrequency:0.8
             items: Objects {
                 CardItemDelegate {
                     cardColor: Theme.FillCardColor

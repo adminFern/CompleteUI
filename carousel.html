@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轮播播放组件</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0c10;
+            --fg: #e8e6e1;
+            --muted: #6b6a67;
+            --accent: #e07a3a;
+            --card: #16181e;
+            --border: rgba(255,255,255,0.06);
+            --glow: rgba(224,122,58,0.15);
+            --carousel-w: 680px;
+            --carousel-h: 420px;
+            --gap: 50px;
+            --side-scale: 0.72;
+            --side-rotate: 6deg;
+            --side-offset: 280px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 背景氛围层 */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 600px 400px at 25% 30%, rgba(224,122,58,0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 500px at 75% 65%, rgba(58,140,180,0.05) 0%, transparent 70%),
+                radial-gradient(ellipse 800px 300px at 50% 50%, rgba(224,122,58,0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 浮动光斑 */
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+            animation: orbFloat 12s ease-in-out infinite alternate;
+        }
+        .ambient-orb:nth-child(1) {
+            width: 300px; height: 300px;
+            background: rgba(224,122,58,0.07);
+            top: 10%; left: 5%;
+            animation-delay: 0s;
+        }
+        .ambient-orb:nth-child(2) {
+            width: 250px; height: 250px;
+            background: rgba(58,160,180,0.05);
+            bottom: 15%; right: 8%;
+            animation-delay: -4s;
+        }
+        .ambient-orb:nth-child(3) {
+            width: 200px; height: 200px;
+            background: rgba(180,100,60,0.04);
+            top: 60%; left: 50%;
+            animation-delay: -8s;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -20px) scale(1.1); }
+            100% { transform: translate(-20px, 15px) scale(0.95); }
+        }
+
+        /* 页面标题 */
+        .page-title {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--fg);
+            position: relative;
+        }
+        .page-title h1::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background: var(--accent);
+            margin: 14px auto 0;
+            border-radius: 2px;
+        }
+        .page-title p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 10px;
+            letter-spacing: 2px;
+        }
+
+        /* 轮播容器 */
+        .carousel-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-viewport {
+            position: relative;
+            width: calc(var(--carousel-w) + var(--side-offset) * 2 + var(--gap) * 2);
+            height: var(--carousel-h);
+            perspective: 1200px;
+        }
+
+        /* 单张幻灯片 */
+        .carousel-slide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: var(--carousel-w);
+            height: var(--carousel-h);
+            margin-left: calc(var(--carousel-w) / -2);
+            margin-top: calc(var(--carousel-h) / -2);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition:
+                transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                filter 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        /* 幻灯片底部渐变遮罩 */
+        .carousel-slide::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 45%;
+            background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* 幻灯片标题 */
+        .slide-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 28px;
+            z-index: 3;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
+        }
+        .slide-caption h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .slide-caption span {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 1px;
+        }
+
+        /* 中间状态 */
+        .carousel-slide[data-pos="center"] {
+            transform: translateX(0) translateZ(0) rotateY(0deg) scale(1);
+            opacity: 1;
+            z-index: 10;
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.5),
+                0 0 0 1px var(--border),
+                0 0 80px var(--glow);
+            filter: brightness(1);
+        }
+        .carousel-slide[data-pos="center"]::after { opacity: 1; }
+        .carousel-slide[data-pos="center"] .slide-caption {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 左侧 */
+        .carousel-slide[data-pos="left"] {
+            transform: translateX(calc(-1 * var(--side-offset) - var(--gap) / 2)) rotateY(var(--side-rotate)) scale(var(--side-scale));
+            opacity: 0.5;
+            z-index: 5;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            filter: brightness(0.65);
+        }
+
+        /* 右侧 */
+        .carousel-slide[data-pos="right"] {
+            transform: translateX(calc(var(--side-offset) + var(--gap) / 2)) rotateY(calc(-1 * var(--side-rotate))) scale(var(--side-scale));
+            opacity: 0.5;
+            z-index: 5;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            filter: brightness(0.65);
+        }
+
+        /* 远左 */
+        .carousel-slide[data-pos="far-left"] {
+            transform: translateX(calc(-1 * var(--side-offset) * 1.6 - var(--gap))) rotateY(calc(var(--side-rotate) * 1.5)) scale(calc(var(--side-scale) * 0.8));
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            filter: brightness(0.4);
+        }
+
+        /* 远右 */
+        .carousel-slide[data-pos="far-right"] {
+            transform: translateX(calc(var(--side-offset) * 1.6 + var(--gap))) rotateY(calc(-1 * var(--side-rotate) * 1.5)) scale(calc(var(--side-scale) * 0.8));
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            filter: brightness(0.4);
+        }
+
+        /* 隐藏 */
+        .carousel-slide[data-pos="hidden"] {
+            transform: translateX(0) scale(0.6);
+            opacity: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 左右箭头 */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(22,24,30,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: var(--fg);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .carousel-nav:hover {
+            background: rgba(224,122,58,0.2);
+            border-color: rgba(224,122,58,0.4);
+            color: var(--accent);
+            transform: translateY(-50%) scale(1.08);
+        }
+        .carousel-nav:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        .carousel-nav:focus-visible {
+            box-shadow: 0 0 0 3px rgba(224,122,58,0.4);
+        }
+        .carousel-nav.prev { left: calc(50% - var(--carousel-w) / 2 - var(--side-offset) - 50px); }
+        .carousel-nav.next { right: calc(50% - var(--carousel-w) / 2 - var(--side-offset) - 50px); }
+
+        /* 底部控制区 */
+        .carousel-controls {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+            margin-top: 40px;
+        }
+
+        /* 指示器 */
+        .carousel-dots {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--muted);
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            outline: none;
+            padding: 0;
+        }
+        .carousel-dot:hover {
+            background: rgba(224,122,58,0.6);
+            transform: scale(1.2);
+        }
+        .carousel-dot.active {
+            width: 28px;
+            border-radius: 10px;
+            background: var(--accent);
+            box-shadow: 0 0 12px rgba(224,122,58,0.4);
+        }
+        .carousel-dot:focus-visible {
+            box-shadow: 0 0 0 3px rgba(224,122,58,0.4);
+        }
+
+        /* 播放/暂停按钮 */
+        .carousel-play-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(22,24,30,0.6);
+            backdrop-filter: blur(8px);
+            color: var(--muted);
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .carousel-play-btn:hover {
+            color: var(--fg);
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(22,24,30,0.9);
+        }
+        .carousel-play-btn:focus-visible {
+            box-shadow: 0 0 0 3px rgba(224,122,58,0.4);
+        }
+
+        /* 进度条 */
+        .carousel-progress {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: var(--carousel-w);
+            height: 3px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+            overflow: hidden;
+            z-index: 20;
+        }
+        .carousel-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), #f0a060);
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+        .carousel-progress-bar.paused {
+            transition: none;
+        }
+
+        /* 计数器 */
+        .carousel-counter {
+            position: absolute;
+            top: 20px;
+            right: calc(50% - var(--carousel-w) / 2 + 20px);
+            z-index: 20;
+            font-size: 13px;
+            color: var(--muted);
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+        .carousel-counter .current {
+            color: var(--fg);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* 粒子画布 */
+        #particles-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1100px) {
+            :root {
+                --carousel-w: 520px;
+                --carousel-h: 330px;
+                --side-offset: 220px;
+                --gap: 30px;
+            }
+            .carousel-nav.prev { left: calc(50% - var(--carousel-w) / 2 - var(--side-offset) - 40px); }
+            .carousel-nav.next { right: calc(50% - var(--carousel-w) / 2 - var(--side-offset) - 40px); }
+        }
+
+        @media (max-width: 800px) {
+            :root {
+                --carousel-w: 340px;
+                --carousel-h: 220px;
+                --side-offset: 150px;
+                --gap: 20px;
+                --side-scale: 0.68;
+                --side-rotate: 4deg;
+            }
+            .carousel-nav.prev { left: 10px; }
+            .carousel-nav.next { right: 10px; }
+            .page-title h1 { font-size: 20px; }
+            .slide-caption h3 { font-size: 14px; }
+            .carousel-counter { right: calc(50% - var(--carousel-w) / 2 + 14px); top: 14px; }
+        }
+
+        @media (max-width: 500px) {
+            :root {
+                --carousel-w: 260px;
+                --carousel-h: 170px;
+                --side-offset: 110px;
+                --side-scale: 0.6;
+                --side-rotate: 3deg;
+            }
+        }
+
+        /* 减少动效偏好 */
+        @media (prefers-reduced-motion: reduce) {
+            .carousel-slide {
+                transition-duration: 0.01ms !important;
+            }
+            .ambient-orb {
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景光斑 -->
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+
+    <!-- 粒子画布 -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- 页面标题 -->
+    <div class="page-title">
+        <h1>Gallery Carousel</h1>
+        <p>沉浸式画卷轮播</p>
+    </div>
+
+    <!-- 轮播主体 -->
+    <div class="carousel-wrapper">
+        <!-- 计数器 -->
+        <div class="carousel-counter">
+            <span class="current">01</span> / <span class="total">05</span>
+        </div>
+
+        <!-- 视口 -->
+        <div class="carousel-viewport" id="carouselViewport" role="region" aria-label="图片轮播" aria-roledescription="carousel">
+            <!-- 幻灯片由JS动态生成 -->
+        </div>
+
+        <!-- 左右箭头 -->
+        <button class="carousel-nav prev" id="prevBtn" aria-label="上一张">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="carousel-nav next" id="nextBtn" aria-label="下一张">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- 进度条 -->
+        <div class="carousel-progress">
+            <div class="carousel-progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- 底部控制 -->
+    <div class="carousel-controls">
+        <button class="carousel-play-btn" id="playBtn" aria-label="暂停自动播放">
+            <i class="fas fa-pause"></i>
+        </button>
+        <div class="carousel-dots" id="dotsContainer" role="tablist" aria-label="幻灯片导航"></div>
+        <div style="width:36px;"></div>
+    </div>
+
+    <script>
+        /* ============================
+           幻灯片数据
+        ============================ */
+        const slidesData = [
+            {
+                src: 'https://picsum.photos/seed/ghibli-meadow/800/500.jpg',
+                title: '草原上的旅人',
+                tag: '奇幻 · 自然'
+            },
+            {
+                src: 'https://picsum.photos/seed/ghibli-sky/800/500.jpg',
+                title: '天空之城的黎明',
+                tag: '飞行 · 城市'
+            },
+            {
+                src: 'https://picsum.photos/seed/ghibli-cat/800/500.jpg',
+                title: '橘猫与石径',
+                tag: '动物 · 田园'
+            },
+            {
+                src: 'https://picsum.photos/seed/ghibli-forest/800/500.jpg',
+                title: '幽深的古木林',
+                tag: '森林 · 秘境'
+            },
+            {
+                src: 'https://picsum.photos/seed/ghibli-ocean/800/500.jpg',
+                title: '潮汐之间的灯塔',
+                tag: '海洋 · 孤独'
+            }
+        ];
+
+        /* ============================
+           轮播核心逻辑
+        ============================ */
+        class Carousel {
+            constructor(options) {
+                this.viewport = document.getElementById(options.viewportId);
+                this.dotsContainer = document.getElementById(options.dotsId);
+                this.prevBtn = document.getElementById(options.prevId);
+                this.nextBtn = document.getElementById(options.nextId);
+                this.playBtn = document.getElementById(options.playBtnId);
+                this.progressBar = document.getElementById(options.progressId);
+                this.counterEl = document.querySelector('.carousel-counter');
+
+                this.slides = [];
+                this.dots = [];
+                this.currentIndex = 0;
+                this.total = options.data.length;
+                this.isPlaying = true;
+                this.interval = options.interval || 4000;
+                this.timer = null;
+                this.progressStart = 0;
+                this.progressRAF = null;
+                this.isTransitioning = false;
+
+                this.init();
+            }
+
+            init() {
+                this.createSlides();
+                this.createDots();
+                this.bindEvents();
+                this.updatePositions();
+                this.startAutoPlay();
+                this.updateCounter();
+            }
+
+            /* 创建幻灯片DOM */
+            createSlides() {
+                slidesData.forEach((data, i) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'carousel-slide';
+                    slide.setAttribute('role', 'tabpanel');
+                    slide.setAttribute('aria-label', `第 ${i + 1} 张幻灯片: ${data.title}`);
+                    slide.innerHTML = `
+                        <img src="${data.src}" alt="${data.title}" loading="${i === 0 ? 'eager' : 'lazy'}">
+                        <div class="slide-caption">
+                            <h3>${data.title}</h3>
+                            <span>${data.tag}</span>
+                        </div>
+                    `;
+                    this.viewport.appendChild(slide);
+                    this.slides.push(slide);
+                });
+            }
+
+            /* 创建指示器 */
+            createDots() {
+                slidesData.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('role', 'tab');
+                    dot.setAttribute('aria-label', `切换到第 ${i + 1} 张`);
+                    dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+                    dot.addEventListener('click', () => this.goTo(i));
+                    this.dotsContainer.appendChild(dot);
+                    this.dots.push(dot);
+                });
+            }
+
+            /* 绑定事件 */
+            bindEvents() {
+                this.prevBtn.addEventListener('click', () => this.prev());
+                this.nextBtn.addEventListener('click', () => this.next());
+                this.playBtn.addEventListener('click', () => this.togglePlay());
+
+                /* 键盘支持 */
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.prev();
+                    if (e.key === 'ArrowRight') this.next();
+                    if (e.key === ' ') { e.preventDefault(); this.togglePlay(); }
+                });
+
+                /* 鼠标悬停暂停 */
+                this.viewport.addEventListener('mouseenter', () => {
+                    if (this.isPlaying) this.pauseProgress();
+                });
+                this.viewport.addEventListener('mouseleave', () => {
+                    if (this.isPlaying) this.resumeProgress();
+                });
+
+                /* 触摸滑动支持 */
+                let touchStartX = 0;
+                let touchEndX = 0;
+                this.viewport.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    if (this.isPlaying) this.pauseProgress();
+                }, { passive: true });
+                this.viewport.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    const diff = touchStartX - touchEndX;
+                    if (Math.abs(diff) > 50) {
+                        diff > 0 ? this.next() : this.prev();
+                    }
+                    if (this.isPlaying) this.resumeProgress();
+                }, { passive: true });
+
+                /* 中间卡片点击放大（可选交互） */
+                this.slides.forEach((slide, i) => {
+                    slide.addEventListener('click', () => {
+                        if (i !== this.currentIndex) this.goTo(i);
+                    });
+                });
+            }
+
+            /* 计算每张卡片的位置状态 */
+            getPosition(offset) {
+                const positions = ['center', 'right', 'far-right', 'hidden', 'hidden'];
+                if (offset < 0) {
+                    const mirrored = ['center', 'left', 'far-left', 'hidden', 'hidden'];
+                    return mirrored[Math.abs(offset)] || 'hidden';
+                }
+                return positions[offset] || 'hidden';
+            }
+
+            /* 更新所有卡片位置 */
+            updatePositions() {
+                this.slides.forEach((slide, i) => {
+                    const offset = this.getOffset(i, this.currentIndex);
+                    const pos = this.getPosition(offset);
+                    slide.setAttribute('data-pos', pos);
+                });
+
+                /* 更新指示器 */
+                this.dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === this.currentIndex);
+                    dot.setAttribute('aria-selected', i === this.currentIndex ? 'true' : 'false');
+                });
+
+                this.updateCounter();
+            }
+
+            /* 计算索引偏移（支持循环） */
+            getOffset(slideIndex, activeIndex) {
+                let diff = slideIndex - activeIndex;
+                const half = Math.floor(this.total / 2);
+                if (diff > half) diff -= this.total;
+                if (diff < -half) diff += this.total;
+                return diff;
+            }
+
+            /* 切换到指定索引 */
+            goTo(index) {
+                if (this.isTransitioning || index === this.currentIndex) return;
+                this.isTransitioning = true;
+                this.currentIndex = index;
+                this.updatePositions();
+                this.resetProgress();
+                setTimeout(() => {
+                    this.isTransitioning = false;
+                }, 660);
+            }
+
+            prev() {
+                const newIndex = (this.currentIndex - 1 + this.total) % this.total;
+                this.goTo(newIndex);
+            }
+
+            next() {
+                const newIndex = (this.currentIndex + 1) % this.total;
+                this.goTo(newIndex);
+            }
+
+            /* 自动播放控制 */
+            startAutoPlay() {
+                this.stopAutoPlay();
+                this.progressStart = performance.now();
+                this.animateProgress();
+                this.timer = setInterval(() => {
+                    this.next();
+                }, this.interval);
+            }
+
+            stopAutoPlay() {
+                clearInterval(this.timer);
+                this.timer = null;
+                cancelAnimationFrame(this.progressRAF);
+            }
+
+            togglePlay() {
+                this.isPlaying = !this.isPlaying;
+                const icon = this.playBtn.querySelector('i');
+                if (this.isPlaying) {
+                    icon.className = 'fas fa-pause';
+                    this.playBtn.setAttribute('aria-label', '暂停自动播放');
+                    this.startAutoPlay();
+                } else {
+                    icon.className = 'fas fa-play';
+                    this.playBtn.setAttribute('aria-label', '开始自动播放');
+                    this.stopAutoPlay();
+                    this.progressBar.classList.add('paused');
+                }
+            }
+
+            /* 进度条动画 */
+            animateProgress() {
+                const tick = (now) => {
+                    if (!this.isPlaying) return;
+                    const elapsed = now - this.progressStart;
+                    const progress = Math.min((elapsed / this.interval) * 100, 100);
+                    this.progressBar.style.width = progress + '%';
+                    if (progress < 100) {
+                        this.progressRAF = requestAnimationFrame(tick);
+                    }
+                };
+                this.progressBar.classList.remove('paused');
+                this.progressRAF = requestAnimationFrame(tick);
+            }
+
+            resetProgress() {
+                this.progressStart = performance.now();
+                this.progressBar.style.width = '0%';
+                if (this.isPlaying) {
+                    cancelAnimationFrame(this.progressRAF);
+                    this.stopAutoPlay();
+                    this.startAutoPlay();
+                }
+            }
+
+            pauseProgress() {
+                cancelAnimationFrame(this.progressRAF);
+                this.progressBar.classList.add('paused');
+                clearInterval(this.timer);
+            }
+
+            resumeProgress() {
+                /* 恢复时从当前进度位置继续 */
+                const currentWidth = parseFloat(this.progressBar.style.width) || 0;
+                const remaining = (currentWidth / 100) * this.interval;
+                this.progressStart = performance.now() - (this.interval - remaining);
+                this.progressBar.classList.remove('paused');
+                cancelAnimationFrame(this.progressRAF);
+                this.animateProgress();
+                this.timer = setInterval(() => {
+                    this.next();
+                }, remaining);
+            }
+
+            /* 更新计数器 */
+            updateCounter() {
+                const current = this.counterEl.querySelector('.current');
+                const total = this.counterEl.querySelector('.total');
+                current.textContent = String(this.currentIndex + 1).padStart(2, '0');
+                total.textContent = String(this.total).padStart(2, '0');
+            }
+        }
+
+        /* ============================
+           粒子背景
+        ============================ */
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            const particles = [];
+            const PARTICLE_COUNT = 40;
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            /* 创建粒子 */
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 2 + 0.5,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    speedY: (Math.random() - 0.5) * 0.2 - 0.1,
+                    opacity: Math.random() * 0.3 + 0.05,
+                    pulse: Math.random() * Math.PI * 2,
+                    pulseSpeed: Math.random() * 0.01 + 0.005
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    p.pulse += p.pulseSpeed;
+
+                    /* 边界循环 */
+                    if (p.x < -10) p.x = width + 10;
+                    if (p.x > width + 10) p.x = -10;
+                    if (p.y < -10) p.y = height + 10;
+                    if (p.y > height + 10) p.y = -10;
+
+                    const alpha = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse));
+                    const r = Math.max(0.1, p.size);
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(224,160,90,${alpha})`;
+                    ctx.fill();
+
+                    /* 光晕 */
+                    if (r > 1) {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, r * 3, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(224,140,70,${alpha * 0.15})`;
+                        ctx.fill();
+                    }
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        /* ============================
+           启动
+        ============================ */
+        document.addEventListener('DOMContentLoaded', () => {
+            new Carousel({
+                viewportId: 'carouselViewport',
+                dotsId: 'dotsContainer',
+                prevId: 'prevBtn',
+                nextId: 'nextBtn',
+                playBtnId: 'playBtn',
+                progressId: 'progressBar',
+                data: slidesData,
+                interval: 4000
+            });
+            initParticles();
+        });
+    </script>
+</body>
+</html>
