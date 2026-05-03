@@ -53,7 +53,7 @@ Item {
         property bool isTransitioning: false
         property real carouselW: Math.min(carousel.centerImageWidth, carousel.parent ? carousel.parent.width * 0.7 : carousel.centerImageWidth)
         property real carouselH: Math.min(carousel.centerImageHeight, carousel.parent ? carousel.parent.height * 0.7 : carousel.centerImageHeight)
-        property real sideOffset: carouselW * 0.45
+        property real sideOffset: carouselW * 0.30
         property real gap: carouselW * 0.074
         property real sideScale: 0.75
         property real farScale: 0.6
@@ -426,11 +426,11 @@ Item {
                         targetScale = internal.sideScale
                         slideItem.z = 50
                     } else if (posType === "farLeft") {
-                        targetX = centerX - internal.sideOffset * 1.8 - internal.gap
+                        targetX = centerX - internal.sideOffset * 2.0 - internal.gap
                         targetScale = internal.farScale
                         slideItem.z = 10
                     } else if (posType === "farRight") {
-                        targetX = centerX + internal.sideOffset * 1.8 + internal.gap
+                        targetX = centerX + internal.sideOffset * 2.0 + internal.gap
                         targetScale = internal.farScale
                         slideItem.z = 10
                     } else {
@@ -447,7 +447,6 @@ Item {
             id: dotsContainer
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 5
             height: 20
             z: 200
             Row {
@@ -458,14 +457,20 @@ Item {
                     id: dotRepeater
                     model: internal.totalCount
                     Rectangle {
-                        width: active ? 28 : 8
-                        height: 8
-                        radius: active ? 12 : 4
-                        color: active ? "#2c2c2c" : "#c7c7c7"
+                        width: active ? 20 :6
+                        height: 6
+                        radius: active ? 12 : 6
+                        color: active ? Qt.rgba(1,1,1,0.6) : Qt.rgba(1,1,1,0.1)
                         property bool active: index === internal.currentIndex
 
                         Behavior on width {
-                            NumberAnimation { duration: 350; easing.type: Easing.InOutCubic }
+                            NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+                        }
+                        Behavior on radius {
+                            NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+                        }
+                        Behavior on color {
+                            ColorAnimation { duration: 300 }
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -479,7 +484,7 @@ Item {
     }
 
     implicitWidth: internal.carouselW + internal.sideOffset * 1.8 + internal.gap
-    implicitHeight: internal.carouselH +dotsContainer.height
+    implicitHeight: internal.carouselH +dotsContainer.height+4
     // ========== 初始化 ==========
     Component.onCompleted: {
         internal.updatePositions()
