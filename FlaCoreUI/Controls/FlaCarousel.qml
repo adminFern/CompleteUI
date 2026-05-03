@@ -2,13 +2,12 @@ import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import FlaCoreUI
-Item {
+Rectangle {
     id: carousel
-    // Rectangle{
-    //     anchors.fill: parent
-    //     color: "#F4FFB4"
-    // }
-
+    color: Theme.setColorAlpha(Theme.FillCardColor,150)
+    border.width: 1
+    border.color: Theme.FillBorderColor
+    radius: 6
     // ========== 对外公开属性 ==========
     property var slidesModel: [
         {
@@ -43,13 +42,15 @@ Item {
     property int centerImageWidth: 450
     property int centerImageHeight: 250
     property int imageRadius: 10
-    property real hoverScale: 1.05          // 悬停放大比例
-    property real clickScale: 0.95          // 点击缩小比例
-    property int clickAnimationDuration: 150 // 点击动画持续时间(ms)
 
     // ========== 内部私有成员 ==========
     QtObject {
         id: internal
+        property real hoverScale: 1.05          // 悬停放大比例
+        property real clickScale: 0.95          // 点击缩小比例
+        property int clickAnimationDuration: 150 // 点击动画持续时间(ms)
+        property real shadowOpacity: 0.7         // 阴影不透明度
+        property real shadowHoverOpacity: 1.0    // 悬停时阴影不透明度
         property int currentIndex: 0
         property int totalCount: carousel.slidesModel.length
         property bool isTransitioning: false
@@ -180,7 +181,7 @@ Item {
             if (inside) {
                 if (!centerItem.isHovered) {
                     centerItem.isHovered = true
-                    centerItem.hoverScaleFactor = carousel.hoverScale
+                    centerItem.hoverScaleFactor = internal.hoverScale
                 }
             } else {
                 if (centerItem.isHovered) {
@@ -296,7 +297,7 @@ Item {
                 // 点击缩放动画
                 Behavior on clickScaleFactor {
                     NumberAnimation {
-                        duration: carousel.clickAnimationDuration
+                        duration: internal.clickAnimationDuration
                         easing.type: Easing.InOutQuad
                     }
                 }
@@ -307,10 +308,10 @@ Item {
                     anchors.fill: parent
                     glowRadius: 8
                     spread: 0.2
-                    color: Theme.isDark?"#4D000000" : "#1A000000"
+                    color: Theme.isDark ? "#80000000" : "#40000000"
                     cornerRadius: carousel.imageRadius
                     visible: slideItem.opacity > 0
-                    opacity: slideItem.isHovered ? 0.9 : 0.5
+                    opacity: slideItem.isHovered ? internal.shadowHoverOpacity : internal.shadowOpacity
                     Behavior on opacity {
                         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
                     }
@@ -384,7 +385,7 @@ Item {
                     onPressed: {
                         if (index === internal.currentIndex && !internal.isTransitioning) {
                             slideItem.isClicked = true
-                            slideItem.clickScaleFactor = carousel.clickScale
+                            slideItem.clickScaleFactor = internal.clickScale
                         }
                     }
                     onReleased: {
@@ -480,8 +481,8 @@ Item {
         }
     }
 
-    implicitWidth: internal.carouselW + internal.sideOffset * 2 + internal.gap * 2
-    implicitHeight: internal.carouselH + 20
+    implicitWidth: internal.carouselW + internal.sideOffset * 1.8 + internal.gap
+    implicitHeight: internal.carouselH +dotsContainer.height
     // ========== 初始化 ==========
     Component.onCompleted: {
         internal.updatePositions()
