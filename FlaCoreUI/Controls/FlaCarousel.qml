@@ -2,12 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import FlaCoreUI
-Rectangle {
+Item {
     id: carousel
-    color: Theme.setColorAlpha(Theme.FillCardColor,150)
-    border.width: 1
-    border.color: Theme.FillBorderColor
-    radius: 6
+
     // ========== 对外公开属性 ==========
     property var slidesModel: [
         {
