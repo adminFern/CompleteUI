@@ -245,7 +245,6 @@ Item {
         Repeater {
             id: repeater
             model: internal.getItem()
-
             Item {
                 id: slideItem
                 width: internal.carouselW
@@ -305,7 +304,7 @@ Item {
                     id: _placeholderSlide
                     Rectangle {
                         anchors.fill: parent
-                        color: "#2a2a2a"
+                        color: modelData.cardColor!==null && modelData.cardColor !== undefined ?modelData.cardColor: "#2a2a2a"
                     }
                 }
 
@@ -322,26 +321,29 @@ Item {
                             radius: carousel.imageRadius
                         }
                     }
-
+                    //矩形
                     Loader {
+                        z:0
+                        anchors.fill: parent
+                        active: modelData.cardColor !==null && modelData.cardColor !== undefined
+                                && modelData.visibleimage !== true
+                        sourceComponent: _placeholderSlide
+                    }
+                    //图片
+                    Loader {
+                        z:0
+                        anchors.fill: parent
+                        active: modelData.visibleimage===true && modelData.imagesource!==""
+                        sourceComponent: _imageSlide
+                    }
+                    //外部内容
+                    Loader {
+                        z:2
                         anchors.fill: parent
                         active: modelData.delegate !== null && modelData.delegate !== undefined
                         sourceComponent: modelData.delegate
                     }
 
-                    Loader {
-                        anchors.fill: parent
-                        active: (modelData.delegate === null || modelData.delegate === undefined)
-                                && modelData.imagesource && modelData.imagesource.toString().length > 0
-                        sourceComponent: _imageSlide
-                    }
-
-                    Loader {
-                        anchors.fill: parent
-                        active: (modelData.delegate === null || modelData.delegate === undefined)
-                                && (!modelData.imagesource || modelData.imagesource.toString().length === 0)
-                        sourceComponent: _placeholderSlide
-                    }
                 }
 
                 RectangularGlow {

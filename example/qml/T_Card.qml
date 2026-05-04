@@ -109,10 +109,10 @@ Item {
                 color: Theme.Textcolor
             }
         }
-        FlaCard {
+        FlaCardCurveView {
             Layout.fillWidth: true
             Layout.preferredHeight: 160
-            layout: FlaCard.LayoutType.Horizontal
+            layout: FlaCardCurveView.LayoutType.Row
           items: Objects {
                 CardItem {
                     cardColor: Theme.FillCardColor
@@ -197,6 +197,114 @@ Item {
             }
         }
 
+        // ========== 网格卡片区域 ==========
+        Row {
+            spacing: 10
+            Layout.fillWidth: true
+            Layout.preferredHeight: 18
+            FlaImage {
+                iconsource: FluentIcon.ico_Contact
+            }
+            Text {
+                text: qsTr("网格卡片")
+                font.pixelSize: 16
+                font.bold: true
+                color: Theme.Textcolor
+            }
+        }
+        FlaCardCurveView {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 400
+            layout: FlaCardCurveView.LayoutType.Grid
+            spacing: 18
+            items: Objects {
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_1.svg"; nameText: "周杰"
+                        positionText: "技术总监"; companyText: "星辰科技"
+                        phoneText: "138-0001-0001"; emailText: "zhoujie@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_2.svg"; nameText: "李明"
+                        positionText: "软件工程师"; companyText: "星辰科技"
+                        phoneText: "139-0002-0002"; emailText: "liming@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_3.svg"; nameText: "王芳"
+                        positionText: "设计总监"; companyText: "创想设计"
+                        phoneText: "137-0003-0003"; emailText: "wangfang@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_4.svg"; nameText: "张伟"
+                        positionText: "市场经理"; companyText: "博远传媒"
+                        phoneText: "136-0004-0004"; emailText: "zhangwei@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_5.svg"; nameText: "陈静"
+                        positionText: "财务总监"; companyText: "星辰科技"
+                        phoneText: "135-0005-0005"; emailText: "chenjing@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_6.svg"; nameText: "刘洋"
+                        positionText: "运营总监"; companyText: "云启网络"
+                        phoneText: "134-0006-0006"; emailText: "liuyang@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_7.svg"; nameText: "赵磊"
+                        positionText: "产品总监"; companyText: "星辰科技"
+                        phoneText: "133-0007-0007"; emailText: "zhaolei@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor;cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_8.svg"; nameText: "孙丽"
+                        positionText: "HR经理"; companyText: "星辰科技"
+                        phoneText: "132-0008-0008"; emailText: "sunli@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_1.svg"; nameText: "吴强"
+                        positionText: "销售总监"; companyText: "博远传媒"
+                        phoneText: "131-0009-0009"; emailText: "wuqiang@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_2.svg"; nameText: "郑红"
+                        positionText: "客服经理"; companyText: "云启网络"
+                        phoneText: "130-0010-0010"; emailText: "zhenghong@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_3.svg"; nameText: "黄涛"
+                        positionText: "研发经理"; companyText: "星辰科技"
+                        phoneText: "159-0011-0011"; emailText: "huangtao@flacore.com"
+                    }
+                }
+                CardItem { cardColor: Theme.FillCardColor; cardWidth: 100; cardHeight: 48; radius: 12
+                    delegate: CardContent {
+                        avatarSrc: "qrc:/svg/avatar_4.svg"; nameText: "林雪"
+                        positionText: "行政主管"; companyText: "创想设计"
+                        phoneText: "158-0012-0012"; emailText: "linxue@flacore.com"
+                    }
+                }
+            }
+        }
+
         // ========== 波浪线名片卡片区域 ==========
         Row {
             spacing: 10
@@ -215,7 +323,7 @@ Item {
         FlaCardCurveView {
             Layout.fillWidth: true
             Layout.preferredHeight: 200
-            layout: FlaCardCurveView.LayoutType.Horizontal
+            layout: FlaCardCurveView.LayoutType.WaveHorizontal
             curveAmplitude:30
             curveFrequency:0.8
             items: Objects {

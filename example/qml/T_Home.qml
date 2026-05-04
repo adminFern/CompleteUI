@@ -66,7 +66,7 @@ Item {
             FlaCardCurveView{
                 width: parent.width
                 height: 170
-                layout: FlaCardCurveView.LayoutType.Horizontal
+                layout: FlaCardCurveView.LayoutType.WaveHorizontal
                 items: Objects{
 
                     CardItem {
@@ -136,7 +136,7 @@ Item {
                 text: qsTr("最新组件")
                 color: Theme.Textcolor
             }
-            FlaCard{
+            FlaCardCurveView{
                 width: parent.width
                 height: 170
                 items: Objects{
@@ -268,7 +268,7 @@ Item {
             FlaCardCurveView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                layout: FlaCardCurveView.LayoutType.Horizontal
+                layout: FlaCardCurveView.LayoutType.WaveHorizontal
                 items: Objects {
                     CardItemDelegate {
                         cardWidth: 250
@@ -340,8 +340,7 @@ Item {
                         text: qsTr("最新组件")
                         color: Theme.Textcolor
                     }
-                    FlaCard{
-
+                    FlaCardCurveView{
                         items: Objects{
                             CardItemDelegate {
                                /// cardColor: Theme.FillCardColor
