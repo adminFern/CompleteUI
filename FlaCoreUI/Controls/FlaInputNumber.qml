@@ -18,7 +18,7 @@ T.Control {
     property real max: Number.MAX_SAFE_INTEGER    // 最大值
     property real step: 1                         // 步进值
     property int precision: 0                     // 小数位数
-    property string suffix: 'Km'                    // 后缀
+    property string suffix: '￥'                    // 后缀
     property string upIcon: FluentIcon.ico_ChevronUp
     property string downIcon: FluentIcon.ico_ChevronDown
     property var formatter: (v) => v.toFixed(precision)   // 格式化函数
@@ -87,7 +87,6 @@ T.Control {
                     control.valueModified();
                 }
             }
-
             // 滚轮调节
             WheelHandler {
                 enabled: control.enabled && control.useWheel
