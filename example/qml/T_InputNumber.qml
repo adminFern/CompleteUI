@@ -5,9 +5,23 @@ import FlaCoreUI
 
 Item {
 
- FlaInputNumber{
-     width: 80
- }
+
+     Row{
+          anchors.fill: parent
+          FlaInputNumber{
+               width: 80
+          }
+          FlaRadioButton{
+          }
+          FlaRadioButton{
+          }
+          FlaRadioButton{
+          }
+          FlaSwitch{
+
+          }
+     }
+
 
 
 }
