@@ -6,7 +6,7 @@ import FlaCoreUI
 Item {
 
  FlaInputNumber{
-     width: 70
+     width: 80
  }
 
 

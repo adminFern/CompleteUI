@@ -9,7 +9,6 @@ T.Control {
     id: control
     signal valueModified()
     property bool animationEnabled: true
-    property bool active: hovered || activeFocus
     property bool showHandler: true               // 显示增减按钮
     property bool alwaysShowHandler: false        // 始终显示增减按钮
     property bool useWheel: false                 // 支持滚轮调节
@@ -19,12 +18,10 @@ T.Control {
     property real max: Number.MAX_SAFE_INTEGER    // 最大值
     property real step: 1                         // 步进值
     property int precision: 0                     // 小数位数
-    property bool readOnly: false
-    property string suffix: ''                    // 后缀
+    property string suffix: 'Km'                    // 后缀
     property string upIcon: FluentIcon.ico_ChevronUp
     property string downIcon: FluentIcon.ico_ChevronDown
     property var formatter: (v) => v.toFixed(precision)   // 格式化函数
-    property var parser: (text) => parseFloat(text)       // 解析函数
     property int handlerWidth: 24
     property color color: Theme.isDark ? "#3C3C3C" : "white"
     property color colorBorder: {
@@ -65,48 +62,19 @@ T.Control {
 
     contentItem: RowLayout {
         id: __row
-        spacing: 0
-
+        spacing: 2
         // 输入框
         TextInput {
             id: __input
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin: 10
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             color: control.colorText
             font: control.font
-            readOnly: control.readOnly
+            readOnly: true
             selectByMouse: true
-            validator: DoubleValidator {
-                locale: control.locale.name
-                bottom: Math.min(control.min, control.max)
-                top: Math.max(control.min, control.max)
-                decimals: control.precision
-            }
-
-            onActiveFocusChanged: {
-                if (!activeFocus) editingFinished();
-            }
-            onTextChanged: {
-                if (length === 0) return;
-                let v = control.parser(text);
-                if (!isNaN(v) && v > control.max) {
-                    editingFinished();
-                }
-            }
-            onEditingFinished: {
-                if (length === 0) return;
-                let v = control.parser(text);
-                if (isNaN(v)) v = control.value;
-                text = control.formatter(v);
-                control.value = v;
-                control.valueModified();
-            }
-
-            // 键盘快捷键
-            Keys.onReturnPressed: editingFinished()
-            Keys.onEnterPressed: editingFinished()
             Keys.onUpPressed: {
                 if (control.enabled && control.useKeyboard) {
                     control.increase();
@@ -133,25 +101,24 @@ T.Control {
                     }
                 }
             }
-
-            Component.onCompleted: editingFinished()
         }
-
         // 后缀
         Text {
+            Layout.fillWidth: false
+            Layout.fillHeight: true
+            Layout.rightMargin: 8
             visible: control.suffix !== ''
             text: control.suffix
-            color: control.colorText
-            font: control.font
+            color: "darkgray"
+            font.pixelSize: 11
             verticalAlignment: Text.AlignVCenter
-            leftPadding: 4
-            rightPadding: 4
+            Layout.alignment: Qt.AlignRight
         }
 
         // 增减按钮区域
         Rectangle {
             id: __handlerRoot
-            visible: control.showHandler && !control.readOnly
+            visible: control.showHandler
             Layout.preferredWidth: control.enabled && (control.hovered || control.alwaysShowHandler) ? control.handlerWidth : 0
             Layout.fillHeight: true
             color: "transparent"
@@ -160,12 +127,10 @@ T.Control {
             property real halfHeight: height * 0.5
             property real hoverHeight: height * 0.6
             property real noHoverHeight: height * 0.4
-
             Behavior on Layout.preferredWidth {
                 enabled: control.animationEnabled
                 NumberAnimation { easing.type: Easing.OutCubic; duration: 150 }
             }
-
             // 左侧分隔线
             Rectangle {
                 anchors.left: parent.left
@@ -174,7 +139,6 @@ T.Control {
                 width: 1
                 color: control.colorBorder
             }
-
             // 增加按钮
             Rectangle {
                 id: __upButton
@@ -187,7 +151,6 @@ T.Control {
                 topRightRadius: control.radius
                 bottomLeftRadius: 0
                 bottomRightRadius: 0
-
                 FlaImage {
                     anchors.centerIn: parent
                     iconsource: control.upIcon
@@ -216,7 +179,6 @@ T.Control {
                     NumberAnimation { duration: 100 }
                 }
             }
-
             // 中间分隔线
             Rectangle {
                 anchors.left: parent.left
@@ -225,7 +187,6 @@ T.Control {
                 height: 1
                 color: control.colorBorder
             }
-
             // 减少按钮
             Rectangle {
                 id: __downButton
@@ -233,7 +194,7 @@ T.Control {
                 anchors.right: parent.right
                 anchors.top: __upButton.bottom
                 anchors.topMargin: -1
-                height: (__downArea.containsMouse ? parent.hoverHeight : __upArea.containsMouse ? parent.noHoverHeight : parent.halfHeight) + 1
+                height: (__downArea.containsMouse ? parent.hoverHeight : __upArea.containsMouse ? parent.noHoverHeight : parent.halfHeight)
                 color: "transparent"
                 topLeftRadius: 0
                 topRightRadius: 0
@@ -251,7 +212,6 @@ T.Control {
                         NumberAnimation { duration: 100; easing.type: Easing.OutCubic }
                     }
                 }
-
                 MouseArea {
                     id: __downArea
                     anchors.fill: parent
@@ -262,7 +222,6 @@ T.Control {
                         control.valueModified();
                     }
                 }
-
                 Behavior on height {
                     enabled: control.animationEnabled
                     NumberAnimation { duration: 100 }
@@ -270,15 +229,13 @@ T.Control {
             }
         }
     }
-
     // 背景
     background: Rectangle {
         radius: control.radius
         color: control.color
         border.width: 1
         border.color: control.colorBorder
-
-        Behavior on border.color { enabled: control.animationEnabled; ColorAnimation { duration: 150 } }
+        Behavior on border.color { enabled: control.animationEnabled; ColorAnimation { duration: 200 } }
     }
 
     HoverHandler {
