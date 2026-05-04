@@ -11,7 +11,7 @@ Theme::Theme(QObject *parent)
     _accentColor = Colors::getInstance()->Blue();
     _systemDark=QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark;
     _ThemeType=Theme::Type::System;
-    _SpecialEffect=EffectType::MicaAlt;
+    _SpecialEffect=EffectType::Normal;
 
     connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,
             this, [this](Qt::ColorScheme colorScheme) {
@@ -44,9 +44,9 @@ void Theme::refreshColors()
         DisabledColor(dark ? QColor(46, 46, 46,100) : QColor(235, 235, 235,100));
         DisabledTextColor(dark ? QColor(107, 114, 128) : QColor(171, 171, 171));
         DisabledBorderColor(dark ? QColor(100, 100, 100,200) : QColor(200, 200, 200,200));
-        FillBackgroundColor(dark ? QColor(60, 60, 60, 80) : QColor(255, 255, 255, 130));
+        FillBackgroundColor(dark ? QColor(40, 40, 40, 80) : QColor(246, 246, 246, 120));
         FillCardColor(dark ? QColor(45, 45, 45) : QColor(255, 255, 255));
-        FillBorderColor(dark ? QColor(40, 40, 40, 180) : QColor(210, 210, 210, 255));
+        FillBorderColor(dark ? QColor(82, 82, 82, 200) : QColor(210, 210, 210, 200));
         break;
     case Theme::Effect::Acrylic:
         if(Dwm->isWindow11())  backgroundColor(Qt::transparent);
@@ -59,12 +59,12 @@ void Theme::refreshColors()
         DisabledColor(dark ? QColor(46, 46, 46,100) : QColor(235, 235, 235,100));
         DisabledTextColor(dark ? QColor(107, 114, 128) : QColor(171, 171, 171));
         DisabledBorderColor(dark ? QColor(100, 100, 100) : QColor(200, 200, 200));
-        FillBackgroundColor(dark ? QColor(80, 80, 80, 30) : QColor(255, 255, 255, 100));
+        FillBackgroundColor(dark ? QColor(40, 40, 40, 100) : QColor(246, 246, 246, 100));
         FillCardColor(dark ? QColor(45, 45, 45) : QColor(255, 255, 255));
-         FillBorderColor(dark ? QColor(40, 40, 40, 180) : QColor(210, 210, 210, 255));
+        FillBorderColor(dark ? QColor(82, 82, 82, 200) : QColor(210, 210, 210, 200));
         break;
     default:
-        backgroundColor(dark ? QColor(32, 32, 32, 255) : QColor(240, 240, 240, 255));
+        backgroundColor(dark ? QColor(32, 32, 32, 255) : QColor(243, 243, 243, 255));
         DividerColor(dark ? QColor(80, 80, 80, 255) : QColor(210, 210, 210, 255));
         DisabledColor(dark ? QColor(46, 46, 46,180) : QColor(235, 235, 235,180));
         DisabledTextColor(dark ? QColor(100, 100, 100) : QColor(190, 190, 190));
@@ -74,8 +74,8 @@ void Theme::refreshColors()
         ButtonPressColor(dark?QColor(48, 48, 48,220) : QColor(255, 255, 255,220));
         ButtonBorderNormalColor(dark ? QColor(80, 80, 80, 255) : QColor(230, 230, 230, 255));
         Textcolor(dark ? Qt::white:Qt::black);
-        FillBackgroundColor(dark ? QColor(40, 40, 40, 180) : QColor(255, 255, 255, 180));
-        FillBorderColor(dark ? QColor(40, 40, 40, 180) : QColor(210, 210, 210, 255));
+        FillBackgroundColor(dark ? QColor(40, 40, 40, 255) : QColor(246, 246, 246, 255));
+        FillBorderColor(dark ? QColor(100, 100, 100, 150) : QColor(225, 225, 225, 200));
         FillCardColor(dark ? QColor(45, 45, 45) : QColor(255, 255, 255));
         break;   
     }

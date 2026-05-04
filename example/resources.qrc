@@ -24,5 +24,6 @@
         <file>png/Git.png</file>
         <file>svg/git (1).svg</file>
         <file>svg/logo.svg</file>
+        <file>qml/T_InputNumber.qml</file>
     </qresource>
 </RCC>

@@ -34,7 +34,7 @@ Item {
 
     Rectangle{
         anchors.fill: parent
-        color: Theme.isDark?  Theme.setColorAlpha("#3C3C3C",100): Theme.setColorAlpha("white",150)
+        color:Theme.FillBackgroundColor
         Column{
             anchors.fill: parent
             padding: 10
@@ -117,18 +117,18 @@ Item {
                             emailText: "zhoujie@flacore.com"
                         }
                     }
-                    CardItem {
-                        cardWidth: 250
-                        cardHeight: 130
-                        radius: 12
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
-                        delegate: CardContent {
-                            ico:  "qrc:/svg/github.svg"
-                            nameText: "周杰"; positionText: "技术总监"
-                            companyText: "星辰科技"; phoneText: "138-0001-0001"
-                            emailText: "zhoujie@flacore.com"
-                        }
-                    }
+                    // CardItem {
+                    //     cardWidth: 250
+                    //     cardHeight: 130
+                    //     radius: 12
+                    //       cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                    //     delegate: CardContent {
+                    //         ico:  "qrc:/svg/github.svg"
+                    //         nameText: "周杰"; positionText: "技术总监"
+                    //         companyText: "星辰科技"; phoneText: "138-0001-0001"
+                    //         emailText: "zhoujie@flacore.com"
+                    //     }
+                    // }
 
                 }
             }

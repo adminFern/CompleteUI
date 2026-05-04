@@ -43,7 +43,7 @@ Item {
                 PaneItem {
                     title: "数字输入"
                     icon: "⏳"
-                    //  page: "qrc:/qml/T_ProgressBar.qml"
+                      page: "qrc:/qml/T_InputNumber.qml"
                 }
             }
         }
