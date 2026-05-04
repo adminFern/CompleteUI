@@ -20,7 +20,6 @@ T.Control {
     property real step: 1                         // 步进值
     property int precision: 0                     // 小数位数
     property bool readOnly: false
-    property string prefix: ''                    // 前缀
     property string suffix: ''                    // 后缀
     property string upIcon: FluentIcon.ico_ChevronUp
     property string downIcon: FluentIcon.ico_ChevronDown
@@ -55,7 +54,6 @@ T.Control {
     }
 
     onValueChanged: __input.text = formatter(value)
-    onPrefixChanged: valueChanged()
     onSuffixChanged: valueChanged()
     Component.onCompleted: valueChanged()
 
@@ -68,17 +66,6 @@ T.Control {
     contentItem: RowLayout {
         id: __row
         spacing: 0
-
-        // 前缀
-        Text {
-            visible: control.prefix !== ''
-            text: control.prefix
-            color: control.colorText
-            font: control.font
-            verticalAlignment: Text.AlignVCenter
-            leftPadding: 8
-            rightPadding: 4
-        }
 
         // 输入框
         TextInput {
@@ -189,27 +176,39 @@ T.Control {
             }
 
             // 增加按钮
-            FlaIconButton {
+            Rectangle {
                 id: __upButton
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: hovered ? parent.hoverHeight : __downButton.hovered ? parent.noHoverHeight : parent.halfHeight
-                padding: 0
-                radius: 0
-                iconsource: control.upIcon
-                iconsize: 10
-                iconbold: true
-                iconColor: control.enabled ? (hovered ? Theme.PrimaryColor : control.colorText) : Theme.DisabledTextColor
-                handCursor: control.value < control.max
-                autoRepeat: true
-                hoverColor:  "transparent"
-                pressedColor:  "transparent"
-                normalColor: "transparent"
+                height: __upArea.containsMouse ? parent.hoverHeight : __downArea.containsMouse ? parent.noHoverHeight : parent.halfHeight
+                color: "transparent"
+                topLeftRadius: 0
+                topRightRadius: control.radius
+                bottomLeftRadius: 0
+                bottomRightRadius: 0
 
-                onClicked: {
-                    control.increase();
-                    control.valueModified();
+                FlaImage {
+                    anchors.centerIn: parent
+                    iconsource: control.upIcon
+                    iconsize: 10
+                    iconbold: true
+                    icocolor: control.enabled ? (__upArea.containsMouse ? Theme.PrimaryColor : control.colorText) : Theme.DisabledTextColor
+                    scale: __upArea.pressed ? 1.3 : 1.0
+                    Behavior on scale {
+                        NumberAnimation { duration: 100; easing.type: Easing.OutCubic }
+                    }
+                }
+
+                MouseArea {
+                    id: __upArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: control.value < control.max ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: {
+                        control.increase();
+                        control.valueModified();
+                    }
                 }
 
                 Behavior on height {
@@ -228,27 +227,40 @@ T.Control {
             }
 
             // 减少按钮
-            FlaIconButton {
+            Rectangle {
                 id: __downButton
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: __upButton.bottom
                 anchors.topMargin: -1
-                height: (__downButton.hovered ? parent.hoverHeight : __upButton.hovered ? parent.noHoverHeight : parent.halfHeight) + 1
-                padding: 0
-                radius: 0
-                iconsource: control.downIcon
-                iconsize: 10
-                iconbold: true
-                iconColor: control.enabled ? (hovered ? Theme.PrimaryColor : control.colorText) : Theme.DisabledTextColor
-                handCursor: control.value > control.min
-                autoRepeat: true
-                hoverColor:  "transparent"
-                pressedColor:  "transparent"
-                normalColor: "transparent"
-                onClicked: {
-                    control.decrease();
-                    control.valueModified();
+                height: (__downArea.containsMouse ? parent.hoverHeight : __upArea.containsMouse ? parent.noHoverHeight : parent.halfHeight) + 1
+                color: "transparent"
+                topLeftRadius: 0
+                topRightRadius: 0
+                bottomLeftRadius: 0
+                bottomRightRadius: control.radius
+
+                FlaImage {
+                    anchors.centerIn: parent
+                    iconsource: control.downIcon
+                    iconsize: 10
+                    iconbold: true
+                    icocolor: control.enabled ? (__downArea.containsMouse ? Theme.PrimaryColor : control.colorText) : Theme.DisabledTextColor
+                    scale: __downArea.pressed ? 1.3 : 1.0
+                    Behavior on scale {
+                        NumberAnimation { duration: 100; easing.type: Easing.OutCubic }
+                    }
+                }
+
+                MouseArea {
+                    id: __downArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: control.value > control.min ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: {
+                        control.decrease();
+                        control.valueModified();
+                    }
                 }
 
                 Behavior on height {
