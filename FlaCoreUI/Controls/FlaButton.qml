@@ -4,6 +4,7 @@ import QtQuick.Templates as T
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import FlaCoreUI
+
 // 按钮组件：支持图标、文本、高亮状态和按压动画
 T.Button {
     id: control

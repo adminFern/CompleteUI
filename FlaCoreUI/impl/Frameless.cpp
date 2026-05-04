@@ -198,7 +198,7 @@ bool Frameless::nativeEventFilter(const QByteArray &eventType, void *message, qi
         return true;
     } else if (uMsg == WM_NCHITTEST){
 
-        if (!_fixSize && Dwm->isWindow11()) {
+        if (Dwm->isWindow11()) {
             if (_hitMaximizeButton()) {
                 if (*result == HTNOWHERE) {
                     *result = HTZOOM;
@@ -315,7 +315,7 @@ bool Frameless::nativeEventFilter(const QByteArray &eventType, void *message, qi
             return true;
         }
         return false;
-    }else if (!_fixSize && Dwm->isWindow11() && (uMsg == WM_NCLBUTTONDBLCLK || uMsg == WM_NCLBUTTONDOWN)){
+    }else if (Dwm->isWindow11() && (uMsg == WM_NCLBUTTONDBLCLK || uMsg == WM_NCLBUTTONDOWN)){
         if (_hitMaximizeButton()) {
             QMouseEvent event = QMouseEvent(QEvent::MouseButtonPress, QPoint(), QPoint(),
                                             Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
@@ -323,7 +323,7 @@ bool Frameless::nativeEventFilter(const QByteArray &eventType, void *message, qi
             _setMaximizePressed(true);
             return true;
         }
-    }else if (!_fixSize && Dwm->isWindow11() && (uMsg == WM_NCLBUTTONUP || uMsg == WM_NCRBUTTONUP)){
+    }else if (Dwm->isWindow11() && (uMsg == WM_NCLBUTTONUP || uMsg == WM_NCRBUTTONUP)){
         if (_hitMaximizeButton()) {
             QMouseEvent event = QMouseEvent(QEvent::MouseButtonRelease, QPoint(), QPoint(),
                                             Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
@@ -403,9 +403,6 @@ bool Frameless::_hitAppBar()
 
 bool Frameless::_hitMaximizeButton()
 {
-
-
-
     // 添加空指针检查
     if (_maximizeButton && containsCursorToItem(_maximizeButton)) {
         return true;
@@ -415,8 +412,6 @@ bool Frameless::_hitMaximizeButton()
 
 void Frameless::_setMaximizePressed(bool val)
 {
-
-
     if (_maximizeButton) {
         _maximizeButton->setProperty("down", val);
     }
@@ -424,7 +419,6 @@ void Frameless::_setMaximizePressed(bool val)
 
 void Frameless::_setMaximizeHovered(bool val)
 {
-
     if (_maximizeButton) {
         _maximizeButton->setProperty("hover", val);
     }

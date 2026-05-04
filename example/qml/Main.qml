@@ -8,7 +8,6 @@ FlaWindow {
     width: 1200
     height: 780
     visible: true
-    fixSize: true
     initialItem: "qrc:/qml/T_Content.qml"
     appBar: AppBar{
         icon: "qrc:/favicon.ico"
@@ -17,7 +16,7 @@ FlaWindow {
             // 最小化按钮
             FlaIconButton {
                 id: btn_set
-                Layout.preferredWidth: 40
+                Layout.preferredWidth: 28
                 Layout.preferredHeight: parent.height
                 iconsize: 14
                 radius: 0

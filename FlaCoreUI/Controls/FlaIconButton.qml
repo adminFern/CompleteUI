@@ -48,8 +48,6 @@ T.Button {
 
     // 背景
     background: Rectangle {
-        implicitWidth: control.iconsize + control.leftPadding + control.rightPadding
-        implicitHeight: control.iconsize + control.topPadding + control.bottomPadding
         radius: control.radius
         color: control.color
     }
@@ -60,7 +58,11 @@ T.Button {
     }
 
     spacing: 2
-    padding: 8
+    padding: 0
+    topPadding: 4
+    bottomPadding: 4
+    leftPadding: 8
+    rightPadding: 8
 
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
                             implicitContentWidth + leftPadding + rightPadding)

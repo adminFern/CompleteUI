@@ -214,7 +214,7 @@ Item {
         }
         FlaCardCurveView {
             Layout.fillWidth: true
-            Layout.preferredHeight: 200
+            Layout.preferredHeight: 400
             layout: FlaCardCurveView.LayoutType.Grid
             spacing: 18
             items: Objects {

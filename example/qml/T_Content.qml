@@ -31,16 +31,6 @@ Item {
                 icon: FluentIcon.ico_Switch
                 page: "qrc:/qml/T_Carousel.qml"
             }
-            PaneItem {
-                title: "选项卡"
-                icon: FluentIcon.ico_Set
-                page: "qrc:/qml/T_TabView.qml"
-            }
-            PaneItem {
-                title: "表格视图"
-                icon: FluentIcon.ico_Add
-                page: "qrc:/qml/T_TableView.qml"
-            }
             PaneItemExpander {
                 title: "基本组件"
                 isExpand: true

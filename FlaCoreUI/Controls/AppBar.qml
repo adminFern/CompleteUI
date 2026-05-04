@@ -6,7 +6,6 @@ Rectangle {
     id: control
 
     property Component action                // 自定义操作区域组件
-    property bool fixSize: false
     property bool showClose: true            // 显示关闭按钮
     property bool showMinimize: true         // 显示最小化按钮
     property bool showMaximize: true         // 显示最大化按钮
@@ -117,18 +116,12 @@ Rectangle {
                 iconsize: 12
                 radius: 0
                 visible: showMaximize
-                enabled: fixSize
                 iconsource: d.isRestore ? FluentIcon.ico_ChromeMaximize : FluentIcon.ico_ChromeRestore
-                iconColor: !fixSize? "darkgray":"black"
                 color: {
-                    if (!enabled) {
-                        console.log("xxxxxxxxxxx")
-                        return Theme.DisabledColor
-                    }
                     if (btn_maximized.down) {
                         return Theme.isDark ? Qt.rgba(1, 1, 1, 0.03) : Qt.rgba(0, 0, 0, 0.03)
                     }
-                    return btn_maximized.hover && !fixSize? Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05) : "transparent"
+                    return btn_maximized.hover ? Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05) : "transparent"
                 }
                 onClicked: {
                     if (d.isRestore) {
@@ -155,6 +148,7 @@ Rectangle {
                     Window.window.close()
                 }
             }
+
             Component.onCompleted: {
                 d.setHitTestVisible(this)
             }

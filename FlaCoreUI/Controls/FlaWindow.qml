@@ -13,7 +13,7 @@ Window {
 
     // 窗口标题栏
     property AppBar appBar: AppBar {
-        fixSize:control.fixSize
+        showMaximize: !control.fixSize
         title: control.title
         icon: control.icon
     }
