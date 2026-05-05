@@ -17,7 +17,7 @@ if (FLACOREUI_BUILD_STATIC_LIB)
 else ()
     set(LIBRARY_TYPE_NAME FlaCoreUI)
 endif ()
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2)
 set(PROJECT_SOURCES
     main.cpp
     resources.qrc

@@ -5,13 +5,12 @@ import FlaCoreUI
 Item {
     id: control
 
-    // 布局模式：Row=普通水平、Column=普通垂直、WaveHorizontal=波浪水平、WaveVertical=波浪垂直、Grid=网格
+    // 布局模式：Row=普通水平、Column=普通垂直、WaveHorizontal=波浪水平、WaveVertical=波浪垂直
     enum LayoutType {
         Row = 0,
         Column = 1,
         WaveHorizontal = 2,
-        WaveVertical = 3,
-        Grid = 4
+        WaveVertical = 3
     }
     property Objects items                         // 卡片数据源
     property int layout: FlaCardCurveView.LayoutType.Row       // 布局模式
@@ -20,17 +19,12 @@ Item {
     property real cardDensity: 0.8         // 卡片密集度 0.0~1.0，越大卡片重叠越深
     property int curveDuration: 600                              // 波浪动画时长（毫秒）
     property int restoreDelay: 3000                              // 自动恢复折叠延迟（毫秒）
-
-
     signal clicked(int index, var item)
-
     QtObject {
         id: d
         property int hoveredIndex: -1          // 当前悬停卡片索引
         property var pressedItem: null         // 当前按下的卡片数据
         property bool isExpanded: false        // 波浪模式是否展开
-        property int refCardWidth: items && items.children.length > 0 ? items.children[0].cardWidth : 250   // 网格列宽参考（取首项 cardWidth）
-        property int gridColumns: Math.max(1, Math.floor((flickable.width - 2 * flickable._glowPadding + control.spacing) / (refCardWidth + control.spacing)))  // 网格列数（按可用宽度自动计算）
 
         // 将 items.children 转为可遍历数组，为每项附加 _idx 索引
         function handleItems() {
@@ -139,9 +133,7 @@ Item {
                         ? Math.max(flickable.height, d.totalLayoutSize() + _glowPadding * 2)  // 波浪垂直：总布局尺寸 + 发光余量
                         : control.layout === FlaCardCurveView.LayoutType.Column
                           ? _glowPadding + columnLayout.implicitHeight + _glowPadding           // 普通垂直：列隐式高度 + 发光余量
-                          : control.layout === FlaCardCurveView.LayoutType.Grid
-                            ? _glowPadding + gridLayout.implicitHeight + _glowPadding           // 网格：网格隐式高度 + 发光余量
-                            : flickable.height                                                   // 其他：填满视口
+                           : flickable.height
 
         // 滚动方向：Row/WaveHorizontal 水平滚动，其余垂直滚动
         flickableDirection: control.layout === FlaCardCurveView.LayoutType.Row
@@ -188,7 +180,6 @@ Item {
                 delegate: plainCardDelegate
             }
         }
-
         // 普通垂直布局
         Column {
             id: columnLayout
@@ -200,22 +191,7 @@ Item {
                 delegate: plainCardDelegate
             }
         }
-
-        // 网格布局
-        Grid {
-            id: gridLayout
-            columns: d.gridColumns
-            anchors.horizontalCenter: parent.horizontalCenter
-            y: flickable._glowPadding
-            spacing: control.spacing
-            visible: control.layout === FlaCardCurveView.LayoutType.Grid
-            Repeater {
-                model: d.handleItems()
-                delegate: plainCardDelegate
-            }
-        }
     }
-
     // 自动恢复折叠定时器：悬停离开后延迟恢复波浪折叠
     Timer {
         id: restoreTimer
@@ -223,7 +199,6 @@ Item {
         repeat: false
         onTriggered: d.isExpanded = false
     }
-
     Component {
         id: cardVisualComponent
         Item {
@@ -260,7 +235,6 @@ Item {
             }
         }
     }
-
     Component {
         id: waveCardDelegate
         Item {
@@ -342,7 +316,7 @@ Item {
                     anchors.fill: parent
                     anchors.leftMargin: 8
                     sourceComponent: cardVisualComponent
-                    property bool showGlow: control.layout !== FlaCardCurveView.LayoutType.Grid
+                    property bool showGlow: true
                     property bool isHovered: cardRect.isHovered
                     property bool isPressed: cardRect.isPressed
                     onItemChanged: {
@@ -410,7 +384,7 @@ Item {
                     anchors.fill: parent
                     anchors.leftMargin: 8
                     sourceComponent: cardVisualComponent
-                    property bool showGlow: control.layout !== FlaCardCurveView.LayoutType.Grid
+                    property bool showGlow: true
                     property bool isHovered: cardRect.isHovered
                     property bool isPressed: cardRect.isPressed
                     onItemChanged: {
