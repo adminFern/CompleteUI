@@ -44,7 +44,7 @@ void Theme::refreshColors()
         DisabledColor(dark ? QColor(46, 46, 46,100) : QColor(235, 235, 235,100));
         DisabledTextColor(dark ? QColor(107, 114, 128) : QColor(171, 171, 171));
         DisabledBorderColor(dark ? QColor(100, 100, 100,200) : QColor(200, 200, 200,200));
-        FillBackgroundColor(dark ? QColor(40, 40, 40, 80) : QColor(246, 246, 246, 120));
+        FillBackgroundColor(dark ? QColor(246, 246, 246, 10) : QColor(246, 246, 246, 120));
         FillCardColor(dark ? QColor(45, 45, 45) : QColor(255, 255, 255));
         FillBorderColor(dark ? QColor(82, 82, 82, 200) : QColor(210, 210, 210, 200));
         break;

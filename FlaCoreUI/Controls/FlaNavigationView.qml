@@ -612,7 +612,7 @@ Item {
     StackView {
         id: stack
         anchors.left: layout_list.right
-        anchors.leftMargin: 1
+       anchors.margins: 4
         anchors.right: control.right
         anchors.top: control.top
         anchors.bottom: control.bottom
