@@ -18,8 +18,8 @@ Item {
     property Objects items                         // 卡片数据源
     property int layout: FlaCardCurveView.LayoutType.Row       // 布局模式
     property int spacing: 18                                     // 卡片间距（像素）
-    property real curveAmplitude: 30                             // 波浪振幅（像素）
-    property real curveFrequency: 0                              // 波浪频率
+    property real curveAmplitude: 20                 // 波浪振幅（像素）
+    property real curveFrequency:0.8                            // 波浪频率
     property real curveDensity: 0.85                             // 波浪密集度 0.0~1.0，越大越密集重叠
     property real cardDensity: 0.35                              // 卡片密集度
     property int curveDuration: 600                              // 波浪动画时长（毫秒）

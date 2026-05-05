@@ -37,10 +37,10 @@ Item {
         }
         color:{
             if(Theme.SpecialEffect===Theme.Mica ||Theme.SpecialEffect===Theme.MicaAlt){
-                return Theme.isDark? Theme.setColorAlpha( "#232323",150):Theme.setColorAlpha( "#FFFFFF",200)
+                return Theme.isDark? Theme.setColorAlpha( "#232323",100):Theme.setColorAlpha( "#FFFFFF",200)
             }
             if(Theme.SpecialEffect===Theme.Acrylic ){
-                return Theme.isDark? Theme.setColorAlpha( "#232323",150):Theme.setColorAlpha( "#FFFFFF",200)
+                return Theme.isDark? Theme.setColorAlpha( "#232323",100):Theme.setColorAlpha( "#FFFFFF",200)
             }
             return  Theme.isDark? "#232323":"#FFFFFF"
         }

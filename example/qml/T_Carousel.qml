@@ -21,8 +21,6 @@ Item {
         anchors.fill: parent
         anchors.margins: 10
         spacing: 5
-
-
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
