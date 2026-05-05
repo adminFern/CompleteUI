@@ -14,6 +14,8 @@ T.Switch {
                              implicitIndicatorHeight + topPadding + bottomPadding)
 
     property color checkColor: Theme.PrimaryColor
+
+
     property color color: {
         if(control.checked){
             return control.checkColor
@@ -31,13 +33,11 @@ T.Switch {
         if(control.checked){
             return "transparent"
         }
-        if(control.pressed){
-            return Theme.ButtonPressColor
-        }
+
         if(control.hovered){
-            return Theme.ButtonHoverColor
+            return Theme.isDark? "dimgrey":"#919191"   //137, 141, 142
         }
-        return Theme.ButtonNormalColor
+        return Theme.isDark? "dimgrey":"#A0A0A0"//Theme.ButtonNormalColor  137, 137, 137   158, 158, 158
     }
 
     font: Qt.font({family:Theme.defaultFontFamily,pixelSize : 14, weight: Font.Normal})

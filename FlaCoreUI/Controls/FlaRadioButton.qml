@@ -57,9 +57,9 @@ T.RadioButton {
                     return Theme.DisabledBorderColor
                 }
                 if(control.hovered){
-                    return Theme.ButtonHoverColor
+                    return Theme.isDark? "dimgrey":"#919191"   //137, 141, 142
                 }
-                return Theme.ButtonNormalColor
+                return Theme.isDark? "dimgrey":"#A0A0A0"//Theme.ButtonNormalColor  137, 137, 137   158, 158, 158
             }
         }
         Behavior on border.width {

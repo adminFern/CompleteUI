@@ -30,6 +30,8 @@ class Theme : public QObject
      Q_PROPERTY_AUTO(QColor,FillCardColor)
     Q_PROPERTY_AUTO(QColor, FillBorderColor)
     Q_PROPERTY_AUTO(QColor, Textcolor)
+
+
     //textcolor
     QML_SINGLETON
     QML_ELEMENT
