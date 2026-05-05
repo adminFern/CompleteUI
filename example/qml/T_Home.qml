@@ -29,10 +29,18 @@ Item {
             //   }
 
         }
+    }
+    FlaGroupBox{
+        anchors.fill: parent
+        radius: 8
+        FlaExpander{
+            width: parent.width
+
+        }
 
     }
-
-    Rectangle{
+}
+/*  Rectangle{
         anchors.fill: parent
         color:Theme.FillBackgroundColor
         radius: 4
@@ -233,9 +241,9 @@ Item {
                 }
             }
         }
-    }
+    }*/
 
-}
+
 
 /*Rectangle {
         anchors.fill: parent
