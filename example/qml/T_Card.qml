@@ -115,7 +115,9 @@ Item {
             layout: FlaCardCurveView.LayoutType.Row
           items: Objects {
                 CardItem {
-                    cardColor: Theme.FillCardColor
+                    cardColor:Theme.isDark? Qt.darker( Theme.setColorAlpha("#DDA0DD",200),0.9):
+                                                            Qt.lighter(Theme.setColorAlpha("#DDA0DD",200),1.2)
+                    borderColor:"#DDA0DD"
                     cardWidth: 250; cardHeight: 130; radius: 12
                     delegate: CardContent {
                         avatarSrc: "qrc:/svg/avatar_1.svg"
@@ -324,8 +326,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 200
             layout: FlaCardCurveView.LayoutType.WaveHorizontal
-            curveAmplitude:30
-            curveFrequency:0.8
+            curveAmplitude: 0.75
             items: Objects {
                 CardItem {
                     cardColor: Theme.FillCardColor

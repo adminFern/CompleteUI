@@ -218,6 +218,63 @@ Item {
                                 desc2: qsTr("座下细犬随行，法力高强，听调不听宣，劈山救母威震三界")
                             }
                         }
+                        CardItem {
+                            cardWidth: 250
+                            cardHeight: 130
+                            cardColor:Theme.isDark? Qt.darker( Theme.setColorAlpha("#FF4500",200),0.9):
+                                                                    Qt.lighter(Theme.setColorAlpha("#FF4500",200),1.2)
+                            borderColor:"#FF4500"
+                            radius: 12
+                            delegate: CardContent {
+                                ico: "qrc:/svg/avatar_5.svg"
+                                nameText: qsTr("红孩儿")
+                                desc1: qsTr("圣婴大王红孩儿，牛魔王与铁扇公主之子，修炼三昧真火神通")
+                                desc2: qsTr("占山为王捉唐僧，观音菩萨用玉净瓶甘露降服，收为善财童子")
+                            }
+                        }
+                        CardItem {
+                            cardWidth: 250
+                            cardHeight: 130
+                            cardColor:Theme.isDark? Qt.darker( Theme.setColorAlpha("#DDA0DD",200),0.9):
+                                                                    Qt.lighter(Theme.setColorAlpha("#DDA0DD",200),1.2)
+                            borderColor:"#DDA0DD"
+                            radius: 12
+                            delegate: CardContent {
+                                ico: "qrc:/svg/avatar_6.svg"
+                                nameText: qsTr("玉兔精")
+                                desc1: qsTr("玉兔精，本为广寒宫中捣药的玉兔，因私逃下界化作天竺国公主")
+                                desc2: qsTr("欲取唐僧元阳成仙，被太阴星君识破收回月宫，幸免于孙悟空的追杀")
+                            }
+                        }
+                        CardItem {
+                            cardWidth: 250
+                            cardHeight: 130
+                            cardColor:Theme.isDark? Qt.darker( Theme.setColorAlpha("#4682B4",200),0.9):
+                                                                    Qt.lighter(Theme.setColorAlpha("#4682B4",200),1.2)
+                            borderColor:"#4682B4"
+                            radius: 12
+                            delegate: CardContent {
+                                ico: "qrc:/svg/avatar_8.svg"
+                                nameText: qsTr("小白龙")
+                                desc1: qsTr("小白龙，西海龙王敖闰第三子，因纵火烧殿上明珠被贬蛇盘山鹰愁涧")
+                                desc2: qsTr("得观音点化化作白马驮负唐僧西行，历经艰辛终成八部天龙广力菩萨")
+                            }
+                        }
+                        CardItem {
+                            cardWidth: 250
+                            cardHeight: 130
+                            cardColor:Theme.isDark? Qt.darker( Theme.setColorAlpha("#DAA520",200),0.9):
+                                                                    Qt.lighter(Theme.setColorAlpha("#DAA520",200),1.2)
+                            borderColor:"#DAA520"
+                            radius: 12
+                            delegate: CardContent {
+                                ico: "qrc:/svg/avatar_11.svg"
+                                nameText: qsTr("菩提祖师")
+                                desc1: qsTr("菩提祖师，住灵台方寸山斜月三星洞，精通佛道儒三教法力深不可测")
+                                desc2: qsTr("短短数年将孙悟空调教成三界闻名的齐天大圣，后再未现身于三界")
+                            }
+                        }
+
                     }
                 }
             }

@@ -13,15 +13,11 @@ Item {
         WaveVertical = 3,
         Grid = 4
     }
-
-
     property Objects items                         // 卡片数据源
     property int layout: FlaCardCurveView.LayoutType.Row       // 布局模式
-    property int spacing: 18                                     // 卡片间距（像素）
-    property real curveAmplitude: 20                 // 波浪振幅（像素）
-    property real curveFrequency:0.8                            // 波浪频率
-    property real curveDensity: 0.85                             // 波浪密集度 0.0~1.0，越大越密集重叠
-    property real cardDensity: 0.35                              // 卡片密集度
+    property int spacing: 1                                   // 卡片间距（像素）
+    property real curveAmplitude: 0.8       // 波浪弯曲幅度 0.0~1.0，越大波浪越明显
+    property real cardDensity: 0.8         // 卡片密集度 0.0~1.0，越大卡片重叠越深
     property int curveDuration: 600                              // 波浪动画时长（毫秒）
     property int restoreDelay: 3000                              // 自动恢复折叠延迟（毫秒）
 
@@ -62,20 +58,16 @@ Item {
                    : control.height - 4
         }
 
-        // 波浪模式步长：根据组件宽度和密集度自动计算
-        // curveDensity: 0.0=最稀疏(无重叠), 1.0=最密集(深度重叠)
+        // 波浪模式步长：根据密集度自动计算
+        // cardDensity: 0.0=最稀疏(无重叠), 1.0=最密集(深度重叠)
         function waveStep() {
             var itemList = handleItems()
             var n = itemList.length
             if (n <= 1) return 0
             var cardSize = cardAxisSize(itemList[0])
-            // 稀疏步长：卡片之间无重叠
-            var sparseStep = cardSize + control.spacing
-            // 密集步长：卡片高度重叠，步长仅为卡片宽度
-            var denseStep = cardSize * control.cardDensity
-            // 按 curveDensity 在两个极端之间插值
-            var density = Math.max(0.0, Math.min(1.0, control.curveDensity))
-            return sparseStep + (denseStep - sparseStep) * density
+            var density = Math.max(0.0, Math.min(1.0, control.cardDensity))
+            var overlap = density * 0.9
+            return cardSize * (1.0 - overlap) + control.spacing
         }
 
         // 计算卡片在排列方向的位置
@@ -232,7 +224,43 @@ Item {
         onTriggered: d.isExpanded = false
     }
 
-    // 波浪模式委托
+    Component {
+        id: cardVisualComponent
+        Item {
+            property var visualData: ({})
+            property bool showGlow: true
+            property bool isHovered: false
+            property bool isPressed: false
+            anchors.fill: parent
+            Rectangle {
+                id: cardBackground
+                anchors.fill: parent
+                color: visualData.cardColor
+                radius: visualData.radius
+                border.color: visualData.borderVisible ? visualData.borderColor : "transparent"
+                border.width: visualData.borderVisible ? 1 : 0
+            }
+            Loader {
+                anchors.fill: parent
+                z: 4
+                sourceComponent: visualData.delegate
+            }
+            RectangularGlow {
+                id: glow
+                anchors.fill: cardBackground
+                glowRadius: 7
+                spread: 0.3
+                color: visualData.shadowColor
+                cornerRadius: cardBackground.radius
+                visible: showGlow
+                opacity: (isHovered || isPressed) ? 1 : 0.6
+                Behavior on opacity {
+                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                }
+            }
+        }
+    }
+
     Component {
         id: waveCardDelegate
         Item {
@@ -257,7 +285,7 @@ Item {
 
             // 波浪偏移：展开时为 0，折叠时按正弦曲线偏移
             property real curveOffset: d.isExpanded ? 0 :
-                control.curveAmplitude * Math.sin(index * control.curveFrequency)
+                control.curveAmplitude * 40 * Math.sin(index * 0.8)
             // 堆叠旋转：展开时为 0，折叠时奇偶交替 ±2.5°
             property real stackRotation: d.isExpanded ? 0 : (index % 2 === 0 ? 2.5 : -2.5)
             // z 序：展开时按索引递增，折叠时首尾最高中间最低
@@ -309,61 +337,40 @@ Item {
                 z: cardRect.isHovered ? 200 : cardRect.baseZ
 
                 // 卡片背景外观
-                Rectangle {
-                    anchors.rightMargin: 8
+                Loader {
                     z: 3
-                    id: cardBackground
-                    width: modelData.cardWidth
-                    height: modelData.cardHeight
-                    color: modelData.cardColor
-                    radius: modelData.radius
-                    border.color: modelData.borderVisible ? modelData.borderColor: "transparent"
-                    border.width:  modelData.borderVisible ? 1 : 0
-
-                    // 用户自定义内容
-                    Loader {
-                        z: 4
-                        anchors.fill: parent
-                        sourceComponent: modelData.delegate
-                    }
-
-                    // 悬停/点击交互
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: {
-                            cardRect.isHovered = true
-                            d.hoveredIndex = index
-                            d.isExpanded = true
-                            restoreTimer.stop()
-                        }
-                        onExited: {
-                            cardRect.isHovered = false
-                            cardRect.isPressed = false
-                            d.hoveredIndex = -1
-                            restoreTimer.restart()
-                        }
-                        onPressed: cardRect.isPressed = true
-                        onReleased: cardRect.isPressed = false
-                        onClicked: control.clicked(index, modelData)
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    sourceComponent: cardVisualComponent
+                    property bool showGlow: control.layout !== FlaCardCurveView.LayoutType.Grid
+                    property bool isHovered: cardRect.isHovered
+                    property bool isPressed: cardRect.isPressed
+                    onItemChanged: {
+                        if (item)
+                            item.visualData = modelData
                     }
                 }
 
-                // 外发光效果（网格布局不发光）
-                RectangularGlow {
-                    id: glow
-                    z: 0
-                    anchors.fill: cardBackground
-                    glowRadius: 7
-                    spread: 0.3
-                    color: modelData.shadowColor
-                    cornerRadius: cardBackground.radius
-                    visible: control.layout !== FlaCardCurveView.LayoutType.Grid
-                    opacity: (cardRect.isHovered || cardRect.isPressed) ? 1 : 0.6
-                    Behavior on opacity {
-                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                MouseArea {
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered: {
+                        cardRect.isHovered = true
+                        d.hoveredIndex = index
+                        d.isExpanded = true
+                        restoreTimer.stop()
                     }
+                    onExited: {
+                        cardRect.isHovered = false
+                        cardRect.isPressed = false
+                        d.hoveredIndex = -1
+                        restoreTimer.restart()
+                    }
+                    onPressed: cardRect.isPressed = true
+                    onReleased: cardRect.isPressed = false
+                    onClicked: control.clicked(index, modelData)
                 }
             }
         }
@@ -398,55 +405,33 @@ Item {
                     }
                 }
 
-                // 卡片背景外观
-                Rectangle {
-                    anchors.rightMargin: 8
+                Loader {
                     z: 3
-                    id: cardBackground
-                    width: modelData.cardWidth
-                    height: modelData.cardHeight
-                    color: modelData.cardColor
-                    radius: modelData.radius
-                    border.color: modelData.borderVisible ? modelData.borderColor: "transparent"
-                    border.width:  modelData.borderVisible ? 1 : 0
-
-                    // 用户自定义内容
-                    Loader {
-                        z: 4
-                        anchors.fill: parent
-                        sourceComponent: modelData.delegate
-                    }
-
-                    // 悬停/点击交互
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: cardRect.isHovered = true
-                        onExited: {
-                            cardRect.isHovered = false
-                            cardRect.isPressed = false
-                        }
-                        onPressed: cardRect.isPressed = true
-                        onReleased: cardRect.isPressed = false
-                        onClicked: control.clicked(index, modelData)
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    sourceComponent: cardVisualComponent
+                    property bool showGlow: control.layout !== FlaCardCurveView.LayoutType.Grid
+                    property bool isHovered: cardRect.isHovered
+                    property bool isPressed: cardRect.isPressed
+                    onItemChanged: {
+                        if (item)
+                            item.visualData = modelData
                     }
                 }
 
-                // 外发光效果（网格布局不发光）
-                RectangularGlow {
-                    id: glow
-                    z: 0
-                    anchors.fill: cardBackground
-                    glowRadius: 7
-                    spread: 0.3
-                    color: modelData.shadowColor
-                    cornerRadius: cardBackground.radius
-                    visible: control.layout !== FlaCardCurveView.LayoutType.Grid
-                    opacity: (cardRect.isHovered || cardRect.isPressed) ? 1 : 0.6
-                    Behavior on opacity {
-                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                MouseArea {
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered: cardRect.isHovered = true
+                    onExited: {
+                        cardRect.isHovered = false
+                        cardRect.isPressed = false
                     }
+                    onPressed: cardRect.isPressed = true
+                    onReleased: cardRect.isPressed = false
+                    onClicked: control.clicked(index, modelData)
                 }
             }
         }
