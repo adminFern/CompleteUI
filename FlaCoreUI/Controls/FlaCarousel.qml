@@ -287,66 +287,55 @@ Item {
                     }
                 }
 
-                // 图片内容组件
-                Component {
-                    id: _imageSlide
-                    Image {
+
+
+
+
+
+
+                Item{
+                    id: visualContent
+                    anchors.fill: parent
+                    Rectangle{
+                        visible: modelData.imagesource===""&&modelData.visibleimage===false
                         anchors.fill: parent
+                        color:  modelData.cardColor
+                        radius: carousel.imageRadius
+                        Loader {
+                            z:5
+                            anchors.fill: parent
+                            active: modelData.delegate !== null && modelData.delegate !== undefined
+                            sourceComponent: modelData.delegate
+                        }
+                    }
+                    Image{
+                        id: _imageSlide
+                        anchors.fill: parent
+                        visible: modelData.imagesource!==""&&modelData.visibleimage
                         source: modelData.imagesource
                         fillMode: Image.PreserveAspectCrop
                         asynchronous: true
                         smooth: true
-                    }
-                }
-
-                // 占位组件
-                Component {
-                    id: _placeholderSlide
-                    Rectangle {
-                        anchors.fill: parent
-                        color: modelData.cardColor!==null && modelData.cardColor !== undefined ?modelData.cardColor: "#2a2a2a"
-                    }
-                }
-
-                // 卡片视觉内容（带圆角裁剪）
-                Item {
-                    id: visualContent
-                    anchors.fill: parent
-                    visible: true
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: Rectangle {
-                            width: visualContent.width
-                            height: visualContent.height
-                            radius: carousel.imageRadius
+                        layer.samples: 8
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Rectangle {
+                                width: _imageSlide.width
+                                height: _imageSlide.height
+                                radius: carousel.imageRadius
+                            }
+                        }
+                        Loader {
+                            z:5
+                            anchors.fill: parent
+                            active: modelData.delegate !== null && modelData.delegate !== undefined
+                            sourceComponent: modelData.delegate
                         }
                     }
-                    //矩形
-                    Loader {
-                        z:0
-                        anchors.fill: parent
-                        active: modelData.cardColor !==null && modelData.cardColor !== undefined
-                                && modelData.visibleimage !== true
-                        sourceComponent: _placeholderSlide
-                    }
-                    //图片
-                    Loader {
-                        z:0
-                        anchors.fill: parent
-                        active: modelData.visibleimage===true && modelData.imagesource!==""
-                        sourceComponent: _imageSlide
-                    }
-                    //外部内容
-                    Loader {
-                        z:2
-                        anchors.fill: parent
-                        active: modelData.delegate !== null && modelData.delegate !== undefined
-                        sourceComponent: modelData.delegate
-                    }
 
                 }
 
-                RectangularGlow {
+                 RectangularGlow {
                     id: glow
                     z: 0
                     anchors.fill: visualContent
@@ -365,7 +354,6 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-
                     onPressed: {
                         if (index === internal.currentIndex && !internal.isTransitioning) {
                             slideItem.isClicked = true

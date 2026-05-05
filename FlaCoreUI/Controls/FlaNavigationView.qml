@@ -20,8 +20,11 @@ Item {
     property color primaryColor: Theme.PrimaryColor
     property int displayMode: FlaNavigationView.NavViewType.Auto
     property int navCompactWidth: 40
-    property int itemHeight: 38
-    property int sidebarWidth: 200
+    property int itemHeight: 40
+    property int sidebarWidth: 210
+    property int initSelectIndex: -1
+    property Component home                               // 侧边栏顶部主页内容
+    property int homeHeight: 70                          // 主页区域高度，0 时自适应内容
     property color textColor: Theme.Textcolor
     property font textfont: Qt.font({ family: Theme.defaultFontFamily, pixelSize: 13, weight: Font.Normal })
     property color hoverColor: Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05)
@@ -85,6 +88,21 @@ Item {
         }
 
         // 折叠时：如果当前选中项属于此 expander，回退选中到 expander 自身
+        function selectPageByIndex(idx) {
+            for (var i = 0; i < _itemsCache.length; i++) {
+                var item = _itemsCache[i]
+                if (item._idx === idx && item.page) {
+                    if (d.isPage !== item.page) {
+                        d.isPage = item.page
+                        stack.replace(item.page)
+                    }
+                    nav_list.currentIndex = idx
+                    return true
+                }
+            }
+            return false
+        }
+
         function collapseCheck(expanderItem) {
             if (nav_list.currentIndex < 0) return
             var curData = nav_list.model
@@ -106,6 +124,8 @@ Item {
         })
         d.refreshItems()
         d.refreshFooterItems()
+        if (control.initSelectIndex >= 0)
+            d.selectPageByIndex(control.initSelectIndex)
     }
 
     onItemsChanged: d.refreshItems()
@@ -137,6 +157,7 @@ Item {
     Component {
         id: com_panel_item_header
         NavItemBase {
+            hoverCursor: Qt.ArrowCursor
             itemModel: model
             width: layout_list.width
             isSelected: layout_footer.currentIndex === itemModel._idx
@@ -162,6 +183,7 @@ Item {
     Component {
         id: com_panel_item
         NavItemBase {
+            hoverCursor: Qt.ArrowCursor
             itemModel: model
             width: layout_list.width
             isSelected: nav_list.currentIndex === itemModel._idx
@@ -195,6 +217,7 @@ Item {
     Component {
         id: com_panel_item_expander
         NavItemBase {
+            hoverCursor: Qt.ArrowCursor
             itemModel: model
             width: layout_list.width
             isSelected: nav_list.currentIndex === itemModel._idx
@@ -306,7 +329,7 @@ Item {
                         id: popup_mouse
                         anchors.fill: parent
                         hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
+                       // cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             if (model.page) d.go(model.page)
                             control_popup.close()
@@ -370,6 +393,33 @@ Item {
             anchors.fill: parent
             anchors.margins: 0
             spacing: 0
+
+            // 主页内容区域（侧边栏最顶部，独立设计）
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: control.homeHeight
+                visible: control.home ? true : false
+
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    radius: 6
+                    color: ma_home.containsMouse ? control.hoverColor : "transparent"
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                }
+
+                MouseArea {
+                    id: ma_home
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                }
+
+                Loader {
+                    anchors.fill: parent
+                    sourceComponent: control.home
+                }
+            }
 
             // 主导航列表
             Item {

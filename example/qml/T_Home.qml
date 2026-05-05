@@ -35,6 +35,7 @@ Item {
     Rectangle{
         anchors.fill: parent
         color:Theme.FillBackgroundColor
+        radius: 4
         Column{
             anchors.fill: parent
             padding: 10
@@ -85,7 +86,7 @@ Item {
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                         delegate: CardContent {
                             ico:  "qrc:/svg/github.svg"
                             nameText: "周杰"; positionText: "技术总监"
@@ -97,7 +98,7 @@ Item {
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                         delegate: CardContent {
                             ico:  "qrc:/svg/github.svg"
                             nameText: "周杰"; positionText: "技术总监"
@@ -109,7 +110,7 @@ Item {
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
                         delegate: CardContent {
                             ico:  "qrc:/svg/github.svg"
                             nameText: "周杰"; positionText: "技术总监"
@@ -141,8 +142,8 @@ Item {
                 height: 170
                 items: Objects{
                     CardItem {
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
-                       /// cardColor: Theme.FillCardColor
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -154,8 +155,8 @@ Item {
                         // }
                     }
                     CardItem {
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
-                       /// cardColor: Theme.FillCardColor
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -167,8 +168,8 @@ Item {
                         // }
                     }
                     CardItem {
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
-                       /// cardColor: Theme.FillCardColor
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -180,8 +181,8 @@ Item {
                         // }
                     }
                     CardItem {
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
-                       /// cardColor: Theme.FillCardColor
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -193,8 +194,8 @@ Item {
                         // }
                     }
                     CardItem {
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
-                       /// cardColor: Theme.FillCardColor
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12
@@ -206,8 +207,8 @@ Item {
                         // }
                     }
                     CardItem {
-                          cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
-                       /// cardColor: Theme.FillCardColor
+                        cardColor:Theme.isDark?"#1E293B":"#FFFFFF"
+                        /// cardColor: Theme.FillCardColor
                         cardWidth: 250
                         cardHeight: 130
                         radius: 12

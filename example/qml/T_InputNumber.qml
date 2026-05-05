@@ -20,6 +20,9 @@ Item {
           FlaSwitch{
 
           }
+          FlaTextField{
+
+          }
      }
 
 

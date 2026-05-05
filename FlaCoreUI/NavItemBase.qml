@@ -25,6 +25,7 @@ Item {
     property color selectedBgColor: Theme.setColorAlpha(Theme.PrimaryColor, 100)
     property color hoverBgColor: Theme.isDark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(0, 0, 0, 0.05)
     readonly property bool isDisabled: itemModel ? (itemModel.disabled === true) : false
+    property int hoverCursor: Qt.PointingHandCursor
     signal clicked
     height: itemHeight
     width: parent ? parent.width : 0
@@ -77,7 +78,7 @@ Item {
             sourceComponent: FlaImage {
                 iconsource: root.itemModel && root.itemModel.icon ? root.itemModel.icon : ""
                 iconsize: root.iconSize
-                iconbold: true
+               // iconbold: true
                 icocolor: root.itemTextColor
             }
         }
@@ -121,7 +122,7 @@ Item {
             id: mouseArea
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: root.hoverCursor
             onClicked: root.clicked()
         }
     }
