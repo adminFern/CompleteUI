@@ -134,8 +134,6 @@ Item {
     Connections {
         target: d
         function onDisplayModeChanged() {
-            if (d.displayMode === FlaNavigationView.NavViewType.Compact)
-                setExpandAll(false)
             d.enableNavigationPanel = false
             control_popup.close()
         }
@@ -189,7 +187,7 @@ Item {
             isSelected: nav_list.currentIndex === itemModel._idx
             isChildItem: itemModel._parent !== undefined
             isCompactMode: d.isCompactAndNotPanel
-            itemHeight: (itemModel && itemModel._parent && !itemModel._parent.isExpand) ? 0 : control.itemHeight
+            itemHeight: (itemModel && itemModel._parent && (!itemModel._parent.isExpand || d.isCompactAndNotPanel)) ? 0 : control.itemHeight
             visible: itemHeight > 0
             opacity: Math.min(1, itemHeight / control.itemHeight * 2)
             iconSize: d.iconsize
@@ -329,7 +327,6 @@ Item {
                         id: popup_mouse
                         anchors.fill: parent
                         hoverEnabled: true
-                       // cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             if (model.page) d.go(model.page)
                             control_popup.close()
@@ -386,6 +383,10 @@ Item {
                 navIndicator.bottomPos = navIndicator.highlightSize
                 navIndicator.lastIndex = -1
                 navIndicator.state = "normal"
+            } else if (nav_list.currentIndex >= 0) {
+                navIndicator.topPos = navIndicator.targetTop
+                navIndicator.bottomPos = navIndicator.targetBottom
+                navIndicator.lastIndex = nav_list.currentIndex
             }
         }
 
@@ -398,7 +399,7 @@ Item {
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: control.homeHeight
-                visible: control.home ? true : false
+                visible: control.home && d.displayMode === FlaNavigationView.NavViewType.Open
 
                 Rectangle {
                     anchors.fill: parent
@@ -520,6 +521,8 @@ Item {
                                 navIndicator.state = "endEnter"
                                 navIndicator.state = "normal"
                             } else {
+                                navIndicator.topPos = navIndicator.targetTop
+                                navIndicator.bottomPos = navIndicator.targetBottom
                                 navIndicator.state = "normal"
                             }
                             navIndicator.lastIndex = nav_list.currentIndex
