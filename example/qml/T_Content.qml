@@ -9,6 +9,7 @@ Item {
     FlaNavigationView {
         anchors.margins: 2
         anchors.fill: parent
+        initSelectIndex:0
         items: Objects {
             PaneItem {
                 title: "首页"

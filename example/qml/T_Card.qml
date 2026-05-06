@@ -530,7 +530,7 @@ Item {
                     }
                 }
                 FlaCardCurveView {
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: 350
                     Layout.fillHeight: true
                     layout: FlaCardCurveView.LayoutType.WaveVertical
                     spacing:10

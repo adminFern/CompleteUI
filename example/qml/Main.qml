@@ -6,7 +6,7 @@ import FlaCoreUI
  FlaWindow {
      id: win
      width: 1200
-     height: 780
+     height: 800
      visible: true
      initialItem: "qrc:/qml/T_Content.qml"
      appBar: AppBar{
