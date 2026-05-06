@@ -246,7 +246,7 @@ Item {
             Layout.preferredHeight: 18
             Layout.topMargin: 10
             FlaImage {
-                iconsource: FluentIcon.ico_Contact
+                iconsource: FluentIcon.ico_ViewDashboard  //FluentIcons.graph_ViewDashboard
             }
             Text {
                 text: qsTr("波浪线名片卡片")
@@ -397,7 +397,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 18
                     FlaImage {
-                        iconsource: FluentIcon.ico_List
+                        iconsource: FluentIcon.ico_PrintCustomRange
                     }
                     Text {
                         text: qsTr("普通垂直名片卡片")
@@ -520,7 +520,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 18
                     FlaImage {
-                        iconsource: FluentIcon.ico_Sync
+                        iconsource: FluentIcon.ico_WebSearch    //FluentIcons.graph_WebSearch
                     }
                     Text {
                         text: qsTr("波浪垂直名片卡片")
