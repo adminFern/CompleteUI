@@ -111,7 +111,7 @@ Item {
         function containerOffset() {
             var size = totalLayoutSize()
             var avail = availableSize()
-            if (size >= avail) return 2
+            if (size >= avail) return flickable._glowPadding
             return (avail - size) / 2
         }
     }

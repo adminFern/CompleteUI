@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import FlaCoreUI
-
 Item {
     // 名片卡片内容：头像在左，信息在右
     component CardContent: Item {
@@ -410,6 +409,7 @@ Item {
                 FlaCardCurveView {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    spacing:10
                     layout: FlaCardCurveView.LayoutType.Column
                     items: Objects {
                         CardItem {
@@ -533,7 +533,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     layout: FlaCardCurveView.LayoutType.WaveVertical
-
+                    spacing:10
                     items: Objects {
                         CardItem {
                             cardWidth: 250; cardHeight: 130

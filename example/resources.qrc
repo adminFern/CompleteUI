@@ -5,8 +5,6 @@
         <file>qml/T_Content.qml</file>
         <file>qml/T_Home.qml</file>
         <file>qml/T_Card.qml</file>
-        <file>qml/T_SpeedButton.qml</file>
-        <file>qml/T_Carousel.qml</file>
         <file>svg/avatar_1.svg</file>
         <file>svg/avatar_2.svg</file>
         <file>svg/avatar_3.svg</file>
@@ -19,11 +17,5 @@
         <file>svg/avatar_10.svg</file>
         <file>svg/avatar_11.svg</file>
         <file>svg/avatar_12.svg</file>
-        <file>svg/github.svg</file>
-        <file>svg/git.svg</file>
-        <file>png/Git.png</file>
-        <file>svg/git (1).svg</file>
-        <file>svg/logo.svg</file>
-        <file>qml/T_InputNumber.qml</file>
     </qresource>
 </RCC>
